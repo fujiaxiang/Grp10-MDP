@@ -11,12 +11,21 @@ public class Robot {
     private int direction;//2 4 6 8
     private boolean[][] maze;
     private boolean[][] explored;
+    private static Robot instance = new Robot();
 
 //    ***********
     private Sensor[] sensors;
 //    ********
     //temporary attribute
     //robot size  assume robot size = 3
+
+    private Robot(){}
+
+    public static Robot getInstance(){
+        if(instance==null)
+            instance = new Robot();
+        return instance;
+    }
 
     public Robot(int[] location,double speed,int direction,boolean[][] maze){
         this.location = location;
@@ -46,5 +55,7 @@ public class Robot {
             e.printStackTrace();
         }
     }
+
+
 }
 

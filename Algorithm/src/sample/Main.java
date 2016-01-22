@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import models.Arena;
+
 public class Main extends Application {
     private Controller controller;
 
@@ -60,8 +62,8 @@ public class Main extends Application {
             COLOR_PATH,COLOR_OBSTACLE,COLOR_START,COLOR_GOAL,COLOR_ROBOT,COLOR_EXPLORED
             //COLOR_EXPLORED
     };
-    private final int COL = 15;
-    private final int ROW = 20;
+    private final int COL = Arena.getInstance().COL;
+    private final int ROW = Arena.getInstance().ROW;
     private final int[] INIT_START = {ROW-2,1};//ROW,COL
     private final int[] INIT_GOAL = {1,COL-2};//ROW,COL
     private final int START_GOAL_SIZE = 3;//ODD
