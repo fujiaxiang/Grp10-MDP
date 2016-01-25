@@ -133,7 +133,7 @@ public class Controller {
                 location[i*3+j][1] = robot.getLocation()[1]-1+j;
             }
 
-        if(robot.getDirection()==6){
+        if(robot.getOrientation()==6){
             previous = new int[3][2];
             for(int i=0;i<3;i++) {
                 previous[i][0] = location[i * 3][0];

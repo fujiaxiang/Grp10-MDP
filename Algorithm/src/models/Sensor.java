@@ -1,24 +1,30 @@
 package models;
-import utilities.GlobalUtilities.Orientation;
+import utilities.Orientation;
 
 /**
  * Created by Jiaxiang on 22/1/16.
  */
 public class Sensor {
     private int[] relativeLocation;
-    private Orientation orientation;
+    private int relativeOrientation;
     private int maxRange;
     private int minRange;
 
+    private Robot robot = Robot.getInstance();
+
     public int[] getLocation(){
         int[] absoluteLocation= new int[2];
-        absoluteLocation[0] = Robot.getInstance().getLocation()[0] + relativeLocation[0];
-        absoluteLocation[1] = Robot.getInstance().getLocation()[1] + relativeLocation[1];
+        absoluteLocation[0] = robot.getLocation()[0] + relativeLocation[0];
+        absoluteLocation[1] = robot.getLocation()[1] + relativeLocation[1];
         return absoluteLocation;
     }
 
-    public Orientation getOrientation() {
-        return orientation;
+    public int getrelativeOrientation() {
+        return relativeOrientation;
+    }
+
+    public int getAbsoluteOrientation() {
+        return Orientation.turn(robot.getOrientation(), relativeOrientation);
     }
 
     public int getMinRange() {

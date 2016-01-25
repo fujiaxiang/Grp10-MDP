@@ -5,24 +5,20 @@ package utilities;
  */
 public class GlobalUtilities {
 
-    public enum Orientation {
-        NORTH, SOUTH, EAST, WEST
-    };
 
-
-    public static int[] locationParser(int[] origin, Orientation orientation, int steps){
+    public static int[] locationParser(int[] origin, int orientation, int steps){
 
         switch(orientation){
-            case NORTH:
+            case Orientation.NORTH:
                 origin[0] -= steps;
                 break;
-            case SOUTH:
+            case Orientation.SOUTH:
                 origin[0] += steps;
                 break;
-            case EAST:
+            case Orientation.EAST:
                 origin[1] += steps;
                 break;
-            case WEST:
+            case Orientation.WEST:
                 origin[1] -= steps;
                 break;
             default:

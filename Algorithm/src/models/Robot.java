@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Robot {
     private int[] location;
     private double speed;
-    private int direction;//2 4 6 8
+    private int orientation;
     private boolean[][] maze;
     private boolean[][] explored;
     private static Robot instance = new Robot();
@@ -27,10 +27,10 @@ public class Robot {
         return instance;
     }
 
-    public Robot(int[] location,double speed,int direction,boolean[][] maze){
+    public Robot(int[] location,double speed,int orientation,boolean[][] maze){
         this.location = location;
         this.speed = speed;
-        this.direction = direction;
+        this.orientation = orientation;
         this.maze = maze;
         this.explored = new boolean[maze.length][maze[0].length];
         for(int i=0;i<explored.length;i++)
@@ -42,7 +42,16 @@ public class Robot {
     public int[] getLocation(){
         return location;
     }
-    public int getDirection(){return direction;}
+
+    public int getOrientation(){return orientation;}
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+    }
+
+    public void setLocation(int[] location) {
+        this.location = location;
+    }
 
     public void explore(){
         try {
