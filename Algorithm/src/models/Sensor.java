@@ -1,11 +1,12 @@
 package models;
+import utilities.GlobalUtilities.Orientation;
 
 /**
  * Created by Jiaxiang on 22/1/16.
  */
 public class Sensor {
     private int[] relativeLocation;
-    private int orientation;
+    private Orientation orientation;
     private int maxRange;
     private int minRange;
 
@@ -16,7 +17,7 @@ public class Sensor {
         return absoluteLocation;
     }
 
-    public int getOrientation() {
+    public Orientation getOrientation() {
         return orientation;
     }
 

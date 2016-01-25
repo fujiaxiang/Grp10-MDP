@@ -10,6 +10,8 @@ public class Arena {
     public final int START_SIZE = 3;
     public final int GOAL_SIZE = 3;
 
+    private int maze_info[][];
+
     private static Arena instance = new Arena();
 
     private int[] start;//indicate start center
@@ -29,4 +31,7 @@ public class Arena {
         return instance;
     }
 
+    public int[][] getMaze_info() {
+        return maze_info;
+    }
 }

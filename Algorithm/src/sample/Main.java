@@ -74,7 +74,9 @@ public class Main extends Application {
 
     private GraphicsContext gc; //Graphic Context of Canvas
     private int draw_mode = OBSTACLE;
-    private int maze_info[][];
+
+    //I intend to move this to Arena class*********
+    private int maze_info[][];//*************
 
     private int robot_loc[][];//used to store robot location
 
