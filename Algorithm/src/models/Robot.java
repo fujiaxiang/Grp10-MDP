@@ -6,6 +6,8 @@ import java.util.ArrayList;
  * Created by Fujitsu on 20/1/2016.
  */
 public class Robot {
+    public static final int SIZE = 3;
+    public static final int HALF_SIZE = SIZE/2;
     private int[] location;
     private double speed;
     private int orientation;
@@ -53,15 +55,12 @@ public class Robot {
         this.location = location;
     }
 
-    public void explore(){
-        try {
-            //+half size < - half size
-            while(location[1]+2<maze[0].length){
-                location[1]++;
-                Thread.sleep((long)speed);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void walk(){
+        switch(orientation){
+            case 2:location[0]--;break;
+            case 4:location[1]--;break;
+            case 6:location[1]++;break;
+            case 8:location[0]++;break;
         }
     }
 

@@ -5,12 +5,9 @@ package models;
  */
 public class Arena {
 
-    public final int COL = 15;
-    public final int ROW = 20;
-    public final int START_SIZE = 3;
-    public final int GOAL_SIZE = 3;
-
-    private int maze_info[][];
+    public static final int COL = 15;
+    public static final int ROW = 20;
+    public static final int START_GOAL_SIZE = 3;
 
     private static Arena instance = new Arena();
 
@@ -31,7 +28,26 @@ public class Arena {
         return instance;
     }
 
-    public int[][] getMaze_info() {
-        return maze_info;
+    public int[] getStart(){
+        return start;
+    }
+    public int[] getGoal(){
+        return goal;
+    }
+
+    public void setStart(int[] start){
+        this.start = start;
+    }
+
+    public void setGoal(int[] goal){
+        this.goal = goal;
+    }
+
+    public void setObstacle(int row,int col,boolean set){
+        maze[row][col] = set;
+    }
+
+    public boolean[][] getMaze(){
+        return maze;
     }
 }

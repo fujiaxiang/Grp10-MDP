@@ -16,13 +16,13 @@ public class SimuSensorService implements SensorServiceInterface{
     @Override
     public int detectObstacle(Sensor sensor) {
         int[] location = new int[2];
-        int[][] maze = Arena.getInstance().getMaze_info();
+        boolean[][] maze = Arena.getInstance().getMaze();
 
         for(int step=sensor.getMinRange(); step<=sensor.getMaxRange(); step++){
             try{
                 int[] tempLocation = locationParser(sensor.getLocation(), sensor.getAbsoluteOrientation(), step);
-                int obstacle = maze[tempLocation[0]][tempLocation[1]];
-                if(obstacle!=0)
+                boolean obstacle = maze[tempLocation[0]][tempLocation[1]];
+                if(obstacle)
                     return step;
             }catch (ArrayIndexOutOfBoundsException e){
                 return step;
