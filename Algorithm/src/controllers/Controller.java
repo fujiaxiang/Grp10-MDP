@@ -1,5 +1,8 @@
 package controllers;
 import models.*;
+
+import java.util.Random;
+
 /**
  * Created by Fujitsu on 20/1/2016.
  */
@@ -170,6 +173,8 @@ public class Controller {
 
     public void startRobot() {
         isDone = false;
+        int[] loc = {arena.getStart()[0],arena.getStart()[1]};
+        robot.setLocation(loc);
         for(int i=0;i<previous.length;i++)
             previous[i][0] = -1;
         for(int i=0;i<location.length;i++)
@@ -180,23 +185,36 @@ public class Controller {
         //Robot move
         update = true;//to show first update
         int i = 0;
+        Random r = new Random();
         while(i++<999999){
             try {
-                Thread.sleep(100);//Assume waiting for sensor
+                Thread.sleep(50);//Assume waiting for sensor
+
+                //update data
+
+                //decision making
+
+                //for testing
+                int rand = r.nextInt(10);
+                if(rand==0) {
+                    robot.setOrientation((r.nextInt(4)+1)*2);
+                }
+                else {
+                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
+                        robot.setOrientation(2);
+                    else if (robot.getOrientation() == 2 && robot.getLocation()[0] - 1 - Robot.HALF_SIZE < 0)
+                        robot.setOrientation(4);
+                    else if (robot.getOrientation() == 4 && robot.getLocation()[1] - 1 - Robot.HALF_SIZE < 0)
+                        robot.setOrientation(8);
+                    else if (robot.getOrientation() == 8 && robot.getLocation()[0] + 1 + Robot.HALF_SIZE >= Arena.ROW)
+                        robot.setOrientation(6);
+                    else
+                        robot.walk();
+                }
             }
             catch(Exception ex) {
                 ex.printStackTrace();
             }
-            if(robot.getOrientation()==6&&robot.getLocation()[1]+1+ Robot.HALF_SIZE>=Arena.COL)
-                robot.setOrientation(2);
-            else if(robot.getOrientation()==2&&robot.getLocation()[0]-1-Robot.HALF_SIZE<0)
-                robot.setOrientation(4);
-            else if(robot.getOrientation()==4&&robot.getLocation()[1]-1-Robot.HALF_SIZE<0)
-                robot.setOrientation(8);
-            else if(robot.getOrientation()==8&&robot.getLocation()[0]+1+Robot.HALF_SIZE>=Arena.ROW)
-                robot.setOrientation(6);
-            else
-                robot.walk();
             update = true;
         }
         isDone = true;

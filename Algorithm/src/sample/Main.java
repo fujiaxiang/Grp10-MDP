@@ -2,6 +2,7 @@ package sample;
 
 import controllers.Controller;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -10,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -37,7 +39,8 @@ public class Main extends Application {
     private final int BUTTON_SIDE_Y = CANVAS_Y;
     private final int BUTTON_BOTTOM_X = CANVAS_X;
     private final int BUTTON_BOTTOM_Y = CANVAS_Y+CANVAS_HEIGHT+MARGIN;
-    private final int SLEEP_DURATION    = 50;
+    private final int LABEL_TIMER_WIDTH = 50;
+    private final int SLEEP_DURATION    = 10;
 
     private final Color COLOR_GOAL = Color.GREEN;
     private final Color COLOR_START = Color.RED;
@@ -60,9 +63,10 @@ public class Main extends Application {
     private final int CELL_SIZE = CANVAS_WIDTH/Arena.COL;//assume cell is square
     private GraphicsContext gc; //Graphic Context of Canvas
     private ComboBox<String> ddl;
-    private Text text_timer;
+    private Label text_timer;
     private int draw_mode = OBSTACLE;
     private int[][] robot_loc_array;
+    private long time;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -81,6 +85,7 @@ public class Main extends Application {
             g.getChildren().add(b);
         g.getChildren().add(getDropdownlist());
         g.getChildren().add(getTextTimer());
+        g.getChildren().add(createTextLabel());
         return g;
     }
 
@@ -96,12 +101,19 @@ public class Main extends Application {
         }
         return ddl;
     }
-
-    private Text getTextTimer(){
+    private Label createTextLabel(){
+        Label label = new Label("Timer  : ");
+        label.setLayoutX(CANVAS_X+5);
+        label.setLayoutY(getDropdownlist().getLayoutY()+BUTTON_HEIGHT);
+        label.setPrefSize(LABEL_TIMER_WIDTH,BUTTON_HEIGHT);
+        return label;
+    }
+    private Label getTextTimer(){
         if(text_timer == null){
-            text_timer = new Text("Timer  : ");
-            text_timer.setLayoutX(CANVAS_X+5);
-            text_timer.setLayoutY(getDropdownlist().getLayoutY()+BUTTON_HEIGHT*1.5);
+            text_timer = new Label("0 ");
+            text_timer.setPrefSize(BUTTON_WIDTH,BUTTON_HEIGHT);
+            text_timer.setLayoutX(CANVAS_X+LABEL_TIMER_WIDTH+5);
+            text_timer.setLayoutY(getDropdownlist().getLayoutY()+BUTTON_HEIGHT);
         }
         return text_timer;
     }
@@ -173,9 +185,9 @@ public class Main extends Application {
 
     private void drawGrid(GraphicsContext gc,int row,int col,Color color){
         int a = col*CELL_SIZE;
-        int b = (col+1)*CELL_SIZE;
+        //int b = (col+1)*CELL_SIZE;
         int c = row*CELL_SIZE;
-        int d = (row+1)*CELL_SIZE;
+        //int d = (row+1)*CELL_SIZE;
 
         //grid
         gc.setFill(COLOR_GRID);
@@ -232,6 +244,7 @@ public class Main extends Application {
     private Button[] createBottomButtons(){
         String[] buttons_text = {"Save Map","Load Map","Explore"};
         Button[] buttons = new Button[buttons_text.length];
+        time = 0;
         EventHandler handler = (event)-> {
                 if(event.getTarget().toString().contains(buttons_text[0])){
 
@@ -271,6 +284,17 @@ public class Main extends Application {
                             controller.startRobot();
                         }
                     },SLEEP_DURATION);
+
+                    Timer t3 = new Timer();//for update label
+                    t3.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            time+=100;
+                            Platform.runLater(()->{
+                                getTextTimer().setText(Long.toString(time));
+                            });
+                        }
+                    },0,100);
                 }
             };
         //insert button
