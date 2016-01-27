@@ -180,9 +180,9 @@ public class Controller {
         //Robot move
         update = true;//to show first update
         int i = 0;
-        while(i++<=60){
+        while(i++<999999){
             try {
-                Thread.sleep(1000);//Assume waiting for sensor
+                Thread.sleep(100);//Assume waiting for sensor
             }
             catch(Exception ex) {
                 ex.printStackTrace();
@@ -193,13 +193,15 @@ public class Controller {
                 robot.setOrientation(4);
             else if(robot.getOrientation()==4&&robot.getLocation()[1]-1-Robot.HALF_SIZE<0)
                 robot.setOrientation(8);
+            else if(robot.getOrientation()==8&&robot.getLocation()[0]+1+Robot.HALF_SIZE>=Arena.ROW)
+                robot.setOrientation(6);
             else
                 robot.walk();
             update = true;
         }
         isDone = true;
     }
-
+    public int getRobotOrientation(){return robot.getOrientation();}
     public boolean isDone(){return isDone;}
     public boolean needUpdate(){return update;}
     public void updated(){update = false;}

@@ -9,8 +9,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Timer;
@@ -33,6 +35,8 @@ public class Main extends Application {
     private final int BUTTON_HEIGHT = 30;
     private final int BUTTON_SIDE_X = SCENE_WIDTH-BUTTON_WIDTH-MARGIN;
     private final int BUTTON_SIDE_Y = CANVAS_Y;
+    private final int BUTTON_BOTTOM_X = CANVAS_X;
+    private final int BUTTON_BOTTOM_Y = CANVAS_Y+CANVAS_HEIGHT+MARGIN;
     private final int SLEEP_DURATION    = 50;
 
     private final Color COLOR_GOAL = Color.GREEN;
@@ -49,15 +53,14 @@ public class Main extends Application {
     private final int START = 2;
     private final int GOAL = 3;
 
-    private final int ROBOT = 4;
-    private final int EXPLORED = 5;
-
     private final Color[] COLOR_REF = {
             COLOR_PATH,COLOR_OBSTACLE,COLOR_START,COLOR_GOAL,COLOR_ROBOT,COLOR_EXPLORED
             //COLOR_EXPLORED
     };
     private final int CELL_SIZE = CANVAS_WIDTH/Arena.COL;//assume cell is square
     private GraphicsContext gc; //Graphic Context of Canvas
+    private ComboBox<String> ddl;
+    private Text text_timer;
     private int draw_mode = OBSTACLE;
     private int[][] robot_loc_array;
 
@@ -76,8 +79,31 @@ public class Main extends Application {
             g.getChildren().add(b);
         for(Button b:createBottomButtons())
             g.getChildren().add(b);
-
+        g.getChildren().add(getDropdownlist());
+        g.getChildren().add(getTextTimer());
         return g;
+    }
+
+    private ComboBox<String> getDropdownlist(){
+        if(ddl==null){
+            String[] list = {"Simutation","Real"};
+            ddl = new ComboBox<String>();
+            ddl.getItems().addAll(list);
+            ddl.setPrefSize(BUTTON_WIDTH*2,BUTTON_HEIGHT);
+            ddl.setLayoutX(CANVAS_X);
+            ddl.setLayoutY(BUTTON_BOTTOM_Y+2*BUTTON_HEIGHT);
+            ddl.setValue(list[0]);
+        }
+        return ddl;
+    }
+
+    private Text getTextTimer(){
+        if(text_timer == null){
+            text_timer = new Text("Timer  : ");
+            text_timer.setLayoutX(CANVAS_X+5);
+            text_timer.setLayoutY(getDropdownlist().getLayoutY()+BUTTON_HEIGHT*1.5);
+        }
+        return text_timer;
     }
 
     private Canvas createCanvas(){
@@ -150,12 +176,16 @@ public class Main extends Application {
         int b = (col+1)*CELL_SIZE;
         int c = row*CELL_SIZE;
         int d = (row+1)*CELL_SIZE;
-        //maze
-        gc.setFill(color);
-        gc.fillRect(a,c,CELL_SIZE,CELL_SIZE);
 
         //grid
         gc.setFill(COLOR_GRID);
+        gc.fillRect(a,c,CELL_SIZE,CELL_SIZE);
+        //maze
+        gc.setFill(color);
+        gc.fillRect(a+1,c+1,CELL_SIZE-2,CELL_SIZE-2);
+
+        /*
+        Slow, involved array creation, removed
         //Horizon 1
         gc.moveTo(a,c);
         gc.lineTo(b,c);
@@ -171,16 +201,14 @@ public class Main extends Application {
         //Vertical 2
         gc.moveTo(a,c);
         gc.lineTo(a,d);
-        gc.stroke();
+        gc.stroke();*/
     }
 
     //Create all side buttons
     private Button[] createMazeSetupButtons(){
         String[] buttons_text = {"Obstacle","Path","Start","Goal"};
         Button[] buttons = new Button[buttons_text.length];
-        EventHandler handler = new EventHandler() {
-            @Override
-            public void handle(Event event) {
+        EventHandler handler = (event)->{
                 String object_string = event.getSource().toString();
                 if(object_string.contains(buttons_text[0]))
                     draw_mode = OBSTACLE;
@@ -192,7 +220,6 @@ public class Main extends Application {
                     draw_mode = GOAL;
                 else
                     draw_mode = PATH;
-            }
         };
         //insert button
         for(int i=0;i<buttons_text.length;i++)
@@ -205,9 +232,7 @@ public class Main extends Application {
     private Button[] createBottomButtons(){
         String[] buttons_text = {"Save Map","Load Map","Explore"};
         Button[] buttons = new Button[buttons_text.length];
-        EventHandler handler = new EventHandler() {
-            @Override
-            public void handle(Event event) {
+        EventHandler handler = (event)-> {
                 if(event.getTarget().toString().contains(buttons_text[0])){
 
                 }
@@ -221,15 +246,14 @@ public class Main extends Application {
                         public void run() {
                             if(controller.needUpdate()) {
                                 robot_loc_array = controller.getRobotLocation();
+                                int orientation = controller.getRobotOrientation()-1;
                                 for (int i = 0; i < controller.getPrevious().length; i++) {
-                                    if (controller.getPrevious()[i][0] < 0 || controller.getPrevious()[i][0] >= Arena.ROW)
-                                        break;
-                                    if (controller.getPrevious()[i][1] < 0 || controller.getPrevious()[i][1] >= Arena.COL)
+                                    if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
                                         break;
                                     drawGrid(gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
                                 for (int i = 0; i < robot_loc_array.length; i++)
-                                    drawGrid(gc, robot_loc_array[i][0], robot_loc_array[i][1], COLOR_ROBOT);
+                                    drawGrid(gc, robot_loc_array[i][0], robot_loc_array[i][1], (i==orientation)?COLOR_ROBOT_FACE:COLOR_ROBOT);
 
                                 controller.updated();
                             }
@@ -248,12 +272,10 @@ public class Main extends Application {
                         }
                     },SLEEP_DURATION);
                 }
-            }
-        };
+            };
         //insert button
-        int first_y = CANVAS_Y+CANVAS_HEIGHT+MARGIN;
         for(int i=0;i<buttons_text.length;i++)
-            buttons[i] = createButton(buttons_text[i],CANVAS_X+(i%2)*BUTTON_WIDTH,first_y+i/2*BUTTON_HEIGHT,handler);
+            buttons[i] = createButton(buttons_text[i],BUTTON_BOTTOM_X+(i%2)*BUTTON_WIDTH,BUTTON_BOTTOM_Y+i/2*BUTTON_HEIGHT,handler);
         return buttons;
     }
 
