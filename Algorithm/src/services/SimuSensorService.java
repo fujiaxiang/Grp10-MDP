@@ -13,6 +13,14 @@ import static utilities.GlobalUtilities.*;
 
 public class SimuSensorService implements SensorServiceInterface{
 
+    private static SimuSensorService instance = new SimuSensorService();
+
+    public static SimuSensorService getInstance(){
+        if(instance==null)
+            instance= new SimuSensorService();
+        return instance;
+    }
+
     /**
      * returns the distance between the sensor and the obstacle or wall, should there be any within sensor range
      * if nothing detected within sensor range, returns -1

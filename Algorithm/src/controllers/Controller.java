@@ -1,5 +1,8 @@
 package controllers;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import models.*;
+import services.SimuSensorService;
+import utilities.Orientation;
 
 import java.util.Random;
 
@@ -24,8 +27,10 @@ public class Controller {
 
         int[] start = {Arena.ROW-2,1};
         int[] goal = {1,Arena.COL-2};
-        this.arena = new Arena(start,goal,maze);
-        robot = new Robot(start,1000,6,maze);
+        arena = Arena.getInstance();
+        arena.initialize(start,goal,maze);
+        robot = Robot.getInstance();
+        robot.initialize(start,1000,Orientation.EAST,maze);
 
         previous = new int[6][2];//Stops using -1 for any
         for(int i=0;i<previous.length;i++)
@@ -132,19 +137,19 @@ public class Controller {
     public int[][] getRobotLocation(){
         //calculate robot location base on robot loc(center)+robot size
 
-        if(robot.getOrientation()==2){
+        if(robot.getOrientation()==Orientation.NORTH){
             for(int i=0;i<Robot.SIZE;i++) {
                 previous[i][0] = location[2*Robot.SIZE+i][0];
                 previous[i][1] = location[2*Robot.SIZE+i][1];
             }
         }
-        else if(robot.getOrientation()==4){
+        else if(robot.getOrientation()==Orientation.WEST){
             for(int i=0;i<Robot.SIZE;i++) {
                 previous[i][0] = location[(i+1) * Robot.SIZE-1][0];
                 previous[i][1] = location[(i+1) * Robot.SIZE-1][1];
             }
         }
-        else if(robot.getOrientation()==6){
+        else if(robot.getOrientation()==Orientation.EAST){
             for(int i=0;i<Robot.SIZE;i++) {
                 previous[i][0] = location[i * Robot.SIZE][0];
                 previous[i][1] = location[i * Robot.SIZE][1];
@@ -197,19 +202,24 @@ public class Controller {
                 //for testing
                 int rand = r.nextInt(10);
                 if(rand==0) {
-                    robot.setOrientation((r.nextInt(4)+1)*2);
+                    robot.turn(r.nextInt(4));
                 }
                 else {
-                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
-                        robot.setOrientation(2);
-                    else if (robot.getOrientation() == 2 && robot.getLocation()[0] - 1 - Robot.HALF_SIZE < 0)
-                        robot.setOrientation(4);
-                    else if (robot.getOrientation() == 4 && robot.getLocation()[1] - 1 - Robot.HALF_SIZE < 0)
-                        robot.setOrientation(8);
-                    else if (robot.getOrientation() == 8 && robot.getLocation()[0] + 1 + Robot.HALF_SIZE >= Arena.ROW)
-                        robot.setOrientation(6);
+                    if(SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0])==1){
+                        robot.turn(1);
+                    }
                     else
-                        robot.walk();
+                        robot.moveForward(1);
+//                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
+//                        robot.setOrientation(2);
+//                    else if (robot.getOrientation() == 2 && robot.getLocation()[0] - 1 - Robot.HALF_SIZE < 0)
+//                        robot.setOrientation(4);
+//                    else if (robot.getOrientation() == 4 && robot.getLocation()[1] - 1 - Robot.HALF_SIZE < 0)
+//                        robot.setOrientation(8);
+//                    else if (robot.getOrientation() == 8 && robot.getLocation()[0] + 1 + Robot.HALF_SIZE >= Arena.ROW)
+//                        robot.setOrientation(6);
+//                    else
+//                        robot.moveForward(1);
                 }
             }
             catch(Exception ex) {

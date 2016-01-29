@@ -266,7 +266,7 @@ public class Main extends Application {
                                     drawGrid(gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
                                 for (int i = 0; i < robot_loc_array.length; i++)
-                                    drawGrid(gc, robot_loc_array[i][0], robot_loc_array[i][1], (i==orientation)?COLOR_ROBOT_FACE:COLOR_ROBOT);
+                                    drawGrid(gc, robot_loc_array[i][0], robot_loc_array[i][1], (i==(orientation+1)*2-1)?COLOR_ROBOT_FACE:COLOR_ROBOT);
 
                                 controller.updated();
                             }

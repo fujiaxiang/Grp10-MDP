@@ -32,12 +32,15 @@ public class Robot {
         return instance;
     }
 
-    public Robot(int[] location,double speed,int orientation,boolean[][] maze){
+    public void initialize(int[] location,double speed,int orientation,boolean[][] maze){
         this.location = location;
         this.speed = speed;
         this.orientation = orientation;
         this.maze = maze;
         this.explored = new boolean[maze.length][maze[0].length];
+        this.sensors = new Sensor[5];
+        int[] relativeLocation = {0,1};
+        this.sensors[0] = new Sensor(relativeLocation, Orientation.FRONT, 5, 1);
         for(int i=0;i<explored.length;i++)
             for(int j=0;j<explored[i].length;j++)
                 explored[i][j] = false;

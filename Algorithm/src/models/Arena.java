@@ -16,7 +16,7 @@ public class Arena {
     private boolean[][] maze;//indicate whether the grid is a obstacle  , true = obstacle
     private Arena(){}
 
-    public Arena(int[] start,int[] goal,boolean[][] maze){
+    public void initialize(int[] start,int[] goal,boolean[][] maze){
         this.start = start;
         this.goal = goal;
         this.maze = maze;

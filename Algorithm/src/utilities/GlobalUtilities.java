@@ -22,7 +22,7 @@ public class GlobalUtilities {
                 origin[1] -= steps;
                 break;
             default:
-                System.out.println("In class SimuSensorService, case does not exist");
+                System.out.println("In class GlobalUtilities, case does not exist. The current orientation is: " + orientation);
                 origin[0] = -1;
                 origin[1] = -1;
                 break;

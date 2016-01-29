@@ -13,6 +13,11 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public int moveForward(int steps) {
+        try {
+            Thread.sleep(50);
+        }catch(InterruptedException e){
+
+        }
         int orientation = robot.getOrientation();
         robot.setLocation(GlobalUtilities.locationParser(robot.getLocation(), orientation, steps));
         return 0;
