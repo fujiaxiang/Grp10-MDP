@@ -13,6 +13,12 @@ import static utilities.GlobalUtilities.*;
 
 public class SimuSensorService implements SensorServiceInterface{
 
+    /**
+     * returns the distance between the sensor and the obstacle or wall, should there be any within sensor range
+     * if nothing detected within sensor range, returns -1
+     * @param sensor
+     * @return
+     */
     @Override
     public int detectObstacle(Sensor sensor) {
         int[] location = new int[2];

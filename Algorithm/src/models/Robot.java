@@ -1,5 +1,8 @@
 package models;
 
+import utilities.GlobalUtilities;
+import utilities.Orientation;
+
 import java.util.ArrayList;
 
 /**
@@ -41,6 +44,10 @@ public class Robot {
 
     }
 
+    public Sensor[] getSensors(){
+        return sensors;
+    }
+
     public int[] getLocation(){
         return location;
     }
@@ -55,13 +62,28 @@ public class Robot {
         this.location = location;
     }
 
-    public void walk(){
-        switch(orientation){
-            case 2:location[0]--;break;
-            case 4:location[1]--;break;
-            case 6:location[1]++;break;
-            case 8:location[0]++;break;
+//    public void walk(){
+//        switch(orientation){
+//            case 2:location[0]--;break;
+//            case 4:location[1]--;break;
+//            case 6:location[1]++;break;
+//            case 8:location[0]++;break;
+//        }
+//    }
+
+    public int moveForward(int steps){
+        try{
+            setLocation(GlobalUtilities.locationParser(getLocation(), orientation, steps));
+        }catch (ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+            System.out.println("Error inside Robot class, method moveForward");
         }
+        return 0;
+    }
+
+    public int turn(int direction){
+        setOrientation(Orientation.turn(getOrientation(), direction));
+        return 0;
     }
 
 
