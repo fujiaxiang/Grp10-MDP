@@ -273,6 +273,7 @@ public class Main extends Application {
                             if(controller.isDone()){
                                 System.out.println("Done");
                                 timer.cancel();
+                                //add in stop for timer
                             }
                         }
                     },0,SLEEP_DURATION);
