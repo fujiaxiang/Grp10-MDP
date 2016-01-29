@@ -21,6 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import models.Arena;
+import utilities.Orientation;
 
 public class Main extends Application {
     private Controller controller;
@@ -259,14 +260,22 @@ public class Main extends Application {
                         public void run() {
                             if(controller.needUpdate()) {
                                 robot_loc_array = controller.getRobotLocation();
-                                int orientation = controller.getRobotOrientation()-1;
+                                int orientation;
+                                switch(controller.getRobotOrientation()){
+                                    case Orientation.NORTH:orientation = 1;break;
+                                    case Orientation.WEST:orientation = 3;break;
+                                    case Orientation.EAST:orientation = 5;break;
+                                    case Orientation.SOUTH:orientation = 7;break;
+                                    default : orientation = 0;
+                                }
                                 for (int i = 0; i < controller.getPrevious().length; i++) {
                                     if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
                                         break;
                                     drawGrid(gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
                                 for (int i = 0; i < robot_loc_array.length; i++)
-                                    drawGrid(gc, robot_loc_array[i][0], robot_loc_array[i][1], (i==(orientation+1)*2-1)?COLOR_ROBOT_FACE:COLOR_ROBOT);
+                                    drawGrid(gc, robot_loc_array[i][0], robot_loc_array[i][1], i==orientation?COLOR_ROBOT_FACE:COLOR_ROBOT);
+
 
                                 controller.updated();
                             }

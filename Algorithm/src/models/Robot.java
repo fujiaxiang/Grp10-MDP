@@ -60,7 +60,6 @@ public class Robot {
     public void setOrientation(int orientation) {
         this.orientation = orientation;
     }
-
     public void setLocation(int[] location) {
         this.location = location;
     }

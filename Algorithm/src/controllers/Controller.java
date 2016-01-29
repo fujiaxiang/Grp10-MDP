@@ -193,21 +193,20 @@ public class Controller {
         Random r = new Random();
         while(i++<999999){
             try {
-                Thread.sleep(50);//Assume waiting for sensor
+                Thread.sleep(100);//Assume waiting for sensor
 
                 //update data
 
                 //decision making
 
                 //for testing
-                int rand = r.nextInt(10);
-                if(rand==0) {
-                    robot.turn(r.nextInt(4));
-                }
-                else {
-                    if(SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0])==1){
+                int rand = r.nextInt(10);/*
+                if(rand==0)
+                    robot.turn(1);
+                else {*/
+                System.out.println(robot.getLocation()[0]+"|"+(robot.getLocation()[1])+"\t "+robot.getSensors()[0].getLocation()[0]+"|"+robot.getSensors()[0].getLocation()[1]+"\t"+SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]));
+                    if(SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0])==1)
                         robot.turn(1);
-                    }
                     else
                         robot.moveForward(1);
 //                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
@@ -220,7 +219,7 @@ public class Controller {
 //                        robot.setOrientation(6);
 //                    else
 //                        robot.moveForward(1);
-                }
+               // }
             }
             catch(Exception ex) {
                 ex.printStackTrace();
