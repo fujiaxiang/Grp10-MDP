@@ -27,6 +27,12 @@ public class Sensor {
         return absoluteLocation;
     }
 
+    public void setRelativeLocation(int[] relativeLocation){
+        this.relativeLocation = relativeLocation;
+    }
+
+    public int[] getRelativeLocation(){return relativeLocation;}
+
     public int getrelativeOrientation() {
         return relativeOrientation;
     }

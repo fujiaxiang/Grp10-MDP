@@ -18,8 +18,11 @@ public class Controller {
     private int[][] location;
     private boolean isDone;//indicate an action issued is done
     private boolean update;//indicate whether an udpate is needed
+    private boolean isStopped;
 
     public Controller(){
+        isStopped = true;
+
         boolean[][] maze = new boolean[Arena.ROW][Arena.COL];
         for(int i=0;i<maze.length;i++)
             for(int j=0;j<maze[i].length;j++)
@@ -46,7 +49,7 @@ public class Controller {
 
     //return true for successful set
     public boolean setObstacle(int row,int col){
-        if(!isInStartGoalArea(row,col)) {
+        if(isInStartGoalArea(row,col)==0) {
             arena.setObstacle(row, col, true);
             return true;
         }
@@ -58,17 +61,18 @@ public class Controller {
     }
 
     //in goal/start area
-    public boolean isInStartGoalArea(int row,int col){
+    //return 0 = safe,1 = start,2 = goal
+    public int isInStartGoalArea(int row,int col){
         int half_size = (Arena.START_GOAL_SIZE/2);
         int[] start = arena.getStart();
         int[] goal = arena.getGoal();
         if(start[0] - half_size<=row&&row<=start[0]+half_size)
             if(start[1] - half_size<=col&&col<=start[1]+half_size)
-                return true;
+                return 1;
         if(goal[0] - half_size<=row&&row<=goal[0]+half_size)
             if(goal[1] - half_size<=col&&col<=goal[1]+half_size)
-                return true;
-        return false;
+                return 2;
+        return 0;
     }
 
     public boolean isValidForStartGoal(boolean setStart,int row,int col){
@@ -178,8 +182,8 @@ public class Controller {
 
     public void startRobot() {
         isDone = false;
-        int[] loc = {arena.getStart()[0],arena.getStart()[1]};
-        robot.setLocation(loc);
+        isStopped = false;
+
         for(int i=0;i<previous.length;i++)
             previous[i][0] = -1;
         for(int i=0;i<location.length;i++)
@@ -191,24 +195,25 @@ public class Controller {
         update = true;//to show first update
         int i = 0;
         Random r = new Random();
-        while(i++<999999){
+        while(!isStopped){
             try {
-                Thread.sleep(100);//Assume waiting for sensor
+                Thread.sleep(30);//Assume waiting for sensor
 
                 //update data
 
                 //decision making
 
                 //for testing
-                int rand = r.nextInt(10);/*
-                if(rand==0)
+                /*int rand = r.nextInt(10);
+                if (rand == 0)
                     robot.turn(1);
                 else {*/
-                System.out.println(robot.getLocation()[0]+"|"+(robot.getLocation()[1])+"\t "+robot.getSensors()[0].getLocation()[0]+"|"+robot.getSensors()[0].getLocation()[1]+"\t"+SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]));
-                    if(SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0])==1)
+                    if (SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]) == 1)
                         robot.turn(1);
                     else
                         robot.moveForward(1);
+                //}
+            }
 //                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
 //                        robot.setOrientation(2);
 //                    else if (robot.getOrientation() == 2 && robot.getLocation()[0] - 1 - Robot.HALF_SIZE < 0)
@@ -220,7 +225,6 @@ public class Controller {
 //                    else
 //                        robot.moveForward(1);
                // }
-            }
             catch(Exception ex) {
                 ex.printStackTrace();
             }
@@ -228,8 +232,23 @@ public class Controller {
         }
         isDone = true;
     }
+    public void setRobotLocation(int[] loc){robot.setLocation(loc);}
     public int getRobotOrientation(){return robot.getOrientation();}
+    public int getRobotOrientation1357(){
+        int orientation;
+        switch(getRobotOrientation()){
+            case Orientation.NORTH:orientation = 1;break;
+            case Orientation.WEST:orientation = 3;break;
+            case Orientation.EAST:orientation = 5;break;
+            case Orientation.SOUTH:orientation = 7;break;
+            default : orientation = 0;
+        }
+        return orientation;
+    }
+
+    public void setRobotOrientation(int orientation){robot.setOrientation(orientation);}
     public boolean isDone(){return isDone;}
+    public boolean isStopped(){return isStopped;}
     public boolean needUpdate(){return update;}
     public void updated(){update = false;}
 }
