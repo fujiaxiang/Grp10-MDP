@@ -1,5 +1,6 @@
 package services;
 
+import controllers.Controller;
 import models.Robot;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
@@ -21,7 +22,7 @@ public class SimuRPiService implements RPiServiceInterface{
                 System.out.println("Handled exception in class SimuRPiService, moveForward method");
             }
             robot.moveForward(1);
-
+            notifyUIChange();
         }
         robot.printStatus();
         return 0;
@@ -29,7 +30,14 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public int turn(int direction) {
-        robot.setOrientation(Orientation.turn(robot.getOrientation(), direction));
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            System.out.println("Handled exception in class SimuRPiService, moveForward method");
+        }
+        robot.turn(direction);
+        notifyUIChange();
         return 0;
     }
 
@@ -45,6 +53,6 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public void notifyUIChange() {
-
+        Controller.getInstance().setUpdate(true);
     }
 }

@@ -64,18 +64,18 @@ public class Robot {
 
     public void setOrientation(int orientation) {
         //Temporary Turns  , Change Sensor Relative Location when turned
-        double different = (this.orientation - orientation)/2.0;
-        double rad = different*Math.PI;
-        double[][] mat = {{Math.cos(rad),-Math.sin(rad)},{Math.sin(rad),Math.cos(rad)}};
-        for(Sensor s:getSensors()){
-            if(s==null)break;
-            int[] relative = s.getRelativeLocation();
-            int r = relative[0]*-1;//either make this negative or angle negative
-            int c = relative[1];
-            for(int i=0;i<2;i++)
-                relative[i] = (int)Math.round(c*mat[1-i][0]+r*mat[1-i][1]);
-            relative[0]*=-1;
-        }
+//        double different = (this.orientation - orientation)/2.0;
+//        double rad = different*Math.PI;
+//        double[][] mat = {{Math.cos(rad),-Math.sin(rad)},{Math.sin(rad),Math.cos(rad)}};
+//        for(Sensor s:getSensors()){
+//            if(s==null)break;
+//            int[] relative = s.getRelativeLocation();
+//            int r = relative[0]*-1;//either make this negative or angle negative
+//            int c = relative[1];
+//            for(int i=0;i<2;i++)
+//                relative[i] = (int)Math.round(c*mat[1-i][0]+r*mat[1-i][1]);
+//            relative[0]*=-1;
+//        }
 
         this.orientation = orientation;
     }
