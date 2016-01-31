@@ -152,7 +152,6 @@ public class Controller {
     //assumed robot size = 3
     public int[][] getRobotLocation(){
         //calculate robot location base on robot loc(center)+robot size
-
         if(robot.getOrientation()==Orientation.NORTH){
             for(int i=0;i<Robot.SIZE;i++) {
                 previous[i][0] = location[2*Robot.SIZE+i][0];
@@ -220,7 +219,7 @@ public class Controller {
                 if (rand == 0)
                     robot.turn(1);
                 else {*/
-                if (SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]) == 1)
+               if (SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]) == 1)
                     robot.turn(1);
                 else
                     robot.moveForward(1);

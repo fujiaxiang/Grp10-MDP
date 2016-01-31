@@ -301,17 +301,16 @@ public class Main extends Application {
                         @Override
                         public void run() {
                             if(controller.needUpdate()) {
+                                drawRobot();
                                 for (int i = 0; i < controller.getPrevious().length; i++) {
                                     if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
                                         break;
                                     drawGrid(gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
-                                drawRobot();
 
                                 controller.updated();
                             }
                             if(controller.isDone()){
-                                System.out.println("Done");
                                 ui_timer.cancel();
                                 timer_timer.cancel();
                                 //add in stop for timer
