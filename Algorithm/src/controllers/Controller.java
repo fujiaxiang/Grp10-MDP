@@ -1,5 +1,4 @@
 package controllers;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import models.*;
 import services.SimuSensorService;
 import utilities.Orientation;
@@ -20,9 +19,12 @@ public class Controller {
     private boolean update;//indicate whether an udpate is needed
     private boolean isStopped;
 
-    public Controller(){
-        isStopped = true;
 
+
+    private static Controller instance = new Controller();
+
+    private Controller(){
+        isStopped = true;
         boolean[][] maze = new boolean[Arena.ROW][Arena.COL];
         for(int i=0;i<maze.length;i++)
             for(int j=0;j<maze[i].length;j++)
@@ -43,6 +45,12 @@ public class Controller {
             location[i][0] = -1;//used as a block to previous
     }
 
+    public static Controller getInstance(){
+        if(instance==null)
+            instance = new Controller();
+        return instance;
+    }
+
     public boolean[][] getMaze(){
         return arena.getMaze();
     }
@@ -58,6 +66,10 @@ public class Controller {
 
     public void setFree(int row,int col){
         arena.setObstacle(row,col,false);
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 
     //in goal/start area
@@ -208,10 +220,10 @@ public class Controller {
                 if (rand == 0)
                     robot.turn(1);
                 else {*/
-                    if (SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]) == 1)
-                        robot.turn(1);
-                    else
-                        robot.moveForward(1);
+                if (SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]) == 1)
+                    robot.turn(1);
+                else
+                    robot.moveForward(1);
                 //}
             }
 //                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
@@ -224,7 +236,7 @@ public class Controller {
 //                        robot.setOrientation(6);
 //                    else
 //                        robot.moveForward(1);
-               // }
+            // }
             catch(Exception ex) {
                 ex.printStackTrace();
             }
@@ -232,6 +244,7 @@ public class Controller {
         }
         isDone = true;
     }
+
     public void setRobotLocation(int[] loc){robot.setLocation(loc);}
     public int getRobotOrientation(){return robot.getOrientation();}
     public int getRobotOrientation1357(){

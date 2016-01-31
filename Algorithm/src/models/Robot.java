@@ -55,6 +55,11 @@ public class Robot {
         return location;
     }
 
+    public void printStatus(){
+        System.out.print("Robot location: Row: " + getLocation()[0] + ", Col: " + getLocation()[1]+ ". ");
+        System.out.println("Orientation: " + getOrientation());
+    }
+
     public int getOrientation(){return orientation;}
 
     public void setOrientation(int orientation) {

@@ -12,4 +12,6 @@ public interface RPiServiceInterface {
     int turn(int direction);
 
     int callibrate();
+
+    void notifyUIChange();
 }

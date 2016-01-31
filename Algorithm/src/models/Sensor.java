@@ -20,8 +20,9 @@ public class Sensor {
         this.robot = Robot.getInstance();
     }
 
-    public int[] getLocation(){
+    public int[] getAbsoluteLocation(){
         int[] absoluteLocation= new int[2];
+        int[] rotatedRelativeLocation = Orientation.rotateCoordinates(getRelativeLocation(), robot.getOrientation());
         absoluteLocation[0] = robot.getLocation()[0] + relativeLocation[0];
         absoluteLocation[1] = robot.getLocation()[1] + relativeLocation[1];
         return absoluteLocation;

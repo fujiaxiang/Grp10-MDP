@@ -34,7 +34,7 @@ public class SimuSensorService implements SensorServiceInterface{
 
         for(int step=sensor.getMinRange(); step<=sensor.getMaxRange(); step++){
             try{
-                int[] tempLocation = locationParser(sensor.getLocation(), sensor.getAbsoluteOrientation(), step);
+                int[] tempLocation = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), step);
                 boolean obstacle = maze[tempLocation[0]][tempLocation[1]];
                 if(obstacle)
                     return step;

@@ -33,4 +33,23 @@ public class Orientation {
     public static int rotateRight(int orientation){
         return (orientation + 1) % 4;
     }
+
+    /**
+     * This function returns the coordinates of a point after rotated along the originate (0, 0).
+     * @param coordinates
+     * @param orientation
+     * @return
+     */
+    public static int[] rotateCoordinates(int[] coordinates, int orientation){
+        int x, y;
+        try{
+            x = ((orientation/2)*(-2)+1)*coordinates[orientation%2];
+            y = ((((orientation+1)/2)%2)*(-2)+1)*coordinates[(orientation+1)%2];
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Handled exception in class Orientation, rotateCoordinates method");
+            return null;
+        }
+        return new int[] {x, y};
+    }
 }

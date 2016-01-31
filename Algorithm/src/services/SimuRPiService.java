@@ -13,13 +13,17 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public int moveForward(int steps) {
-        try {
-            Thread.sleep(50);
-        }catch(InterruptedException e){
+        for(int i=0; i<steps; i++) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.out.println("Handled exception in class SimuRPiService, moveForward method");
+            }
+            robot.moveForward(1);
 
         }
-        int orientation = robot.getOrientation();
-        robot.setLocation(GlobalUtilities.locationParser(robot.getLocation(), orientation, steps));
+        robot.printStatus();
         return 0;
     }
 
@@ -37,5 +41,10 @@ public class SimuRPiService implements RPiServiceInterface{
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public void notifyUIChange() {
+
     }
 }

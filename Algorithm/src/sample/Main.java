@@ -79,7 +79,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        controller = new Controller();
+        controller = Controller.getInstance();
         primaryStage.setTitle(SCENE_TITLE);
         primaryStage.setScene(new Scene(createGroup(), SCENE_WIDTH,SCENE_HEIGHT,Color.LIGHTGRAY));
         primaryStage.show();

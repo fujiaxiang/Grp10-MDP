@@ -18,4 +18,9 @@ public class RealRPiService implements RPiServiceInterface {
     public int callibrate() {
         return 0;
     }
+
+    @Override
+    public void notifyUIChange() {
+
+    }
 }
