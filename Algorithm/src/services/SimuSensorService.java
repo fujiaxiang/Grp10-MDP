@@ -13,7 +13,7 @@ import static utilities.GlobalUtilities.*;
 
 public class SimuSensorService implements SensorServiceInterface{
 
-    private static SimuSensorService instance = new SimuSensorService();
+    private static SimuSensorService instance;
 
     public static SimuSensorService getInstance(){
         if(instance==null)
@@ -31,7 +31,11 @@ public class SimuSensorService implements SensorServiceInterface{
     public int detectObstacle(Sensor sensor) {
         int[] location = new int[2];
         boolean[][] maze = Arena.getInstance().getMaze();
-
+        try{
+            Thread.sleep(30);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
         for(int step=sensor.getMinRange(); step<=sensor.getMaxRange(); step++){
             try{
                 int[] tempLocation = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), step);

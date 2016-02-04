@@ -86,14 +86,6 @@ public class Robot {
         this.location = location;
     }
 
-//    public void walk(){
-//        switch(orientation){
-//            case 2:location[0]--;break;
-//            case 4:location[1]--;break;
-//            case 6:location[1]++;break;
-//            case 8:location[0]++;break;
-//        }
-//    }
 
     public int moveForward(int steps){
         try{

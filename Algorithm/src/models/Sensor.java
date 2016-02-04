@@ -10,14 +10,13 @@ public class Sensor {
     private int maxRange;
     private int minRange;
 
-    private Robot robot = Robot.getInstance();
+    private final Robot robot = Robot.getInstance();
 
     public Sensor(int[] relativeLocation, int relativeOrientation, int maxRange, int minRange) {
         this.relativeLocation = relativeLocation;
         this.relativeOrientation = relativeOrientation;
         this.maxRange = maxRange;
         this.minRange = minRange;
-        this.robot = Robot.getInstance();
     }
 
     public int[] getAbsoluteLocation(){

@@ -1,5 +1,7 @@
 package controllers;
 import models.*;
+import services.RPiServiceInterface;
+import services.SimuRPiService;
 import services.SimuSensorService;
 import utilities.Orientation;
 
@@ -11,17 +13,21 @@ import java.util.Random;
 
 //Waiting fo Rename
 public class Controller {
-    private Arena arena;
-    private Robot robot;
+    private final Arena arena;
+    private final Robot robot;
     private int[][] previous;//used to store previous location
     private int[][] location;
     private boolean isDone;//indicate an action issued is done
     private boolean update;//indicate whether an udpate is needed
     private boolean isStopped;
 
-
-
     private static Controller instance = new Controller();
+
+    public static Controller getInstance(){
+        if(instance==null)
+            instance = new Controller();
+        return instance;
+    }
 
     private Controller(){
         isStopped = true;
@@ -43,12 +49,6 @@ public class Controller {
         location = new int[9][2];
         for(int i=0;i<location.length;i++)
             location[i][0] = -1;//used as a block to previous
-    }
-
-    public static Controller getInstance(){
-        if(instance==null)
-            instance = new Controller();
-        return instance;
     }
 
     public boolean[][] getMaze(){
@@ -191,6 +191,7 @@ public class Controller {
         return previous;
     }
 
+
     public void startRobot() {
         isDone = false;
         isStopped = false;
@@ -200,49 +201,13 @@ public class Controller {
         for(int i=0;i<location.length;i++)
             location[i][0] = -1;//used as a block to previous
 
-        //like Sensor detect
-        //update Robot
-        //Robot move
         update = true;//to show first update
-        int i = 0;
-        Random r = new Random();
-        while(!isStopped){
-            try {
-                Thread.sleep(30);//Assume waiting for sensor
 
-                //update data
-
-                //decision making
-
-                //for testing
-                /*int rand = r.nextInt(10);
-                if (rand == 0)
-                    robot.turn(1);
-                else {*/
-               if (SimuSensorService.getInstance().detectObstacle(robot.getSensors()[0]) == 1)
-                    robot.turn(1);
-                else
-                    robot.moveForward(1);
-                //}
-            }
-//                    if (robot.getOrientation() == 6 && robot.getLocation()[1] + 1 + Robot.HALF_SIZE >= Arena.COL)
-//                        robot.setOrientation(2);
-//                    else if (robot.getOrientation() == 2 && robot.getLocation()[0] - 1 - Robot.HALF_SIZE < 0)
-//                        robot.setOrientation(4);
-//                    else if (robot.getOrientation() == 4 && robot.getLocation()[1] - 1 - Robot.HALF_SIZE < 0)
-//                        robot.setOrientation(8);
-//                    else if (robot.getOrientation() == 8 && robot.getLocation()[0] + 1 + Robot.HALF_SIZE >= Arena.ROW)
-//                        robot.setOrientation(6);
-//                    else
-//                        robot.moveForward(1);
-            // }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
-            update = true;
-        }
+        MazeExplorer.getInstance().explore();
         isDone = true;
     }
+
+
 
     public void setRobotLocation(int[] loc){robot.setLocation(loc);}
     public int getRobotOrientation(){return robot.getOrientation();}

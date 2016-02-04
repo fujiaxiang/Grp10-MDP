@@ -10,7 +10,17 @@ import utilities.Orientation;
  */
 public class SimuRPiService implements RPiServiceInterface{
 
-    private Robot robot = Robot.getInstance();
+    private static SimuRPiService instance;
+
+    public static SimuRPiService getInstance(){
+        if(instance==null)
+            instance= new SimuRPiService();
+        return instance;
+    }
+
+    private SimuRPiService(){}
+
+    private final Robot robot = Robot.getInstance();
 
     @Override
     public int moveForward(int steps) {
@@ -38,6 +48,7 @@ public class SimuRPiService implements RPiServiceInterface{
         }
         robot.turn(direction);
         notifyUIChange();
+        robot.printStatus();
         return 0;
     }
 
