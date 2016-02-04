@@ -66,6 +66,12 @@ public class MazeExplorer {
         }
     }
 
+    /**
+     * This function takes in a sensor and the readings it has returned. Based on the sensor location, orientation
+     * and its range, the function marks cells in perceivedMaze to be freeSpace or obstacles
+     * @param sensor
+     * @param steps
+     */
     private void markMaze(Sensor sensor, int steps){
         try {
             if (steps < 0) {
@@ -120,11 +126,6 @@ public class MazeExplorer {
         else
             rpiService.moveForward(1);
 
-//            try{
-//                Thread.sleep(1000);
-//            }catch (InterruptedException e){
-//                e.printStackTrace();
-//            }
     }
 
 

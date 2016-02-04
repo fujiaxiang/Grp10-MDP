@@ -35,12 +35,17 @@ public class Robot {
         return instance;
     }
 
-    public void initialize(int[] location, double speed, int orientation, Arena.mazeState[][] maze){
+    public void initialize(int[] location, double speed, int orientation){
+        int[] start = {Arena.ROW-2,1};
+        int[] goal = {1,Arena.COL-2};
+        perceivedArena = new Arena(start, goal);
+        perceivedArena.resetToCertainState(Arena.mazeState.unknow);
+        Arena.mazeState[][] maze = getPerceivedArena().getMaze();
+        
         this.location = location;
         this.speed = speed;
         this.orientation = orientation;
-        int[] start = {Arena.ROW-2,1};
-        int[] goal = {1,Arena.COL-2};
+     
         this.perceivedArena = new Arena(start, goal, maze);
         this.explored = new boolean[maze.length][maze[0].length];
         this.sensors = new Sensor[1];

@@ -19,15 +19,21 @@ public class Arena {
     private int[] goal;//indicate goal center
     private mazeState[][] maze; //indicate whether the grid is a obstacle
 
+    public Arena(int[] start,int[] goal){
+        this.start = start;
+        this.goal = goal;
+        this.maze = new mazeState[ROW][COL];
+    }
     public Arena(int[] start,int[] goal, mazeState[][] maze){
-        try {
-            this.start = start;
-            this.goal = goal;
-            this.maze = maze;
+        this.start = start;
+        this.goal = goal;
+        this.maze = maze;
+    }
 
-        }catch (NullPointerException e){
-            e.printStackTrace();
-            System.out.print("**************************************");
+    public void resetToCertainState(mazeState state){
+        for(int i=0; i<maze.length; i++){
+            for(int j=0; j<maze[0].length; j++)
+                maze[i][j] = state;
         }
     }
 
