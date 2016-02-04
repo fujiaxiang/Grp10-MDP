@@ -41,7 +41,7 @@ public class Controller {
         arena = new Arena(start, goal, maze);
 //        arena.initialize(start,goal,maze);
         robot = Robot.getInstance();
-        robot.initialize(start, 1000, Orientation.EAST);
+        robot.initialize(start, Orientation.EAST);
         previous = new int[6][2];//Stops using -1 for any
         for(int i=0;i<previous.length;i++)
             previous[i][0] = -1;

@@ -52,7 +52,7 @@ public class MazeExplorer {
 
         while(!controller.isStopped()){
             observe();
-            analyze();
+            analyzeAndMove();
         }
         return 0;
     }
@@ -76,15 +76,15 @@ public class MazeExplorer {
         try {
             if (steps < 0) {
                 for (int i = sensor.getMinRange(); i <= sensor.getMaxRange(); i++) {
-                    int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i + 1);
+                    int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
                     robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                 }
             } else if (sensor.getMinRange() <= steps && steps <= sensor.getMaxRange()) {
                 for (int i = sensor.getMinRange(); i < steps; i++) {
-                    int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i + 1);
+                    int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
                     robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                 }
-                int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps + 1);
+                int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps);
                 robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.obstacle);
             }
         }catch (ArrayIndexOutOfBoundsException e){
@@ -118,7 +118,7 @@ public class MazeExplorer {
     }
 
 
-    private void analyze(){
+    private void analyzeAndMove(){
         //update data
 
         if(getSensorReadings()[0] == 1)
