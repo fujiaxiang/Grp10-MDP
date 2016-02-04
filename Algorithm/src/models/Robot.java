@@ -14,7 +14,10 @@ public class Robot {
     private int[] location;
     private double speed;
     private int orientation;
-    private boolean[][] maze;
+
+ 
+
+    private Arena perceivedArena;
     private boolean[][] explored;
     private static Robot instance = new Robot();
 
@@ -32,13 +35,15 @@ public class Robot {
         return instance;
     }
 
-    public void initialize(int[] location,double speed,int orientation,boolean[][] maze){
+    public void initialize(int[] location, double speed, int orientation, boolean[][] maze){
         this.location = location;
         this.speed = speed;
         this.orientation = orientation;
-        this.maze = maze;
+        int[] start = {Arena.ROW-2,1};
+        int[] goal = {1,Arena.COL-2};
+        this.perceivedArena = new Arena(start, goal, maze);
         this.explored = new boolean[maze.length][maze[0].length];
-        this.sensors = new Sensor[5];
+        this.sensors = new Sensor[1];
         int[] relativeLocation = {-1,0};
         this.sensors[0] = new Sensor(relativeLocation, Orientation.FRONT, 5, 1);
         for(int i=0;i<explored.length;i++)
@@ -102,6 +107,8 @@ public class Robot {
         return 0;
     }
 
-
+    public Arena getPerceivedArena() {
+        return perceivedArena;
+    }
 }
 

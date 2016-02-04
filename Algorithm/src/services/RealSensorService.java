@@ -18,6 +18,11 @@ public class RealSensorService implements SensorServiceInterface{
     private RealSensorService(){}
 
     @Override
+    public String detect() {
+        return null;
+    }
+
+    @Override
     public int detectObstacle(Sensor sensor) {
         return 0;
     }

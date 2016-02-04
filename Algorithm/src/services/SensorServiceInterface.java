@@ -7,4 +7,6 @@ import models.Sensor;
  */
 public interface SensorServiceInterface {
     int detectObstacle(Sensor sensor);
+
+    String detect();
 }

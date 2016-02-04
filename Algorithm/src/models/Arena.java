@@ -9,24 +9,39 @@ public class Arena {
     public static final int ROW = 20;
     public static final int START_GOAL_SIZE = 3;
 
-    private static Arena instance = new Arena();
+    public enum mazeState{
+        freeSpace, obstacle, unknow
+    }
+
+//    private static Arena instance = new Arena();
 
     private int[] start;//indicate start center
     private int[] goal;//indicate goal center
-    private boolean[][] maze;//indicate whether the grid is a obstacle  , true = obstacle
-    private Arena(){}
+    private boolean[][] maze; //indicate whether the grid is a obstacle
 
-    public void initialize(int[] start,int[] goal,boolean[][] maze){
-        this.start = start;
-        this.goal = goal;
-        this.maze = maze;
+    public Arena(int[] start,int[] goal, boolean[][] maze){
+        try {
+            this.start = start;
+            this.goal = goal;
+            this.maze = maze;
+
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.print("**************************************");
+        }
     }
 
-    public static Arena getInstance(){
-        if(instance==null)
-            instance = new Arena();
-        return instance;
-    }
+//    public void initialize(){
+//        this.start = start;
+//        this.goal = goal;
+//        this.maze = maze;
+//    }
+
+//    private static Arena getInstance(){
+//        if(instance==null)
+//            instance = new Arena();
+//        return instance;
+//    }
 
     public int[] getStart(){
         return start;

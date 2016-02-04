@@ -1,6 +1,8 @@
 package services;
 
+import controllers.Controller;
 import models.Arena;
+import models.Robot;
 import models.Sensor;
 import static utilities.GlobalUtilities.*;
 
@@ -15,10 +17,30 @@ public class SimuSensorService implements SensorServiceInterface{
 
     private static SimuSensorService instance;
 
+    private Arena realArena = Controller.getInstance().getArena();
+    private Robot robot = Robot.getInstance();
+
     public static SimuSensorService getInstance(){
         if(instance==null)
             instance= new SimuSensorService();
         return instance;
+    }
+
+    public String detect(){
+        String result = "";
+        try{
+            Thread.sleep(500/Controller.simulationSpeed);
+            for (Sensor sensor : robot.getSensors()){
+                if(!result.isEmpty())
+                    result+=":";
+                result+=detectObstacle(sensor);
+            }
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -30,12 +52,7 @@ public class SimuSensorService implements SensorServiceInterface{
     @Override
     public int detectObstacle(Sensor sensor) {
         int[] location = new int[2];
-        boolean[][] maze = Arena.getInstance().getMaze();
-        try{
-            Thread.sleep(30);
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
+        boolean[][] maze = realArena.getMaze();
         for(int step=sensor.getMinRange(); step<=sensor.getMaxRange(); step++){
             try{
                 int[] tempLocation = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), step);

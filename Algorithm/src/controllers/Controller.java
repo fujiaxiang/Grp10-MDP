@@ -20,8 +20,9 @@ public class Controller {
     private boolean isDone;//indicate an action issued is done
     private boolean update;//indicate whether an udpate is needed
     private boolean isStopped;
+    public static int simulationSpeed = 10; //10 being the standard speed
 
-    private static Controller instance = new Controller();
+    private static Controller instance;
 
     public static Controller getInstance(){
         if(instance==null)
@@ -31,17 +32,16 @@ public class Controller {
 
     private Controller(){
         isStopped = true;
-        boolean[][] maze = new boolean[Arena.ROW][Arena.COL];
-        for(int i=0;i<maze.length;i++)
-            for(int j=0;j<maze[i].length;j++)
-                maze[i][j] = false;
-
+        boolean[][] maze = new boolean [Arena.ROW][Arena.COL];
+        for (int i = 0; i < maze.length; i++)
+            for (int j = 0; j < maze[i].length; j++)
+                maze[i][j] = false;  //initializing maze to freeSpace
         int[] start = {Arena.ROW-2,1};
         int[] goal = {1,Arena.COL-2};
-        arena = Arena.getInstance();
-        arena.initialize(start,goal,maze);
+        arena = new Arena(start, goal, maze);
+//        arena.initialize(start,goal,maze);
         robot = Robot.getInstance();
-        robot.initialize(start,1000,Orientation.EAST,maze);
+        robot.initialize(start, 1000, Orientation.EAST, maze);
 
         previous = new int[6][2];//Stops using -1 for any
         for(int i=0;i<previous.length;i++)
@@ -65,7 +65,7 @@ public class Controller {
     }
 
     public void setFree(int row,int col){
-        arena.setObstacle(row,col,false);
+        arena.setObstacle(row, col, false);
     }
 
     public void setUpdate(boolean update) {
@@ -228,4 +228,8 @@ public class Controller {
     public boolean isStopped(){return isStopped;}
     public boolean needUpdate(){return update;}
     public void updated(){update = false;}
+
+    public Arena getArena() {
+        return arena;
+    }
 }

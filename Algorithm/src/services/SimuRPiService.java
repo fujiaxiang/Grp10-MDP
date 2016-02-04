@@ -26,7 +26,7 @@ public class SimuRPiService implements RPiServiceInterface{
     public int moveForward(int steps) {
         for(int i=0; i<steps; i++) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(500/Controller.simulationSpeed);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 System.out.println("Handled exception in class SimuRPiService, moveForward method");
@@ -41,7 +41,7 @@ public class SimuRPiService implements RPiServiceInterface{
     @Override
     public int turn(int direction) {
         try {
-            Thread.sleep(50);
+            Thread.sleep(500/Controller.simulationSpeed);
         } catch (InterruptedException e) {
             e.printStackTrace();
             System.out.println("Handled exception in class SimuRPiService, moveForward method");
@@ -55,7 +55,7 @@ public class SimuRPiService implements RPiServiceInterface{
     @Override
     public int callibrate() {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000/Controller.simulationSpeed);
         }catch (InterruptedException e){
             e.printStackTrace();
         }
