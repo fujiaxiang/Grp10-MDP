@@ -17,9 +17,9 @@ public class Arena {
 
     private int[] start;//indicate start center
     private int[] goal;//indicate goal center
-    private boolean[][] maze; //indicate whether the grid is a obstacle
+    private mazeState[][] maze; //indicate whether the grid is a obstacle
 
-    public Arena(int[] start,int[] goal, boolean[][] maze){
+    public Arena(int[] start,int[] goal, mazeState[][] maze){
         try {
             this.start = start;
             this.goal = goal;
@@ -58,11 +58,11 @@ public class Arena {
         this.goal = goal;
     }
 
-    public void setObstacle(int row,int col,boolean set){
-        maze[row][col] = set;
+    public void setObstacle(int row,int col,mazeState state){
+        maze[row][col] = state;
     }
 
-    public boolean[][] getMaze(){
+    public mazeState[][] getMaze(){
         return maze;
     }
 }

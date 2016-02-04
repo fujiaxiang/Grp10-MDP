@@ -35,7 +35,7 @@ public class Robot {
         return instance;
     }
 
-    public void initialize(int[] location, double speed, int orientation, boolean[][] maze){
+    public void initialize(int[] location, double speed, int orientation, Arena.mazeState[][] maze){
         this.location = location;
         this.speed = speed;
         this.orientation = orientation;

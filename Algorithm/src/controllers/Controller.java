@@ -32,10 +32,10 @@ public class Controller {
 
     private Controller(){
         isStopped = true;
-        boolean[][] maze = new boolean [Arena.ROW][Arena.COL];
+        Arena.mazeState[][] maze = new Arena.mazeState [Arena.ROW][Arena.COL];
         for (int i = 0; i < maze.length; i++)
             for (int j = 0; j < maze[i].length; j++)
-                maze[i][j] = false;  //initializing maze to freeSpace
+                maze[i][j] = Arena.mazeState.freeSpace;  //initializing maze to freeSpace
         int[] start = {Arena.ROW-2,1};
         int[] goal = {1,Arena.COL-2};
         arena = new Arena(start, goal, maze);
@@ -51,21 +51,21 @@ public class Controller {
             location[i][0] = -1;//used as a block to previous
     }
 
-    public boolean[][] getMaze(){
+    public Arena.mazeState[][] getMaze(){
         return arena.getMaze();
     }
 
     //return true for successful set
     public boolean setObstacle(int row,int col){
         if(isInStartGoalArea(row,col)==0) {
-            arena.setObstacle(row, col, true);
+            arena.setObstacle(row, col, Arena.mazeState.obstacle);
             return true;
         }
         return false;
     }
 
     public void setFree(int row,int col){
-        arena.setObstacle(row, col, false);
+        arena.setObstacle(row, col, Arena.mazeState.freeSpace);
     }
 
     public void setUpdate(boolean update) {
@@ -117,7 +117,7 @@ public class Controller {
         //A-1,A,A+1(A-1+2)
         for(int i=row-half_size;i<row-half_size+Arena.START_GOAL_SIZE;i++)
             for(int j=col-half_size;j<col-half_size+Arena.START_GOAL_SIZE;j++)
-                arena.setObstacle(i,j,false);
+                arena.setObstacle(i,j,Arena.mazeState.freeSpace);
 
         int[] data = {row,col};
         if(setStart)

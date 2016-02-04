@@ -51,19 +51,8 @@ public class MazeExplorer {
 
 
         while(!controller.isStopped()){
-            //update data
-
-            if(getSensorReadings()[0] == 1)
-                robot.turn(1);
-            else
-                robot.moveForward(1);
-
-            controller.setUpdate(true);
-//            try{
-//                Thread.sleep(1000);
-//            }catch (InterruptedException e){
-//                e.printStackTrace();
-//            }
+            observe();
+            analyze();
         }
         return 0;
     }
@@ -82,18 +71,18 @@ public class MazeExplorer {
             if (steps < 0) {
                 for (int i = sensor.getMinRange(); i <= sensor.getMaxRange(); i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i + 1);
-                    robot.getPerceivedArena().setObstacle(location[0], location[1], false);
+                    robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                 }
             } else if (sensor.getMinRange() <= steps && steps <= sensor.getMaxRange()) {
                 for (int i = sensor.getMinRange(); i < steps; i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i + 1);
-                    robot.getPerceivedArena().setObstacle(location[0], location[1], false);
+                    robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                 }
                 int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps + 1);
-                robot.getPerceivedArena().setObstacle(location[0], location[1], true);
+                robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.obstacle);
             }
         }catch (ArrayIndexOutOfBoundsException e){
-            e.printStackTrace();
+//            System.out.println("This message comes from MazeExplorer method markMaze. This is normal and please ignore this message");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -123,7 +112,20 @@ public class MazeExplorer {
     }
 
 
-    private void analyze(){}
+    private void analyze(){
+        //update data
+
+        if(getSensorReadings()[0] == 1)
+            rpiService.turn(1);
+        else
+            rpiService.moveForward(1);
+
+//            try{
+//                Thread.sleep(1000);
+//            }catch (InterruptedException e){
+//                e.printStackTrace();
+//            }
+    }
 
 
     public void notifyUIChange() {
