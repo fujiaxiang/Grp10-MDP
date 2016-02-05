@@ -51,7 +51,6 @@ public class SimuSensorService implements SensorServiceInterface{
      */
     @Override
     public int detectObstacle(Sensor sensor) {
-        int[] location = new int[2];
         Arena.mazeState[][] maze = realArena.getMaze();
         for(int step=sensor.getMinRange(); step<=sensor.getMaxRange(); step++){
             try{

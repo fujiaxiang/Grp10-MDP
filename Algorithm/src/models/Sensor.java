@@ -1,4 +1,5 @@
 package models;
+import utilities.GlobalUtilities;
 import utilities.Orientation;
 
 /**
@@ -17,6 +18,16 @@ public class Sensor {
         this.relativeOrientation = relativeOrientation;
         this.maxRange = maxRange;
         this.minRange = minRange;
+    }
+
+    //The format of sensorString format: "relativeLocation;relativeOrientation;maxRange;minRange", example "topLeft;0;5;1"
+    public Sensor(String sensorString){
+        String[] sensorStringSplits = sensorString.split(";");
+        this.relativeLocation = GlobalUtilities.relativeLocation.get(sensorStringSplits[0]);
+        this.relativeOrientation = Integer.parseInt(sensorStringSplits[1]);
+        this.maxRange = Integer.parseInt(sensorStringSplits[2]);
+        this.minRange = Integer.parseInt(sensorStringSplits[3]);
+
     }
 
     public int[] getAbsoluteLocation(){

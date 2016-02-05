@@ -4,6 +4,8 @@ import models.Arena;
 import models.Robot;
 import models.Sensor;
 import services.*;
+import utilities.GlobalUtilities;
+import utilities.Orientation;
 
 import static utilities.GlobalUtilities.locationParser;
 
@@ -97,12 +99,16 @@ public class MazeExplorer {
 
     private int[] getSensorReadings(){
         String sensorReadings = SimuSensorService.getInstance().detect();
+        Robot.getInstance().printStatus();
+        System.out.println("The reading is: " + sensorReadings + "\n");
         String[] parts = sensorReadings.split(":");
         int[] readings = new int[parts.length];
         try{
             int i = 0;
-            for(String part : parts)
-                readings[i] =  Integer.parseInt(part);
+            for(String part : parts) {
+                readings[i] = Integer.parseInt(part);
+                i++;
+            }
         }catch (Exception e){
             e.printStackTrace();
 
@@ -121,11 +127,40 @@ public class MazeExplorer {
     private void analyzeAndMove(){
         //update data
 
-        if(getSensorReadings()[0] == 1)
+        if(getSensorReadings()[1] == 1)
             rpiService.turn(1);
         else
             rpiService.moveForward(1);
 
+    }
+
+    //This method reads data stored in Robot.getInstance().getPerceivedArena() rather than sensor readings
+    //and locates the obstacle given a absolute relative location and relative orientation
+    public int locateObstacle(String relativeLocation, int relativeOrientation) {
+        int[] location = new int[2];
+        Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
+        for(int step=1; step<Math.max(Arena.ROW,Arena.COL); step++){
+            try{
+                int[] absoluteLocation = toAbsoluteLocation(relativeLocation);
+                int absoluteOrientation = Orientation.turn(relativeOrientation, robot.getOrientation());
+                int[] tempLocation = locationParser(absoluteLocation, absoluteOrientation, step);
+                Arena.mazeState obstacle = maze[tempLocation[0]][tempLocation[1]];
+                if(obstacle==Arena.mazeState.obstacle)
+                    return step;
+            }catch (ArrayIndexOutOfBoundsException e){
+                return step;
+            }
+        }
+
+        return -1;
+    }
+
+    public int[] toAbsoluteLocation(String relativeLocation){
+        int[] absoluteLocation= new int[2];
+        int[] rotatedRelativeLocation = Orientation.rotateCoordinates(GlobalUtilities.relativeLocation.get(relativeLocation), robot.getOrientation());
+        absoluteLocation[0] = robot.getLocation()[0] + rotatedRelativeLocation[0];
+        absoluteLocation[1] = robot.getLocation()[1] + rotatedRelativeLocation[1];
+        return absoluteLocation;
     }
 
 

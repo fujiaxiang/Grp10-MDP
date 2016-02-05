@@ -1,5 +1,8 @@
 package utilities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Jiaxiang on 22/1/16.
  */
@@ -29,5 +32,17 @@ public class GlobalUtilities {
         }
         return origin;
     }
+
+    public static HashMap<String, int[] > relativeLocation = new HashMap<String, int[]>(){{
+        put("topLeft", new int[]{-1, -1});
+        put("topCenter", new int[]{-1, 0});
+        put("topRight", new int[]{-1, 1});
+        put("middleLeft", new int[]{0, -1});
+        put("middleCenter", new int[]{0, 0});
+        put("middleRight", new int[]{0, 1});
+        put("bottomLeft", new int[]{1, -1});
+        put("bottomCenter", new int[]{1, 0});
+        put("bottomRight", new int[]{1, 1});
+    }};
 
 }

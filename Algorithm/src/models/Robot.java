@@ -16,8 +16,8 @@ public class Robot {
 
     //Specify the basic information of sensors here
     private final int NUMBER_OF_SENSORS = 5;
-    //Format for sensor string: LocX;LocY;orientation;maxRange;minRange
-    private final String[] SENSOR_STRINGS = {"-1;-1;0;5;1", "-1;0;0;5;1", "-1;1;0;5;1", "-1;-1;3;5;1", "-1;11;1;5;1"};
+    //The format of sensorString format: "relativeLocation;relativeOrientation;maxRange;minRange", example "topLeft;0;5;1"
+    private final String[] SENSOR_STRINGS = {"topLeft;0;5;1", "topCenter;0;5;1", "topRight;0;5;1", "topLeft;3;5;1", "topRight;1;5;1"};
 
 
     private Arena perceivedArena;
@@ -51,16 +51,12 @@ public class Robot {
         this.perceivedArena = new Arena(start, goal, maze);
         this.explored = new boolean[maze.length][maze[0].length];
 
-        this.sensors = new Sensor[1];
-//        for(int i=0; i<NUMBER_OF_SENSORS; i++){               //converting the sensor strings to sensor objects
-//            String sensorString = SENSOR_STRINGS[i];
-//            String[] sensorStringSplits = sensorString.split(";");
-//            int[] relativeLocation = {Integer.parseInt(sensorStringSplits[0]), Integer.parseInt(sensorStringSplits[1])};
-//            sensors[i] = new Sensor(relativeLocation, Integer.parseInt(sensorStringSplits[2]),
-//                    Integer.parseInt(sensorStringSplits[3]), Integer.parseInt(sensorStringSplits[4]));
-//        }
-        int[] relativeLocation = {-1, 0};
-        sensors[0] = new Sensor(relativeLocation, Orientation.NORTH, 5, 1);
+        this.sensors = new Sensor[NUMBER_OF_SENSORS];
+        for(int sensorNumber=0; sensorNumber<NUMBER_OF_SENSORS; sensorNumber++){       //converting the sensor strings to sensor objects
+            sensors[sensorNumber] = new Sensor(SENSOR_STRINGS[sensorNumber]);
+        }
+//        int[] relativeLocation = {-1, 0};
+//        sensors[0] = new Sensor(relativeLocation, Orientation.NORTH, 5, 1);
 
         for(int i=0;i<explored.length;i++)
             for(int j=0;j<explored[i].length;j++)
