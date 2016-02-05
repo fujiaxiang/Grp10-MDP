@@ -19,6 +19,8 @@ public class Arena {
     private int[] goal;//indicate goal center
     private mazeState[][] maze; //indicate whether the grid is a obstacle
 
+    public Arena(){}
+
     public Arena(int[] start,int[] goal){
         this.start = start;
         this.goal = goal;

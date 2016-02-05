@@ -98,7 +98,7 @@ public class MazeExplorer {
     }
 
     private int[] getSensorReadings(){
-        String sensorReadings = SimuSensorService.getInstance().detect();
+        String sensorReadings = sensorService.detect();
         System.out.println("The reading is: " + sensorReadings + "\n");
         String[] parts = sensorReadings.split(":");
         int[] readings = new int[parts.length];
