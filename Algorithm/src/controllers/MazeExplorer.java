@@ -46,7 +46,7 @@ public class MazeExplorer {
         //****************************//
         //****************************//
         //****************************//
-        //need to change false to a variable//
+        //need to change this to a variable//
         initialiseServices(false);
         //****************************//
         //****************************//
