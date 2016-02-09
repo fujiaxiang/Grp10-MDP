@@ -1,11 +1,7 @@
 package controllers;
+import algorithms.MazeExplorer;
 import models.*;
-import services.RPiServiceInterface;
-import services.SimuRPiService;
-import services.SimuSensorService;
 import utilities.Orientation;
-
-import java.util.Random;
 
 /**
  * Created by Fujitsu on 20/1/2016.

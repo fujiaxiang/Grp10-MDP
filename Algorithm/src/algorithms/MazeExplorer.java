@@ -1,5 +1,6 @@
-package controllers;
+package algorithms;
 
+import controllers.Controller;
 import models.Arena;
 import models.Robot;
 import models.Sensor;
