@@ -43,6 +43,7 @@ public class Main extends Application {
     private final int BUTTON_BOTTOM_Y = CANVAS_Y+CANVAS_HEIGHT+MARGIN;
     private final int LABEL_TIMER_WIDTH = 50;
     private final int SLEEP_DURATION    = 10;
+    private final int TIMER_UPDATE_DURATION = 100;
 
     private final Color COLOR_GOAL = Color.GREEN;
     private final Color COLOR_START = Color.RED;
@@ -301,12 +302,12 @@ public class Main extends Application {
                         @Override
                         public void run() {
                             if(controller.needUpdate()) {
-                                drawRobot();
                                 for (int i = 0; i < controller.getPrevious().length; i++) {
                                     if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
                                         break;
                                     drawGrid(gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
+                                drawRobot();
 
                                 controller.updated();
                             }
@@ -335,7 +336,7 @@ public class Main extends Application {
                                 getTextTimer().setText(Long.toString(time));
                             });
                         }
-                    },0,100);
+                    },0,TIMER_UPDATE_DURATION);
                 }
             };
         //insert button

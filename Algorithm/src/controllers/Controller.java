@@ -16,7 +16,7 @@ public class Controller {
     private boolean isDone;//indicate an action issued is done
     private boolean update;//indicate whether an udpate is needed
     private boolean isStopped;
-    public static int simulationSpeed = 4; //10 being the standard speed
+    public static int simulationSpeed = 10; //10 being the standard speed
 
     private static Controller instance;
 
