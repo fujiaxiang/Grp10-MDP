@@ -3,6 +3,7 @@ package algorithms;
 import controllers.Controller;
 import models.Arena;
 import models.Robot;
+import utilities.Orientation;
 
 /**
  * Created by Jiaxiang on 5/2/16.
@@ -24,6 +25,7 @@ public class PathFinder {
         public int heuristics;
         public int[] previousNode;
         public boolean visited = false;
+        public int orientation;
 
         public PathNode(){
             pathCost = Integer.MAX_VALUE;
@@ -136,7 +138,7 @@ public class PathFinder {
 
 
 
-    private int[][] aStarStraight(int[] start, int[] goal, Arena.mazeState[][] maze, boolean treatUnknownAsObstacle){
+    private int[][] aStarStraight(int[] start, int[] goal, Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, int startOrientation){
         VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
 
         //initializing heuristics
@@ -150,7 +152,7 @@ public class PathFinder {
         virtualMap.getVirtualMap()[start[0]][start[1]].visited = true;
 
         //expand the first node with pathCost = 1, from the start node
-        expand(virtualMap.getVirtualMap()[start[0]][start[1]], 0);
+        expand(virtualMap.getVirtualMap()[start[0]][start[1]], 0, startOrientation, virtualMap, treatUnknownAsObstacle);
 
 //        error;
 
@@ -158,12 +160,62 @@ public class PathFinder {
         return null;
     }
 
-    int expand(PathNode node, int pathCost){
+    int expand(PathNode node, double pathCost, int orientation, VirtualMap virtualMap, boolean treatUnknownAsObstacle){
         node.pathCost = pathCost;
         node.visited = true;
-        for(int[] reachableNodeIndex : node.getReachableNodeIndices()){
+        node.orientation = orientation;
 
+        double stepCost;
+        PathNode expandingNode;
+
+        //trying to expand the node to the north
+        expandingNode = virtualMap.getVirtualMap()[node.index[0]-1][node.index[1]];
+        //if this is a empty node
+        if(expandingNode.state == Arena.mazeState.freeSpace
+                || (!treatUnknownAsObstacle && expandingNode.state == Arena.mazeState.freeSpace)) {
+            stepCost = COST_TO_MOVE_ONE_STEP;
+            if(orientation == Orientation.EAST || orientation == Orientation.WEST)
+                stepCost += COST_TO_MAKE_A_TURN;
+            if (pathCost + stepCost < expandingNode.pathCost)
+                expand(expandingNode, pathCost+stepCost, Orientation.NORTH, virtualMap, treatUnknownAsObstacle);
         }
+
+        //trying to expand the node to the east
+        expandingNode = virtualMap.getVirtualMap()[node.index[0]][node.index[1]+1];
+        //if this is a empty node
+        if(expandingNode.state == Arena.mazeState.freeSpace
+                || (!treatUnknownAsObstacle && expandingNode.state == Arena.mazeState.freeSpace)) {
+            stepCost = COST_TO_MOVE_ONE_STEP;
+            if(orientation == Orientation.NORTH || orientation == Orientation.SOUTH)
+                stepCost += COST_TO_MAKE_A_TURN;
+            if (pathCost + stepCost < expandingNode.pathCost)
+                expand(expandingNode, pathCost+stepCost, Orientation.EAST, virtualMap, treatUnknownAsObstacle);
+        }
+
+        //trying to expand the node to the south
+        expandingNode = virtualMap.getVirtualMap()[node.index[0]+1][node.index[1]];
+        //if this is a empty node
+        if(expandingNode.state == Arena.mazeState.freeSpace
+                || (!treatUnknownAsObstacle && expandingNode.state == Arena.mazeState.freeSpace)) {
+            stepCost = COST_TO_MOVE_ONE_STEP;
+            if(orientation == Orientation.EAST || orientation == Orientation.WEST)
+                stepCost += COST_TO_MAKE_A_TURN;
+            if (pathCost + stepCost < expandingNode.pathCost)
+                expand(expandingNode, pathCost+stepCost, Orientation.SOUTH, virtualMap, treatUnknownAsObstacle);
+        }
+
+        //trying to expand the node to the east
+        expandingNode = virtualMap.getVirtualMap()[node.index[0]][node.index[1] + 1];
+        //if this is a empty node
+        if(expandingNode.state == Arena.mazeState.freeSpace
+                || (!treatUnknownAsObstacle && expandingNode.state == Arena.mazeState.freeSpace)) {
+            stepCost = COST_TO_MOVE_ONE_STEP;
+            if(orientation == Orientation.NORTH || orientation == Orientation.SOUTH)
+                stepCost += COST_TO_MAKE_A_TURN;
+            if (pathCost + stepCost < expandingNode.pathCost)
+                expand(expandingNode, pathCost+stepCost, Orientation.WEST, virtualMap, treatUnknownAsObstacle);
+        }
+
         return 0;
     }
 
