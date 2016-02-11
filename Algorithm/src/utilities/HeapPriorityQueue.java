@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by Jiaxiang on 6/2/16.
  */
-public class HeapPriorityQueue <T extends Comparable<T>>{
+public class HeapPriorityQueue <T extends Comparable<T> & Updatable>{
 
     private ArrayList<T> heapNodes = new ArrayList<T>();
 
@@ -15,6 +15,8 @@ public class HeapPriorityQueue <T extends Comparable<T>>{
                 offer(tNodes[i][j]);
             }
     }
+
+    public HeapPriorityQueue(){}
 
     public boolean offer(T tNode){
         if(tNode==null)
@@ -90,6 +92,14 @@ public class HeapPriorityQueue <T extends Comparable<T>>{
         }
 
         return false;
+    }
+
+    public void update(){
+        for(int i=0; i<heapNodes.size(); i++){
+            T node = heapNodes.get(i);
+            if(node.needUpdate())
+                fixUp(i);
+        }
     }
 
 }
