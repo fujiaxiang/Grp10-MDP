@@ -39,20 +39,71 @@ public class PathFinder {
             }
         }
 
+        PathNode startNode = virtualMap.getPathNode(start);
+
         //virtualMap.getVirtualMap()[start[0]][start[1]].pathCost = 0;
-        virtualMap.getVirtualMap()[start[0]][start[1]].visited = true;
+        startNode.orientation = startOrientation;
+        startNode.pathCost = 0;
 
         HeapPriorityQueue<PathNode> queue = new HeapPriorityQueue<PathNode>();
-        //expand the first node with pathCost = 1, from the start node
-        virtualMap.getVirtualMap()[start[0]][start[1]].expand(0, startOrientation, virtualMap, treatUnknownAsObstacle, queue);
 
+        expand(startNode, virtualMap, queue);
+
+        //repeatedly polling from the queue and expand
+        PathNode previousNode = startNode;
+        while(queue.size()>0){
+            PathNode expandingNode = queue.poll();
+            expand(expandingNode, virtualMap, queue);
+            if(expandingNode.index.equals(start))
+                break;
+        }
 //        error;
 
 
         return null;
     }
 
+    public void expand(PathNode thisNode, VirtualMap virtualMap, HeapPriorityQueue<PathNode> queue){
+        thisNode.expanded = true;
+        for(int[] reachableNodeIndex : thisNode.getReachableNodeIndices()){
+            //trying to mark reachable nodes and ignore those that are out of index bound
+            try{
+                mark(virtualMap.getPathNode(reachableNodeIndex), thisNode, queue);
+            }catch (ArrayIndexOutOfBoundsException e){}
 
+        }
+    }
+
+
+
+    private void mark(PathNode thisNode, PathNode previousNode, HeapPriorityQueue<PathNode> queue){
+        if(thisNode.state == Arena.mazeState.freeSpace) {
+            int orientation = Orientation.relativeOrientation(thisNode.index, previousNode.index);
+            double stepCost = PathFinder.COST_TO_MOVE_ONE_STEP;
+
+            //if previous orientation is the same as relative orientation, then no need to turn
+            if(orientation == previousNode.orientation){}
+
+            //if orienation is opposite, turn twice
+            else if(orientation == Orientation.oppositeOrientation(previousNode.orientation))
+                stepCost += 2 * PathFinder.COST_TO_MAKE_A_TURN;
+
+            //otherwise, turn once
+            else
+                stepCost += PathFinder.COST_TO_MAKE_A_TURN;
+
+            if (previousNode.pathCost + stepCost < thisNode.pathCost) {
+                if(thisNode.pathCost == Integer.MAX_VALUE){
+                    queue.offer(thisNode);
+                }else {
+                    thisNode.pathCostUpdated = true;
+                }
+
+                thisNode.pathCost = previousNode.pathCost + stepCost;
+                thisNode.orientation = orientation;
+            }
+        }
+    }
 
     private int calculateHeuristic(int row, int col, int[] goal){
         return Math.abs(goal[0] - row) + Math.abs(goal[1] - col);

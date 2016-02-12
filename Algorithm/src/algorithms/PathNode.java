@@ -14,7 +14,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
     public double pathCost;
     public int heuristics;
     public int[] previousNode;
-    public boolean visited = false;
+    public boolean expanded = false;
     public int orientation;
     public boolean pathCostUpdated = false;
 
@@ -42,7 +42,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
 
     //returns the indices of reachable nodes by a robot
     public int[][] getReachableNodeIndices() throws ArrayIndexOutOfBoundsException{
-        int[][] reachableNodes = new int[9][2];
+        int[][] reachableNodes = new int[4][2];
 
         reachableNodes[0] = new int[]{index[0]-1, index[1]};
         reachableNodes[1] = new int[]{index[0], index[1]+1};
@@ -62,9 +62,11 @@ public class PathNode implements Comparable<PathNode>, Updatable{
             return 0;
     }
 
+
+
     public int expand(double pathCost, int orientation, VirtualMap virtualMap, boolean treatUnknownAsObstacle, HeapPriorityQueue<PathNode> queue){
         this.pathCost = pathCost;
-        this.visited = true;
+        this.expanded = true;
         this.orientation = orientation;
 
         double stepCost;

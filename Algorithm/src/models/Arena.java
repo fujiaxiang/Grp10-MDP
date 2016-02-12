@@ -10,7 +10,7 @@ public class Arena {
     public static final int START_GOAL_SIZE = 3;
 
     public enum mazeState{
-        freeSpace, obstacle, unknow, virtualObstacle
+        freeSpace, obstacle, unknown, virtualObstacle
     }
 
 //    private static Arena instance = new Arena();

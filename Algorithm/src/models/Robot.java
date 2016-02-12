@@ -3,8 +3,6 @@ package models;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
 
-import java.util.ArrayList;
-
 /**
  * Created by Fujitsu on 20/1/2016.
  */
@@ -42,7 +40,7 @@ public class Robot {
         int[] start = {Arena.ROW-2,1};
         int[] goal = {1,Arena.COL-2};
         perceivedArena = new Arena(start, goal);
-        perceivedArena.resetToCertainState(Arena.mazeState.unknow);
+        perceivedArena.resetToCertainState(Arena.mazeState.unknown);
         Arena.mazeState[][] maze = getPerceivedArena().getMaze();
         
         this.location = location;
