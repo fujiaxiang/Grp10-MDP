@@ -306,13 +306,12 @@ public class Main extends Application {
 
             }
             else if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[2])){
+                drawRobot(robot_gc);
                 ui_timer = new Timer();
                 ui_timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
                         if(controller.needUpdate()) {
-
-
                             for (int i = 0; i < controller.getPrevious().length; i++) {
                                 if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
                                     break;
@@ -325,10 +324,10 @@ public class Main extends Application {
                                 int[] detected = controller.getDetected()[i];
                                 switch (detected[Controller.ABSOLUTE_ORIENTATION]) {
                                     case Orientation.NORTH:
-                                        offset_row = +1;
+                                        offset_row = -1;
                                         break;
                                     case Orientation.SOUTH:
-                                        offset_row = -1;
+                                        offset_row = +1;
                                         break;
                                     case Orientation.WEST:
                                         offset_col = -1;
@@ -348,7 +347,6 @@ public class Main extends Application {
                                     drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * j, detected[Controller.ABSOLUTE_COL] + offset_col * j, COLOR_EXPLORED);
                             }
                             drawRobot(robot_gc);
-
                             controller.updated();
                         }
                         if(controller.isDone()){

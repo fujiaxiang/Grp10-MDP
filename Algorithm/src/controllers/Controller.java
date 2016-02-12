@@ -25,7 +25,7 @@ public class Controller {
     public static final int ABSOLUTE_COL = 1;
     public static final int ABSOLUTE_ORIENTATION = 2;
     public static final int DISTANCE = 3;
-    public static final int DETECT_RANGE = 3;
+    public static final int DETECT_RANGE = 4;
 
     public static Controller getInstance(){
         if(instance==null)
@@ -49,9 +49,9 @@ public class Controller {
         for(int i=0;i<previous.length;i++)
             previous[i][0] = -1;
 
-        detected = new int[NUMBER_OF_SENSOR][4];//Stops using -1 for any
+        detected = new int[NUMBER_OF_SENSOR][5];//Stops using -1 for any
         for(int i=0;i<detected.length;i++)
-            detected[i][3] = -1;
+            detected[i][0] = -1;
 
         location = new int[9][2];
         for(int i=0;i<location.length;i++)
@@ -159,32 +159,6 @@ public class Controller {
     //assumed robot size = 3
     public int[][] getRobotLocation(){
         //calculate robot location base on robot loc(center)+robot size
-        if(robot.getOrientation()==Orientation.NORTH){
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = location[2*Robot.SIZE+i][0];
-                previous[i][1] = location[2*Robot.SIZE+i][1];
-            }
-        }
-        else if(robot.getOrientation()==Orientation.WEST){
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = location[(i+1) * Robot.SIZE-1][0];
-                previous[i][1] = location[(i+1) * Robot.SIZE-1][1];
-            }
-        }
-        else if(robot.getOrientation()==Orientation.EAST){
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = location[i * Robot.SIZE][0];
-                previous[i][1] = location[i * Robot.SIZE][1];
-            }
-        }
-        else{
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = location[i][0];
-                previous[i][1] = location[i][1];
-            }
-        }
-
-
         for(int i=0;i<Robot.SIZE;i++)
             for(int j=0;j<Robot.SIZE;j++){
                 location[i*Robot.SIZE+j][0] = robot.getLocation()[0]-Robot.HALF_SIZE+i;//location+half size
@@ -194,6 +168,33 @@ public class Controller {
         return location;
     }
 
+    public void savePrevious(){
+        int orientation = robot.getOrientation();
+        if(orientation==Orientation.NORTH){
+            for(int i=0;i<Robot.SIZE;i++) {
+                previous[i][0] = robot.getLocation()[0]+1;
+                previous[i][1] = robot.getLocation()[1]-1+i;
+            }
+        }
+        else if(orientation==Orientation.WEST){
+            for(int i=0;i<Robot.SIZE;i++) {
+                previous[i][0] = robot.getLocation()[0]-1+i;
+                previous[i][1] = robot.getLocation()[1]+1;
+            }
+        }
+        else if(orientation==Orientation.EAST){
+            for(int i=0;i<Robot.SIZE;i++) {
+                previous[i][0] = robot.getLocation()[0]-1+i;
+                previous[i][1] = robot.getLocation()[1]-1;
+            }
+        }
+        else{
+            for(int i=0;i<Robot.SIZE;i++) {
+                previous[i][0] = robot.getLocation()[0]-1;
+                previous[i][1] = robot.getLocation()[1]-1+i;
+            }
+        }
+    }
     public int[][] getPrevious(){
         return previous;
     }
@@ -208,7 +209,8 @@ public class Controller {
         for(int i=0;i<location.length;i++)
             location[i][0] = -1;//used as a block to previous
 
-        update = true;//to show first update
+        update = false;
+        //update = true;//to show first update
 
         MazeExplorer.getInstance().explore();
         isDone = true;

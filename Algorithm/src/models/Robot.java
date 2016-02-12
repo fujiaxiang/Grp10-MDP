@@ -1,5 +1,6 @@
 package models;
 
+import controllers.Controller;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
 
@@ -87,6 +88,7 @@ public class Robot {
 
     public int moveForward(int steps){
         try{
+            Controller.getInstance().savePrevious();
             setLocation(GlobalUtilities.locationParser(getLocation(), orientation, steps));
         }catch (ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
