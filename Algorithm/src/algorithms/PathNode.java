@@ -14,7 +14,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
     public double pathCost;
     public int heuristics;
     public int[] previousNode;
-    public boolean visited = false;
+    public boolean expanded = false;
     public int orientation;
     public boolean pathCostUpdated = false;
 
@@ -28,7 +28,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
 
     //returns the indices of surrounding nodes
     public int[][] getSurrondingNodeIndices() throws ArrayIndexOutOfBoundsException{
-        int[][] surroundingNodes = new int[9][2];
+        int[][] surroundingNodes = new int[4][2];
 
         int n = 0;
         for(int i=-1; i<=1; i++)
@@ -64,7 +64,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
 
     public int expand(double pathCost, int orientation, VirtualMap virtualMap, boolean treatUnknownAsObstacle, HeapPriorityQueue<PathNode> queue){
         this.pathCost = pathCost;
-        this.visited = true;
+        this.expanded = true;
         this.orientation = orientation;
 
         double stepCost;

@@ -18,6 +18,10 @@ public class HeapPriorityQueue <T extends Comparable<T> & Updatable>{
 
     public HeapPriorityQueue(){}
 
+    public int size(){
+        return heapNodes.size();
+    }
+
     public boolean offer(T tNode){
         if(tNode==null)
             return false;
