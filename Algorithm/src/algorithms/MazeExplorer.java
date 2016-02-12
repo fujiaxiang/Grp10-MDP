@@ -120,6 +120,7 @@ public class MazeExplorer {
             }
             return getSensorReadings();
         }
+        markObstaclesOnUI(readings);
         return readings;
     }
 
@@ -200,9 +201,19 @@ public class MazeExplorer {
         return absoluteLocation;
     }
 
-
+    //notify UI a change is made to the robot
     public void notifyUIChange() {
         controller.setUpdate(true);
+    }
+
+    //update UI after getting sensor readings
+    private void markObstaclesOnUI(int[] readings){
+        Sensor sensor;
+        for(int i = 0; i < readings.length; i++){
+            sensor = robot.getSensors()[i];
+            controller.detect(i, sensor.getAbsoluteLocation()[0], sensor.getAbsoluteLocation()[1], sensor.getAbsoluteOrientation(), readings[i], sensor.getMaxRange());
+        }
+        //detect(int sensor,int absolute_row,int absolute_col,int orientation,int distance,int detect_range)
     }
 
 
