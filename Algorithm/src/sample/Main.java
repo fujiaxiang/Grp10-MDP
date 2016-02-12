@@ -24,32 +24,26 @@ import java.util.TimerTask;
 import models.Arena;
 import utilities.Orientation;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 public class Main extends Application {
     private Controller controller;
 
-    private final int SCENE_WIDTH = 800;
+    private final int SCENE_WIDTH = 450;
     private final int SCENE_HEIGHT = 550;
     private final String SCENE_TITLE = "MAZE";
     private final int CANVAS_WIDTH = 300;
     private final int CANVAS_HEIGHT = 400;
-    private final int DRAW_CANVAS_X	= 10;
+    private final int CANVAS_X	= 10;
     private final int CANVAS_Y  = 10;
     private final int MARGIN = 20;
     private final int BUTTON_WIDTH = 100;
     private final int BUTTON_HEIGHT = 30;
+    private final int BUTTON_SIDE_X = SCENE_WIDTH-BUTTON_WIDTH-MARGIN;
     private final int BUTTON_SIDE_Y = CANVAS_Y;
-    private final int BUTTON_SIDE_X = DRAW_CANVAS_X+CANVAS_WIDTH+MARGIN;
-    private final int BUTTON_BOTTOM_X = DRAW_CANVAS_X;
+    private final int BUTTON_BOTTOM_X = CANVAS_X;
     private final int BUTTON_BOTTOM_Y = CANVAS_Y+CANVAS_HEIGHT+MARGIN;
-    private final int ROBOT_CANVAS_X	= BUTTON_SIDE_X+BUTTON_WIDTH+MARGIN;
     private final int LABEL_TIMER_WIDTH = 50;
     private final int SLEEP_DURATION    = 10;
     private final int TIMER_UPDATE_DURATION = 100;
-    private final String[] SIDE_BUTTON_TEXT = {"Obstacle","Path","Start","Goal","Robot"};
-    private final String[] BOTTOM_BUTTON_TEXT = {"Save Map","Load Map","Explore"};
 
     private final Color COLOR_GOAL = Color.GREEN;
     private final Color COLOR_START = Color.RED;
@@ -71,10 +65,8 @@ public class Main extends Application {
             //COLOR_EXPLORED
     };
     private final int CELL_SIZE = CANVAS_WIDTH/Arena.COL;//assume cell is square
-    private GraphicsContext draw_gc; //Graphic Context of Canvas
-    private GraphicsContext robot_gc; //Graphic Context of Canvas
+    private GraphicsContext gc; //Graphic Context of Canvas
     private ComboBox<String> ddl;
-    private ComboBox<Integer> speed_ddl;
     private Label text_timer;
     private int draw_mode = OBSTACLE;
     private int[][] robot_loc_array;
@@ -96,14 +88,12 @@ public class Main extends Application {
 
     private Group createGroup(){
         Group g = new Group();
-        g.getChildren().add(createDrawCanvas());
-        g.getChildren().add(createRobotCanvas());
+        g.getChildren().add(createCanvas());
         for(Button b:createMazeSetupButtons())
             g.getChildren().add(b);
         for(Button b:createBottomButtons())
             g.getChildren().add(b);
         g.getChildren().add(getDropdownlist());
-        g.getChildren().add(getSpeedDropdownlist());
         g.getChildren().add(getTextTimer());
         g.getChildren().add(createTextLabel());
         return g;
@@ -115,35 +105,15 @@ public class Main extends Application {
             ddl = new ComboBox<String>();
             ddl.getItems().addAll(list);
             ddl.setPrefSize(BUTTON_WIDTH*2,BUTTON_HEIGHT);
-            ddl.setLayoutX(DRAW_CANVAS_X);
+            ddl.setLayoutX(CANVAS_X);
             ddl.setLayoutY(BUTTON_BOTTOM_Y+2*BUTTON_HEIGHT);
             ddl.setValue(list[0]);
         }
         return ddl;
     }
-
-    private ComboBox<Integer> getSpeedDropdownlist(){
-        if(speed_ddl==null){
-            Integer[] list = {1,2,5,10,20,25,50};
-            speed_ddl = new ComboBox<Integer>();
-            speed_ddl.getItems().addAll(list);
-            speed_ddl.setPrefSize(BUTTON_WIDTH,BUTTON_HEIGHT);
-            speed_ddl.setLayoutX(BUTTON_SIDE_X);
-            speed_ddl.setLayoutY(BUTTON_SIDE_Y+SIDE_BUTTON_TEXT.length*BUTTON_HEIGHT);
-            speed_ddl.setValue(list[0]);
-
-            EventHandler handler = (event)->{
-                controller.setSimulationSpeed(speed_ddl.getSelectionModel().getSelectedItem());
-            };
-            controller.setSimulationSpeed(speed_ddl.getSelectionModel().getSelectedItem());
-            speed_ddl.setOnAction(handler);
-        }
-        return speed_ddl;
-    }
-
     private Label createTextLabel(){
         Label label = new Label("Timer  : ");
-        label.setLayoutX(DRAW_CANVAS_X+5);
+        label.setLayoutX(CANVAS_X+5);
         label.setLayoutY(getDropdownlist().getLayoutY()+BUTTON_HEIGHT);
         label.setPrefSize(LABEL_TIMER_WIDTH,BUTTON_HEIGHT);
         return label;
@@ -152,15 +122,15 @@ public class Main extends Application {
         if(text_timer == null){
             text_timer = new Label("0 ");
             text_timer.setPrefSize(BUTTON_WIDTH,BUTTON_HEIGHT);
-            text_timer.setLayoutX(DRAW_CANVAS_X+LABEL_TIMER_WIDTH+5);
+            text_timer.setLayoutX(CANVAS_X+LABEL_TIMER_WIDTH+5);
             text_timer.setLayoutY(getDropdownlist().getLayoutY()+BUTTON_HEIGHT);
         }
         return text_timer;
     }
 
-    private Canvas createDrawCanvas(){
+    private Canvas createCanvas(){
         Canvas c = new Canvas(CANVAS_WIDTH,CANVAS_HEIGHT);
-        c.setLayoutX(DRAW_CANVAS_X);
+        c.setLayoutX(CANVAS_X);
         c.setLayoutY(CANVAS_Y);
         EventHandler handler = new EventHandler<MouseEvent>() {
             @Override
@@ -170,11 +140,11 @@ public class Main extends Application {
                 if (draw_mode == PATH){
                     controller.setFree(row,col);
                     if(controller.isInStartGoalArea(row,col)==0)
-                        drawGrid(draw_gc,row,col,COLOR_PATH);
+                        drawGrid(gc,row,col,COLOR_PATH);
                 }
                 else if(draw_mode == OBSTACLE){
                     if(controller.setObstacle(row,col))
-                        drawGrid(draw_gc, row, col,COLOR_OBSTACLE);
+                        drawGrid(gc, row, col,COLOR_OBSTACLE);
                 }
                 else if(draw_mode == ROBOT){
                     if(event.getEventType()==MouseEvent.MOUSE_DRAGGED){
@@ -189,7 +159,7 @@ public class Main extends Application {
                         else if(different_col<-DRAG_THRESHOLD)
                             controller.setRobotOrientation(Orientation.WEST);
 
-                        drawRobot(draw_gc);
+                        drawRobot();
 
                     }
                     else {
@@ -197,12 +167,12 @@ public class Main extends Application {
                         clicked_col = col;clicked_row = row;
                         for (int[] i : controller.getRobotLocation()) {
                             int in_goal_start = controller.isInStartGoalArea(i[0], i[1]);
-                            if (in_goal_start == 0) drawGrid(draw_gc, i[0], i[1], COLOR_PATH);
-                            else drawGrid(draw_gc, i[0], i[1], in_goal_start == 1 ? COLOR_START : COLOR_GOAL);
+                            if (in_goal_start == 0) drawGrid(gc, i[0], i[1], COLOR_PATH);
+                            else drawGrid(gc, i[0], i[1], in_goal_start == 1 ? COLOR_START : COLOR_GOAL);
                         }
                         int loc[] = {row, col};
                         controller.setRobotLocation(loc);
-                        drawRobot(draw_gc);
+                        drawRobot();
                     }
                 }
                 else{
@@ -211,14 +181,14 @@ public class Main extends Application {
                         int updated_row = i/Arena.COL;
                         int updated_col = i%Arena.COL;
                         controller.setFree(updated_row,updated_col);
-                        drawGrid(draw_gc,updated_row,updated_col,COLOR_PATH);
+                        drawGrid(gc,updated_row,updated_col,COLOR_PATH);
                     }
                     //set
                     controller.setStartGoal(draw_mode==START,row,col);
                     for(int i:controller.getStartGoalLoc(draw_mode==START)){
                         int updated_row = i/Arena.COL;
                         int updated_col = i%Arena.COL;
-                        drawGrid(draw_gc,updated_row,updated_col,draw_mode==START?COLOR_START:COLOR_GOAL);
+                        drawGrid(gc,updated_row,updated_col,draw_mode==START?COLOR_START:COLOR_GOAL);
                     }
                 }
             }
@@ -226,39 +196,39 @@ public class Main extends Application {
 
         c.setOnMouseClicked(handler);
         c.setOnMouseDragged(handler);
-        draw_gc = c.getGraphicsContext2D();
+        gc = c.getGraphicsContext2D();
 
         //initialize Maze canvas
-        for(int i=0;i<Arena.ROW;i++)
-            for(int j=0;j<Arena.COL;j++)
-                drawGrid(draw_gc,i,j,COLOR_PATH);
+        gc.setFill(COLOR_REF[PATH]);
+        gc.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+
+        //initialize Grid
+        gc.setFill(COLOR_GRID);
+        for(int i=0;i<=Arena.COL;i++){
+            gc.moveTo(i*CELL_SIZE,0);
+            gc.lineTo(i*CELL_SIZE,CANVAS_HEIGHT);
+            gc.stroke();
+        }
+        for(int i=0;i<=Arena.ROW;i++){
+            gc.moveTo(0,i*CELL_SIZE);
+            gc.lineTo(CANVAS_WIDTH,i*CELL_SIZE);
+            gc.stroke();
+        }
         //start goal
         for(int j=0;j<2;j++)
             for(int i:controller.getStartGoalLoc(j%2==0)){
                 int row = i/Arena.COL;
                 int col = i%Arena.COL;
-                drawGrid(draw_gc,row,col,j%2==0?COLOR_START:COLOR_GOAL);
+                drawGrid(gc,row,col,j%2==0?COLOR_START:COLOR_GOAL);
             }
-        return c;
-    }
-
-    private Canvas createRobotCanvas(){
-        Canvas c = new Canvas(CANVAS_WIDTH,CANVAS_HEIGHT);
-        c.setLayoutX(ROBOT_CANVAS_X);
-        c.setLayoutY(CANVAS_Y);
-        robot_gc = c.getGraphicsContext2D();
-
-        //initialize Maze canvas
-        for(int i=0;i<Arena.ROW;i++)
-            for(int j=0;j<Arena.COL;j++)
-                drawGrid(robot_gc,i,j,COLOR_PATH);
-        //start goal
         return c;
     }
 
     private void drawGrid(GraphicsContext gc,int row,int col,Color color){
         int a = col*CELL_SIZE;
+        //int b = (col+1)*CELL_SIZE;
         int c = row*CELL_SIZE;
+        //int d = (row+1)*CELL_SIZE;
 
         //grid
         gc.setFill(COLOR_GRID);
@@ -266,88 +236,78 @@ public class Main extends Application {
         //maze
         gc.setFill(color);
         gc.fillRect(a+1,c+1,CELL_SIZE-2,CELL_SIZE-2);
+
+        /*
+        Slow, involved array creation, removed
+        //Horizon 1
+        gc.moveTo(a,c);
+        gc.lineTo(b,c);
+        gc.stroke();
+        //Horizon 2
+        gc.moveTo(a,d);
+        gc.lineTo(b,d);
+        gc.stroke();
+        //Vertical 1
+        gc.moveTo(a,c);
+        gc.lineTo(a,d);
+        gc.stroke();
+        //Vertical 2
+        gc.moveTo(a,c);
+        gc.lineTo(a,d);
+        gc.stroke();*/
     }
 
     //Create all side buttons
     private Button[] createMazeSetupButtons(){
+        String[] buttons_text = {"Obstacle","Path","Start","Goal","Robot"};
         Color [] c = {Color.BLACK,COLOR_OBSTACLE,COLOR_START,COLOR_GOAL,Color.GOLDENROD};
-        Button[] buttons = new Button[SIDE_BUTTON_TEXT.length];
+        Button[] buttons = new Button[buttons_text.length];
         EventHandler handler = (event)->{
                 String object_string = event.getSource().toString();
-                if(object_string.contains(SIDE_BUTTON_TEXT[0]))
+                if(object_string.contains(buttons_text[0]))
                     draw_mode = OBSTACLE;
-                else if(object_string.contains(SIDE_BUTTON_TEXT[1]))
+                else if(object_string.contains(buttons_text[1]))
                     draw_mode = PATH;
-                else if(object_string.contains(SIDE_BUTTON_TEXT[2]))
+                else if(object_string.contains(buttons_text[2]))
                     draw_mode = START;
-                else if(object_string.contains(SIDE_BUTTON_TEXT[3]))
+                else if(object_string.contains(buttons_text[3]))
                     draw_mode = GOAL;
-                else if(object_string.contains(SIDE_BUTTON_TEXT[4]))
+                else if(object_string.contains(buttons_text[4]))
                     draw_mode = ROBOT;
                 else
                     draw_mode = PATH;
         };
         //insert button
-        for(int i=0;i<SIDE_BUTTON_TEXT.length;i++)
-            buttons[i] = createButton(SIDE_BUTTON_TEXT[i],BUTTON_SIDE_X,BUTTON_SIDE_Y+i*BUTTON_HEIGHT,c[i],handler);
+        for(int i=0;i<buttons_text.length;i++)
+            buttons[i] = createButton(buttons_text[i],BUTTON_SIDE_X,BUTTON_SIDE_Y+i*BUTTON_HEIGHT,c[i],handler);
         return buttons;
     }
 
 
     //Create bottom buttons
     private Button[] createBottomButtons(){
-        Button[] buttons = new Button[BOTTOM_BUTTON_TEXT.length];
+        String[] buttons_text = {"Save Map","Load Map","Explore"};
+        Button[] buttons = new Button[buttons_text.length];
         time = 0;
         EventHandler handler = (event)-> {
-                if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[0])){
+                if(event.getTarget().toString().contains(buttons_text[0])){
 
                 }
-                else if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[1])){
+                else if(event.getTarget().toString().contains(buttons_text[1])){
 
                 }
-                else if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[2])){
+                else if(event.getTarget().toString().contains(buttons_text[2])){
                     ui_timer = new Timer();
                     ui_timer.scheduleAtFixedRate(new TimerTask() {
                         @Override
                         public void run() {
                             if(controller.needUpdate()) {
-
-
                                 for (int i = 0; i < controller.getPrevious().length; i++) {
                                     if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
                                         break;
-                                    drawGrid(robot_gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
+                                    drawGrid(gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
-
-                                //update detected
-                                for(int i = 0;i<controller.getDetected().length;i++) {
-                                    int offset_row = 0, offset_col = 0;
-                                    int[] detected = controller.getDetected()[i];
-                                    switch (detected[Controller.ABSOLUTE_ORIENTATION]) {
-                                        case Orientation.NORTH:
-                                            offset_row = +1;
-                                            break;
-                                        case Orientation.SOUTH:
-                                            offset_row = -1;
-                                            break;
-                                        case Orientation.WEST:
-                                            offset_col = -1;
-                                            break;
-                                        case Orientation.EAST:
-                                            offset_col = 1;
-                                            break;
-                                    }
-                                    int distance;
-                                    if(detected[Controller.DISTANCE]==-1)distance = detected[Controller.DETECT_RANGE]+1;
-                                    else{
-                                        //if detected obstalce
-                                        distance = detected[Controller.DISTANCE];
-                                        drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * distance, detected[Controller.ABSOLUTE_COL] + offset_col * distance, COLOR_OBSTACLE);
-                                    }
-                                    for (int j = 1; j < distance; j++)
-                                        drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * j, detected[Controller.ABSOLUTE_COL] + offset_col * j, COLOR_EXPLORED);
-                                }
-                                drawRobot(robot_gc);
+                                drawRobot();
 
                                 controller.updated();
                             }
@@ -380,8 +340,8 @@ public class Main extends Application {
                 }
             };
         //insert button
-        for(int i=0;i<BOTTOM_BUTTON_TEXT.length;i++)
-            buttons[i] = createButton(BOTTOM_BUTTON_TEXT[i],BUTTON_BOTTOM_X+(i%2)*BUTTON_WIDTH,BUTTON_BOTTOM_Y+i/2*BUTTON_HEIGHT,null,handler);
+        for(int i=0;i<buttons_text.length;i++)
+            buttons[i] = createButton(buttons_text[i],BUTTON_BOTTOM_X+(i%2)*BUTTON_WIDTH,BUTTON_BOTTOM_Y+i/2*BUTTON_HEIGHT,null,handler);
         return buttons;
     }
 
@@ -395,11 +355,11 @@ public class Main extends Application {
         return button;
     }
 
-    private void drawRobot(GraphicsContext g){
+    private void drawRobot(){
         int orientation = controller.getRobotOrientation1357();
         int[][] robot_loc = controller.getRobotLocation();
         for(int i=0;i<robot_loc.length;i++)
-            drawGrid(g,robot_loc[i][0],robot_loc[i][1],i==orientation?COLOR_ROBOT_FACE:COLOR_ROBOT);
+            drawGrid(gc,robot_loc[i][0],robot_loc[i][1],i==orientation?COLOR_ROBOT_FACE:COLOR_ROBOT);
     }
 
     public static void main(String[] args) {

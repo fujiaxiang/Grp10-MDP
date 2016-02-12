@@ -12,20 +12,13 @@ public class Controller {
     private final Arena arena;
     private final Robot robot;
     private int[][] previous;//used to store previous location
-    private int[][] detected;//[sensor]{ROW,COL,ORIENTATION,DISTANCE}
     private int[][] location;
     private boolean isDone;//indicate an action issued is done
     private boolean update;//indicate whether an udpate is needed
     private boolean isStopped;
     public static int simulationSpeed = 10; //10 being the standard speed
-    private final int NUMBER_OF_SENSOR = 5;
-    private static Controller instance;
 
-    public static final int ABSOLUTE_ROW = 0;
-    public static final int ABSOLUTE_COL = 1;
-    public static final int ABSOLUTE_ORIENTATION = 2;
-    public static final int DISTANCE = 3;
-    public static final int DETECT_RANGE = 3;
+    private static Controller instance;
 
     public static Controller getInstance(){
         if(instance==null)
@@ -48,11 +41,6 @@ public class Controller {
         previous = new int[6][2];//Stops using -1 for any
         for(int i=0;i<previous.length;i++)
             previous[i][0] = -1;
-
-        detected = new int[NUMBER_OF_SENSOR][4];//Stops using -1 for any
-        for(int i=0;i<detected.length;i++)
-            detected[i][3] = -1;
-
         location = new int[9][2];
         for(int i=0;i<location.length;i++)
             location[i][0] = -1;//used as a block to previous
@@ -214,9 +202,6 @@ public class Controller {
         isDone = true;
     }
 
-    public int[][] getDetected(){
-        return detected;
-    }
 
 
     public void setRobotLocation(int[] loc){robot.setLocation(loc);}
@@ -232,20 +217,13 @@ public class Controller {
         }
         return orientation;
     }
-    public void detect(int sensor,int absolute_row,int absolute_col,int orientation,int distance,int detect_range){
-        detected[sensor][ABSOLUTE_ROW] = absolute_row;
-        detected[sensor][ABSOLUTE_COL] = absolute_col;
-        detected[sensor][ABSOLUTE_ORIENTATION] = orientation;
-        detected[sensor][DISTANCE] = distance;
-        detected[sensor][DETECT_RANGE] = detect_range;
-    }
 
     public void setRobotOrientation(int orientation){robot.setOrientation(orientation);}
     public boolean isDone(){return isDone;}
     public boolean isStopped(){return isStopped;}
     public boolean needUpdate(){return update;}
     public void updated(){update = false;}
-    public void setSimulationSpeed(int speed){simulationSpeed = speed;}
+
     public Arena getArena() {
         return arena;
     }
