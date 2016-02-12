@@ -45,4 +45,8 @@ public class GlobalUtilities {
         put("bottomRight", new int[]{1, 1});
     }};
 
+    public static boolean sameLocation(int[] location1, int[] location2){
+        return location1[0]==location2[0] && location1[1]==location2[1];
+    }
+
 }

@@ -234,12 +234,18 @@ public class Controller {
         }
         return orientation;
     }
-    public void detect(int sensor,int absolute_row,int absolute_col,int orientation,int distance,int detect_range){
-        detected[sensor][ABSOLUTE_ROW] = absolute_row;
-        detected[sensor][ABSOLUTE_COL] = absolute_col;
-        detected[sensor][ABSOLUTE_ORIENTATION] = orientation;
-        detected[sensor][DISTANCE] = distance;
-        detected[sensor][DETECT_RANGE] = detect_range;
+    public void detect(int[] readings){
+
+        Sensor sensor;
+        for(int i = 0; i < readings.length; i++) {
+            sensor = robot.getSensors()[i];
+
+            detected[i][ABSOLUTE_ROW] = sensor.getAbsoluteLocation()[0];
+            detected[i][ABSOLUTE_COL] = sensor.getAbsoluteLocation()[1];
+            detected[i][ABSOLUTE_ORIENTATION] = sensor.getAbsoluteOrientation();
+            detected[i][DISTANCE] = readings[i];
+            detected[i][DETECT_RANGE] = sensor.getMaxRange();
+        }
     }
 
     public void setRobotOrientation(int orientation){robot.setOrientation(orientation);}

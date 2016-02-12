@@ -53,10 +53,18 @@ public class MazeExplorer {
         //****************************//
 
         robot.printStatus();
+
+        int moves = 0; //keeping track of the moves robot has made
         while(!controller.isStopped()){
             observe();
             analyzeAndMove();
+
+            //if the robot comes back to start location after more than 20 moves, break
+            if(GlobalUtilities.sameLocation(robot.getLocation(), controller.getArena().getStart()) && moves>20)
+                break;
+            moves++;
         }
+        System.out.println("Exploration has ended");
         return 0;
     }
 
@@ -208,12 +216,7 @@ public class MazeExplorer {
 
     //update UI after getting sensor readings
     private void markObstaclesOnUI(int[] readings){
-        Sensor sensor;
-        for(int i = 0; i < readings.length; i++){
-            sensor = robot.getSensors()[i];
-            controller.detect(i, sensor.getAbsoluteLocation()[0], sensor.getAbsoluteLocation()[1], sensor.getAbsoluteOrientation(), readings[i], sensor.getMaxRange());
-        }
-        //detect(int sensor,int absolute_row,int absolute_col,int orientation,int distance,int detect_range)
+        controller.detect(readings);
     }
 
 

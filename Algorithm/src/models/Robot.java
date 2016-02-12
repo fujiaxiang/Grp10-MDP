@@ -43,8 +43,8 @@ public class Robot {
         perceivedArena = new Arena(start, goal);
         perceivedArena.resetToCertainState(Arena.mazeState.unknown);
         Arena.mazeState[][] maze = getPerceivedArena().getMaze();
-        
-        this.location = location;
+
+        this.location = new int[]{location[0], location[1]};
         this.orientation = orientation;
      
         this.perceivedArena = new Arena(start, goal, maze);
