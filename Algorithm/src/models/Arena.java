@@ -73,4 +73,30 @@ public class Arena {
     public mazeState[][] getMaze(){
         return maze;
     }
+
+    public void print(){
+        for(int i = 0; i < maze.length; i++) {
+            for (int j = 0; j < maze[i].length; j++) {
+
+                switch (maze[i][j]){
+                    case freeSpace:
+                        System.out.print("f\t");
+                        break;
+                    case obstacle:
+                        System.out.print("o\t");
+                        break;
+                    case unknown:
+                        System.out.print("u\t");
+                        break;
+                    case virtualObstacle:
+                        System.out.print("v\t");
+                        break;
+                    default:
+                        System.out.print("0\t");
+                        break;
+                }
+            }
+            System.out.println();
+        }
+    }
 }

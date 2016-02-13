@@ -1,5 +1,6 @@
 package controllers;
 import algorithms.MazeExplorer;
+import algorithms.PathFinder;
 import models.*;
 import utilities.Orientation;
 
@@ -213,6 +214,9 @@ public class Controller {
         //update = true;//to show first update
 
         MazeExplorer.getInstance().explore();
+
+        PathFinder.getInstance().testAStar(Controller.getInstance().arena.getStart(), Controller.getInstance().arena.getGoal(),
+            robot.getPerceivedArena().getMaze(), true, Orientation.SOUTH);
         isDone = true;
     }
 

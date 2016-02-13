@@ -46,8 +46,7 @@ public class Robot {
 
         this.location = new int[]{location[0], location[1]};
         this.orientation = orientation;
-     
-        this.perceivedArena = new Arena(start, goal, maze);
+
         this.explored = new boolean[maze.length][maze[0].length];
 
         this.sensors = new Sensor[NUMBER_OF_SENSORS];

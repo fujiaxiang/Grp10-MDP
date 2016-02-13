@@ -56,13 +56,16 @@ public class MazeExplorer {
 
         int moves = 0; //keeping track of the moves robot has made
         while(!controller.isStopped()){
+
             observe();
+
             analyzeAndMove();
 
             //if the robot comes back to start location after more than 20 moves, break
             if(GlobalUtilities.sameLocation(robot.getLocation(), controller.getArena().getStart()) && moves>20)
                 break;
             moves++;
+
         }
         System.out.println("Exploration has ended");
         return 0;

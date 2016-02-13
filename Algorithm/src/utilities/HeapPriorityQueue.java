@@ -22,11 +22,15 @@ public class HeapPriorityQueue <T extends Comparable<T> & Updatable>{
         return heapNodes.size();
     }
 
+    public ArrayList<T> getHeapNodes(){
+        return heapNodes;
+    }
+
     public boolean offer(T tNode){
         if(tNode==null)
             return false;
         heapNodes.add(tNode);
-        fixUp(heapNodes.size());
+        fixUp(heapNodes.size()-1);
 
         return true;
     }
@@ -37,8 +41,8 @@ public class HeapPriorityQueue <T extends Comparable<T> & Updatable>{
 
     public T poll(){
         T rootNode = heapNodes.get(0);
-        heapNodes.set(0, heapNodes.get(heapNodes.size()));
-        heapNodes.remove(heapNodes.size());
+        heapNodes.set(0, heapNodes.get(heapNodes.size()-1));
+        heapNodes.remove(heapNodes.size()-1);
         fixDown(0);
         return rootNode;
     }
@@ -79,16 +83,23 @@ public class HeapPriorityQueue <T extends Comparable<T> & Updatable>{
     }
 
     public boolean fixDown(int index){
-        if(parentIndex(index)>=heapNodes.size())
-            return false;
-
         int targetIndex;
 
-        if(heapNodes.get(leftChildIndex(index)).compareTo(heapNodes.get(rightChildIndex(index)))>0)
+        //if it does not have any child, return false
+        if(leftChildIndex(index)>=heapNodes.size())
+            return false;
+        //if it only has left child, target left child
+        else if(rightChildIndex(index)>=heapNodes.size()){
+            targetIndex = leftChildIndex(index);
+        }
+        //if it has two children, target the larger one
+        else if(heapNodes.get(leftChildIndex(index)).compareTo(heapNodes.get(rightChildIndex(index)))>0)
             targetIndex = rightChildIndex(index);
+
         else
             targetIndex = leftChildIndex(index);
 
+        //if it's larger than target node, swop
         if(heapNodes.get(index).compareTo(heapNodes.get(targetIndex))>0) {
             swop(index, targetIndex);
             fixDown(targetIndex);
@@ -103,6 +114,12 @@ public class HeapPriorityQueue <T extends Comparable<T> & Updatable>{
             T node = heapNodes.get(i);
             if(node.needUpdate())
                 fixUp(i);
+        }
+    }
+
+    public void print(){
+        for (T node : heapNodes){
+            System.out.print(node + "\t");
         }
     }
 

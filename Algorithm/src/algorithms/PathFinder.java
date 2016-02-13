@@ -2,7 +2,9 @@ package algorithms;
 
 import controllers.Controller;
 import models.Arena;
+import models.Path;
 import models.Robot;
+import utilities.GlobalUtilities;
 import utilities.HeapPriorityQueue;
 import utilities.Orientation;
 
@@ -26,42 +28,50 @@ public class PathFinder {
         return instance;
     }
 
-
-
+    public int[][] testAStar (int[] start, int[] goal, Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, int startOrientation){
+        return aStarStraight(start, goal, maze, treatUnknownAsObstacle, startOrientation);
+    }
 
     private int[][] aStarStraight(int[] start, int[] goal, Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, int startOrientation){
+
         VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
 
+        virtualMap.print();
         //initializing heuristics
         for(int i=0; i<Arena.ROW; i++) {
             for (int j = 0; j < Arena.COL; j++) {
-                virtualMap.getVirtualMap()[i][j].pathCost = calculateHeuristic(i, j, goal);
+                virtualMap.getVirtualMap()[i][j].heuristics = calculateHeuristic(i, j, goal);
             }
         }
 
         PathNode startNode = virtualMap.getPathNode(start);
-        //virtualMap.getVirtualMap()[start[0]][start[1]].pathCost = 0;
+
         startNode.orientation = startOrientation;
         startNode.pathCost = 0;
+        startNode.previousNode = null;
 
         HeapPriorityQueue<PathNode> queue = new HeapPriorityQueue<PathNode>();
-        //expand the first node with pathCost = 1, from the start node
-        virtualMap.getVirtualMap()[start[0]][start[1]].expand(0, startOrientation, virtualMap, treatUnknownAsObstacle, queue);
 
-//        error;
         expand(startNode, virtualMap, queue);
-        //repeatedly polling from the queue and expand
+
         PathNode previousNode = startNode;
-        while(queue.size()>0){
+
+        while(queue.size()>0){    //repeatedly polling from the queue and expand
             PathNode expandingNode = queue.poll();
             expand(expandingNode, virtualMap, queue);
-            if(expandingNode.index.equals(start))
+
+            if(GlobalUtilities.sameLocation(expandingNode.index, goal)) {
+                System.out.println("Reached goal");
                 break;
+            }
         }
 
-
+        Path path = new Path(virtualMap, goal);
+        path.print();
         return null;
     }
+
+
 
     public void expand(PathNode thisNode, VirtualMap virtualMap, HeapPriorityQueue<PathNode> queue){
         thisNode.expanded = true;
@@ -71,6 +81,8 @@ public class PathFinder {
                 mark(virtualMap.getPathNode(reachableNodeIndex), thisNode, queue);
             }catch (ArrayIndexOutOfBoundsException e){}
         }
+
+        queue.update();
     }
 
     private void mark(PathNode thisNode, PathNode previousNode, HeapPriorityQueue<PathNode> queue){
@@ -97,6 +109,7 @@ public class PathFinder {
                 }
 
                 thisNode.pathCost = previousNode.pathCost + stepCost;
+                thisNode.previousNode = previousNode.index;
                 thisNode.orientation = orientation;
             }
         }

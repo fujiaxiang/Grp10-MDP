@@ -27,43 +27,71 @@ public class VirtualMap{
 
 
     //initialize the virtual map, to make surrounding cells of virtual obstacles
-    //in the case of treating unknown as obstacles, all unknowns nodes will remain unknown
-    //in the case of treating unknown as free space, all surrounding nodes of unknowns will be converted to virtual obstacles
-    public VirtualMap(Arena.mazeState[][] maze, boolean treatUnknownAsObstacle){
+
+    public VirtualMap(Arena.mazeState[][] maze, boolean treatUnknownAsObstacle) {
 
         this();
 
         //creating virtual obstacles
-        for(int i=0; i<maze.length; i++) {       //for each cell in the map
+        for (int i = 0; i < maze.length; i++)        //for each cell in the map
             for (int j = 0; j < maze[0].length; j++) {
 
                 this.virtualMap[i][j].state = maze[i][j];
+                this.virtualMap[i][j].index = new int[]{i, j};
+                this.virtualMap[i][j].pathCost = Integer.MAX_VALUE;
+            }
 
+        for (int i = 0; i < maze.length; i++)        //for each cell in the map
+            for (int j = 0; j < maze[0].length; j++) {
                 //if this node is an obstacle, or unknown in the case of treating unknown as obstacle
-                if (maze[i][j] == Arena.mazeState.obstacle || (treatUnknownAsObstacle && maze[i][j]== Arena.mazeState.unknown)) {
+                if (maze[i][j] == Arena.mazeState.obstacle || (treatUnknownAsObstacle && maze[i][j] == Arena.mazeState.unknown)) {
 
-                    //make its surrounding cells an "virtual" obstacle
-                    for (int[] surroundingNodeIndex : virtualMap[i][j].getSurrondingNodeIndices()){
+                    //marking its surrounding cells
+                    for (int[] surroundingNodeIndex : virtualMap[i][j].getSurrondingNodeIndices()) {
 
-                        //if this node is a free space or unknown in the case of treating unknown as free space
-                        if(this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.freeSpace
-                                ||(!treatUnknownAsObstacle &&
-                                this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.unknown))
+                        try {
+                            //if this surrounding node is a free space or unknown in the case of treating unknown as free space
+                            if (this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.freeSpace
+                                    || (!treatUnknownAsObstacle &&
+                                    this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.unknown))
 
-                            try {
                                 this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state
                                         = Arena.mazeState.virtualObstacle;
-                            }catch (ArrayIndexOutOfBoundsException e){}
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                        }
                         //handled exception if the cell is at the side or corner
                     }
-                }else if(!treatUnknownAsObstacle && maze[i][j]== Arena.mazeState.unknown)
-                    maze[i][j] = Arena.mazeState.freeSpace;       //this part was added later
+                }
 
                 //if this node is on the side and is a free space or unknown in the case of treating unknown as free space
-                if(isNodeOnSide(i, j, maze) && (this.virtualMap[i][j].state == Arena.mazeState.freeSpace)
-                        || (!treatUnknownAsObstacle && this.virtualMap[i][j].state == Arena.mazeState.unknown))
+                if (isNodeOnSide(i, j, maze) && ((this.virtualMap[i][j].state == Arena.mazeState.freeSpace)
+                        || (!treatUnknownAsObstacle && this.virtualMap[i][j].state == Arena.mazeState.unknown)))
                     this.virtualMap[i][j].state = Arena.mazeState.virtualObstacle;
             }
+
+        //replace all unknowns with either virtual obstacles or free space
+        for (int i = 0; i < maze.length; i++)        //for each cell in the map
+            for (int j = 0; j < maze[0].length; j++) {
+                if (virtualMap[i][j].state == Arena.mazeState.unknown) {
+                    if(treatUnknownAsObstacle)
+                        virtualMap[i][j].state = Arena.mazeState.virtualObstacle;
+                    else
+                        virtualMap[i][j].state = Arena.mazeState.freeSpace;
+                }
+            }
+
+    }
+
+
+
+    public void print(){
+        for(int i = 0; i < virtualMap.length; i++) {
+            for (int j = 0; j < virtualMap[i].length; j++) {
+
+                System.out.print(virtualMap[i][j]);
+
+            }
+            System.out.println();
         }
     }
 

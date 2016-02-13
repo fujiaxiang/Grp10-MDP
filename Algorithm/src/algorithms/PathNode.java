@@ -28,7 +28,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
 
     //returns the indices of surrounding nodes
     public int[][] getSurrondingNodeIndices() throws ArrayIndexOutOfBoundsException{
-        int[][] surroundingNodes = new int[4][2];
+        int[][] surroundingNodes = new int[9][2];
 
         int n = 0;
         for(int i=-1; i<=1; i++)
@@ -42,7 +42,7 @@ public class PathNode implements Comparable<PathNode>, Updatable{
 
     //returns the indices of reachable nodes by a robot
     public int[][] getReachableNodeIndices() throws ArrayIndexOutOfBoundsException{
-        int[][] reachableNodes = new int[9][2];
+        int[][] reachableNodes = new int[4][2];
 
         reachableNodes[0] = new int[]{index[0]-1, index[1]};
         reachableNodes[1] = new int[]{index[0], index[1]+1};
@@ -160,5 +160,29 @@ public class PathNode implements Comparable<PathNode>, Updatable{
     @Override
     public boolean needUpdate() {
         return pathCostUpdated;
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+        switch (state) {
+            case freeSpace:
+                str += "f\t";
+                break;
+            case obstacle:
+                str += "o\t";
+                break;
+            case unknown:
+                str += "u\t";
+                break;
+            case virtualObstacle:
+                str += "v\t";
+                break;
+            default:
+                str += "0\t";
+                break;
+
+        }
+        return str;
     }
 }
