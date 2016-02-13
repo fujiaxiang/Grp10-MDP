@@ -56,11 +56,13 @@ public class MazeExplorer {
 
             analyzeAndMove();
 
-            //if the robot comes back to start location after more than 20 moves, break
-            if(GlobalUtilities.sameLocation(robot.getLocation(), controller.getArena().getStart()) && moves>20)
+            moves++;
+
+            //if the robot comes back to start location after more than or equal to 58 moves, break
+            //in order to reach goal and come back to start, 58 is the minimum number of moves
+            if(moves>=58 && GlobalUtilities.sameLocation(robot.getLocation(), controller.getArena().getStart()))
                 break;
 
-            moves++;
         }
         Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
@@ -94,7 +96,7 @@ public class MazeExplorer {
             return null;
 
         //get path if robot starts facing east
-        pathStartFacingEast = PathFinder.getInstance().aStarStraight(maze, start, goal, true, Orientation.EAST);
+        pathStartFacingEast = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.EAST);
 
         int targetFacingDirection;
         Path idealPath;

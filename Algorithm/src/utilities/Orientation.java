@@ -57,7 +57,7 @@ public class Orientation {
     public static int relativeOrientation(int[] destinationIndex, int[] originIndex){
         int xDifference = destinationIndex[0] - originIndex[0];
         int yDifference = destinationIndex[1] - originIndex[1];
-        return (xDifference + 1) * xDifference + (2 - yDifference) * yDifference;
+        return yDifference==0 ? (1+xDifference) : (2-yDifference);
     }
 
     public static int oppositeOrientation(int orientation){
