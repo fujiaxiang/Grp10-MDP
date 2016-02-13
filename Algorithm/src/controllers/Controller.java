@@ -28,6 +28,8 @@ public class Controller {
     public static final int DISTANCE = 3;
     public static final int DETECT_RANGE = 4;
 
+    public static boolean isRealRun = false;
+
     public static Controller getInstance(){
         if(instance==null)
             instance = new Controller();
@@ -213,10 +215,12 @@ public class Controller {
         update = false;
         //update = true;//to show first update
 
-        MazeExplorer.getInstance().explore();
+        Path shortestPath = MazeExplorer.getInstance().explore(isRealRun);
 
-        PathFinder.getInstance().testAStar(Controller.getInstance().arena.getStart(), Controller.getInstance().arena.getGoal(),
-            robot.getPerceivedArena().getMaze(), true, Orientation.SOUTH);
+        shortestPath.print();
+
+        System.out.print("The path cost is " + shortestPath.getTotalCost());
+
         isDone = true;
     }
 

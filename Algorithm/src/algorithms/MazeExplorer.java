@@ -2,6 +2,7 @@ package algorithms;
 
 import controllers.Controller;
 import models.Arena;
+import models.Path;
 import models.Robot;
 import models.Sensor;
 import services.*;
@@ -42,15 +43,9 @@ public class MazeExplorer {
         }
     }
 
-    public int explore(){
+    public Path explore(boolean isRealRun){
 
-        //****************************//
-        //****************************//
-        //****************************//
-        //need to change this to a variable//
-        initialiseServices(false);
-        //****************************//
-        //****************************//
+        initialiseServices(isRealRun);
 
         robot.printStatus();
 
@@ -64,11 +59,43 @@ public class MazeExplorer {
             //if the robot comes back to start location after more than 20 moves, break
             if(GlobalUtilities.sameLocation(robot.getLocation(), controller.getArena().getStart()) && moves>20)
                 break;
-            moves++;
 
+            moves++;
         }
-        System.out.println("Exploration has ended");
-        return 0;
+
+        return getReadyForShortestPath();
+
+    }
+
+    //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
+    public Path getReadyForShortestPath(){
+
+        Path pathStartFacingNorth, pathStartFacingEast;
+
+        //get path if robot starts facing north
+        pathStartFacingNorth = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getPerceivedArena().getStart(),
+                robot.getPerceivedArena().getGoal(), true, Orientation.NORTH);
+
+        //get path if robot starts facing east
+        pathStartFacingEast = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getPerceivedArena().getStart(),
+                robot.getPerceivedArena().getGoal(), true, Orientation.EAST);
+
+        int targetFacingDirection;
+        Path idealPath;
+        if(pathStartFacingNorth.getTotalCost() < pathStartFacingEast.getTotalCost()) {
+            targetFacingDirection = Orientation.NORTH;
+            idealPath = pathStartFacingNorth;
+        }
+        else {
+            targetFacingDirection = Orientation.EAST;
+            idealPath = pathStartFacingEast;
+        }
+
+        while(robot.getOrientation() != targetFacingDirection)
+            rpiService.turn(Orientation.LEFT);
+
+        //return the ideal path
+        return idealPath;
     }
 
 

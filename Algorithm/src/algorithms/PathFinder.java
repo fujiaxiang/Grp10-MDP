@@ -28,15 +28,12 @@ public class PathFinder {
         return instance;
     }
 
-    public int[][] testAStar (int[] start, int[] goal, Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, int startOrientation){
-        return aStarStraight(start, goal, maze, treatUnknownAsObstacle, startOrientation);
-    }
 
-    private int[][] aStarStraight(int[] start, int[] goal, Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, int startOrientation){
+
+    public Path aStarStraight(Arena.mazeState[][] maze, int[] start, int[] goal, boolean treatUnknownAsObstacle, int startOrientation){
 
         VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
 
-        virtualMap.print();
         //initializing heuristics
         for(int i=0; i<Arena.ROW; i++) {
             for (int j = 0; j < Arena.COL; j++) {
@@ -54,10 +51,10 @@ public class PathFinder {
 
         expand(startNode, virtualMap, queue);
 
-        PathNode previousNode = startNode;
+        PathNode expandingNode = startNode;
 
         while(queue.size()>0){    //repeatedly polling from the queue and expand
-            PathNode expandingNode = queue.poll();
+            expandingNode = queue.poll();
             expand(expandingNode, virtualMap, queue);
 
             if(GlobalUtilities.sameLocation(expandingNode.index, goal)) {
@@ -66,13 +63,16 @@ public class PathFinder {
             }
         }
 
+        if(!GlobalUtilities.sameLocation(expandingNode.index, goal))
+            return null;
+
         Path path = new Path(virtualMap, goal);
-        path.print();
-        return null;
+
+        return path;
     }
 
 
-
+    //expand a node and mark its reachables nodes
     public void expand(PathNode thisNode, VirtualMap virtualMap, HeapPriorityQueue<PathNode> queue){
         thisNode.expanded = true;
         for(int[] reachableNodeIndex : thisNode.getReachableNodeIndices()){

@@ -34,6 +34,10 @@ public class Path {
         }
     }
 
+    public double getTotalCost(){
+        return totalCost;
+    }
+
 //    public double getTotalCost(){
 //        int previousOrientation = -1;
 //        double totolCost = 0;
