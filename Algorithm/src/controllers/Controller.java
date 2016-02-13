@@ -1,6 +1,7 @@
 package controllers;
 import algorithms.MazeExplorer;
 import algorithms.PathFinder;
+import algorithms.PathRunner;
 import models.*;
 import utilities.Orientation;
 
@@ -217,9 +218,22 @@ public class Controller {
 
         Path shortestPath = MazeExplorer.getInstance().explore(isRealRun);
 
+        if(shortestPath == null){
+            System.out.println("I can't find any path to the goal. I'm sorry!");
+            return;
+        }
+
         shortestPath.print();
 
-        System.out.print("The path cost is " + shortestPath.getTotalCost());
+        System.out.println("The path cost is " + shortestPath.getTotalCost());
+
+        try{
+            Thread.sleep(1000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+        PathRunner.getInstance().runPath(shortestPath, isRealRun);
 
         isDone = true;
     }

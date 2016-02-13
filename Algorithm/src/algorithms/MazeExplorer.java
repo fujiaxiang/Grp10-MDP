@@ -62,34 +62,50 @@ public class MazeExplorer {
 
             moves++;
         }
+        Path shortestPath = getReadyForShortestPath();
+        System.out.println("Exploration completed");
 
-        return getReadyForShortestPath();
+        return shortestPath;
 
     }
 
     //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
     public Path getReadyForShortestPath(){
 
+        Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
+        int[] start = robot.getPerceivedArena().getStart();
+        int[] goal = robot.getPerceivedArena().getGoal();
+
         Path pathStartFacingNorth, pathStartFacingEast;
 
+        boolean treatUnknownAsObstacle = true;
+
         //get path if robot starts facing north
-        pathStartFacingNorth = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getPerceivedArena().getStart(),
-                robot.getPerceivedArena().getGoal(), true, Orientation.NORTH);
+        pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
+
+        //if path does not exist
+        if(pathStartFacingNorth == null) {
+            treatUnknownAsObstacle = false;
+            //get path again
+            pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
+        }
+        //if path still does not exist even if unknown areas are treated free space
+        if(pathStartFacingNorth == null)
+            return null;
 
         //get path if robot starts facing east
-        pathStartFacingEast = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getPerceivedArena().getStart(),
-                robot.getPerceivedArena().getGoal(), true, Orientation.EAST);
+        pathStartFacingEast = PathFinder.getInstance().aStarStraight(maze, start, goal, true, Orientation.EAST);
 
         int targetFacingDirection;
         Path idealPath;
-        if(pathStartFacingNorth.getTotalCost() < pathStartFacingEast.getTotalCost()) {
-            targetFacingDirection = Orientation.NORTH;
+
+        if(pathStartFacingNorth.getTotalCost() < pathStartFacingEast.getTotalCost())
             idealPath = pathStartFacingNorth;
-        }
-        else {
-            targetFacingDirection = Orientation.EAST;
+        else
             idealPath = pathStartFacingEast;
-        }
+
+
+        targetFacingDirection = idealPath.getPathNodes().get(0).orientation;
 
         while(robot.getOrientation() != targetFacingDirection)
             rpiService.turn(Orientation.LEFT);
@@ -166,27 +182,22 @@ public class MazeExplorer {
     private void analyzeAndMove(){
         //update data
 
-//        if(getSensorReadings()[1] == 1)
-//            rpiService.turn(1);
-//        else
-//            rpiService.moveForward(1);
-
         if(isRightEmpty()) {
             rpiService.turn(Orientation.RIGHT);
             observe();
             rpiService.moveForward(1);
-//            System.out.println("Right is empty");
+
         } else if(isFrontEmpty()) {
             rpiService.moveForward(1);
-//            System.out.println("Front is empty");
+
         } else if(isLeftEmpty()) {
             rpiService.turn(Orientation.LEFT);
             observe();
             rpiService.moveForward(1);
-//            System.out.println("Left is empty");
+
         } else {
             rpiService.turn(Orientation.RIGHT);
-//            System.out.println("Nowhere is empty");
+
         }
 
     }

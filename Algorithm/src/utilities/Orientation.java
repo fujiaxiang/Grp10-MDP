@@ -27,7 +27,7 @@ public class Orientation {
     }
 
     public static int rotateLeft(int orientation){
-        return (orientation - 1) % 4;
+        return (orientation + 3) % 4;
     }
 
     public static int rotateRight(int orientation){
@@ -62,5 +62,9 @@ public class Orientation {
 
     public static int oppositeOrientation(int orientation){
         return (orientation + 2) % 4;
+    }
+
+    public static int whichDirectionToTurn(int targetOrientation, int initialOrientation){
+        return (targetOrientation - initialOrientation + 4) % 4;
     }
 }

@@ -30,12 +30,20 @@ public class Path {
     public void print(){
         System.out.println("The path is: ");
         for(PathNode node : pathNodes){
-            System.out.println("Index: " + node.index[0] + ", " + node.index[1]);
+            System.out.println("Index: " + node.index[0] + ", " + node.index[1] + "; Orientation: " + node.orientation);
         }
     }
 
     public double getTotalCost(){
         return totalCost;
+    }
+
+    public int[] getGoalIndex(){
+        return pathNodes.get(pathNodes.size()-1).index;
+    }
+
+    public ArrayList<PathNode> getPathNodes(){
+        return pathNodes;
     }
 
 //    public double getTotalCost(){

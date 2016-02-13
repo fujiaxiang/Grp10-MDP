@@ -75,6 +75,7 @@ public class PathFinder {
     //expand a node and mark its reachables nodes
     public void expand(PathNode thisNode, VirtualMap virtualMap, HeapPriorityQueue<PathNode> queue){
         thisNode.expanded = true;
+//        System.out.println("****Expanded index: " + thisNode.index[0] + ", " + thisNode.index[1]);
         for(int[] reachableNodeIndex : thisNode.getReachableNodeIndices()){
             //trying to mark reachable nodes and ignore those that are out of index bound
             try{
@@ -95,7 +96,7 @@ public class PathFinder {
 
             //if orienation is opposite, turn twice
             else if(orientation == Orientation.oppositeOrientation(previousNode.orientation))
-            stepCost += 2 * PathFinder.COST_TO_MAKE_A_TURN;
+                stepCost += 2 * PathFinder.COST_TO_MAKE_A_TURN;
 
             //otherwise, turn once
             else
