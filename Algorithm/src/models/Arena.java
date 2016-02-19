@@ -99,4 +99,56 @@ public class Arena {
             System.out.println();
         }
     }
+
+    private final int BREAKS_TO_SEPARATE_DESCRIPTOR_PARTS = 2;
+
+    public String toMapDescriptor(){
+        String descriptorPart1 = "11\n";
+        String descriptorPart2 = "";
+        for(int i= ROW-1; i>=0; i--) {
+            for (int j = 0; j < COL; j++) {
+                if (maze[i][j] == mazeState.unknown)
+                    descriptorPart1 += "0";
+                else {
+                    descriptorPart1 += "1";
+                    if(maze[i][j] == mazeState.freeSpace)
+                        descriptorPart2 += "0";
+                    else
+                        descriptorPart2 += "1";
+                }
+            }
+            descriptorPart1 += "\n";
+            descriptorPart2 += "\n";
+        }
+        descriptorPart1 += "\n11";
+        for(int i = 0; i< (8- (descriptorPart2.length() % 8)); i++)
+            descriptorPart2 += "1";
+
+        String separate = "";
+        for(int i = 0; i< BREAKS_TO_SEPARATE_DESCRIPTOR_PARTS; i++)
+            separate += "\n";
+        return descriptorPart1 + separate + ";\n"+ descriptorPart2;
+    }
+
+    public void loadMapDescriptor(String descriptor){
+        String[] descriptors = descriptor.split(";");
+        int counter1 = 3;
+        int counter2 = 1;
+        for(int i= ROW-1; i>=0; i--) {
+            for (int j = 0; j < COL; j++) {
+                if(descriptors[0].charAt(counter1) == '1'){
+                    if(descriptors[1].charAt(counter2) == '1')
+                        maze[i][j] = mazeState.obstacle;
+                    else
+                        maze[i][j] = mazeState.freeSpace;
+                }else
+                    maze[i][j] = mazeState.unknown;
+
+                counter1++;
+                counter2++;
+            }
+            counter1++;
+            counter2++;
+        }
+    }
 }

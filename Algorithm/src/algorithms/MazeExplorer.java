@@ -82,11 +82,13 @@ public class MazeExplorer {
 
         boolean treatUnknownAsObstacle = true;
 
+
+
         //get path if robot starts facing north
         pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
 
         //if path does not exist
-        if(pathStartFacingNorth == null) {
+        if(pathStartFacingNorth == null){
             treatUnknownAsObstacle = false;
             //get path again
             pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
@@ -105,7 +107,6 @@ public class MazeExplorer {
             idealPath = pathStartFacingNorth;
         else
             idealPath = pathStartFacingEast;
-
 
         targetFacingDirection = idealPath.getPathNodes().get(0).orientation;
 

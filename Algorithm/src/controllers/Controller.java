@@ -236,6 +236,7 @@ public class Controller {
         PathRunner.getInstance().runPath(shortestPath, isRealRun);
 
         isDone = true;
+//        isStopped = true;
     }
 
     public int[][] getDetected(){
