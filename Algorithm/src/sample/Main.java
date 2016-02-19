@@ -3,6 +3,7 @@ package sample;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -12,6 +13,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -40,11 +42,18 @@ public class Main extends Application {
     private final int MARGIN = 20;
     private final int BUTTON_WIDTH = 100;
     private final int BUTTON_HEIGHT = 30;
+
     private final int BUTTON_SIDE_Y = CANVAS_Y;
     private final int BUTTON_SIDE_X = DRAW_CANVAS_X+CANVAS_WIDTH+MARGIN;
     private final int BUTTON_BOTTOM_X = DRAW_CANVAS_X;
     private final int BUTTON_BOTTOM_Y = CANVAS_Y+CANVAS_HEIGHT+MARGIN;
     private final int ROBOT_CANVAS_X	= BUTTON_SIDE_X+BUTTON_WIDTH+MARGIN;
+    private final int TEXTFIELD_WIDTH = 100;
+    private final int TEXTFIELD_HEIGHT = 25;
+    private final int BOTTOM_LABEL_X = ROBOT_CANVAS_X;
+    private final int BOTTOM_LABEL_WIDTH = 130;
+    private final int TEXTFIELD_X = ROBOT_CANVAS_X+BOTTOM_LABEL_WIDTH;
+    private final int TEXTFIELD_Y = BUTTON_BOTTOM_Y;
     private final int LABEL_TIMER_WIDTH = 50;
     private final int SLEEP_DURATION    = 10;
     private final int TIMER_UPDATE_DURATION = 100;
@@ -76,6 +85,8 @@ public class Main extends Application {
     private ComboBox<String> ddl;
     private ComboBox<Integer> speed_ddl;
     private Label text_timer;
+    private TextField timelimit_input;
+    private TextField coveragelimit_input;
     private int draw_mode = OBSTACLE;
     private int[][] robot_loc_array;
     private int clicked_row,clicked_col;//for robot drag effect
@@ -105,6 +116,12 @@ public class Main extends Application {
         g.getChildren().add(getSpeedDropdownlist());
         g.getChildren().add(getTextTimer());
         g.getChildren().add(createTextLabel());
+
+        g.getChildren().add(getTimeLimitInput());
+        g.getChildren().add(getCoverageLimitInput());
+        g.getChildren().add(createTimeLimitLabel());
+        g.getChildren().add(createCoverageLimitLabel());
+        g.getChildren().add(createCoveragePercentageLabel());
         return g;
     }
 
@@ -418,6 +435,56 @@ public class Main extends Application {
         button.setOnAction(listener);
         return button;
     }
+
+    private TextField getTimeLimitInput(){
+        if(timelimit_input == null) {
+            timelimit_input = new TextField(Integer.toString(controller.getTimeLimit()));
+            timelimit_input.setLayoutX(TEXTFIELD_X);
+            timelimit_input.setLayoutY(TEXTFIELD_Y);
+            timelimit_input.setPrefSize(TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT);
+            timelimit_input.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    System.out.println(newValue);
+                }
+            });
+        }
+        return timelimit_input;
+    }
+
+    private TextField getCoverageLimitInput(){
+        if(coveragelimit_input == null) {
+            coveragelimit_input = new TextField(Double.toString(controller.getCoverageLimit()));
+            coveragelimit_input.setLayoutX(TEXTFIELD_X);
+            coveragelimit_input.setLayoutY(TEXTFIELD_Y+TEXTFIELD_HEIGHT);
+            coveragelimit_input.setPrefSize(TEXTFIELD_WIDTH-20, TEXTFIELD_HEIGHT);
+        }
+        return coveragelimit_input;
+    }
+    private Label createTimeLimitLabel(){
+        Label timer_label = new Label("Time Limit (Seconds) : ");
+        timer_label.setLayoutX(BOTTOM_LABEL_X);
+        timer_label.setLayoutY(getTimeLimitInput().getLayoutY());
+        timer_label.setPrefSize(BOTTOM_LABEL_WIDTH, TEXTFIELD_HEIGHT);
+        return timer_label;
+    }
+
+    private Label createCoverageLimitLabel(){
+        Label coverage_label = new Label("Coverage Limit : ");
+        coverage_label.setLayoutX(BOTTOM_LABEL_X);
+        coverage_label.setLayoutY(getCoverageLimitInput().getLayoutY());
+        coverage_label.setPrefSize(BOTTOM_LABEL_WIDTH, TEXTFIELD_HEIGHT);
+        return coverage_label;
+    }
+
+    private Label createCoveragePercentageLabel(){
+        Label coverage_percentage_label = new Label("%");
+        coverage_percentage_label.setLayoutX(getCoverageLimitInput().getLayoutX()+getCoverageLimitInput().getPrefWidth()+5);
+        coverage_percentage_label.setLayoutY(getCoverageLimitInput().getLayoutY());
+        coverage_percentage_label.setPrefSize(20, TEXTFIELD_HEIGHT);
+        return coverage_percentage_label;
+    }
+
 
     private void drawRobot(GraphicsContext g){
         int orientation = controller.getRobotOrientation1357();

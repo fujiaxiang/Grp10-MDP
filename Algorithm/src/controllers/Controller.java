@@ -307,4 +307,45 @@ public class Controller {
     public int getTime(){return time;}
     public void updateTime(int time_elapse){time+=time_elapse;}
     public void resetTime(){time = 0;}
+
+    public double getCoverageLimit(){
+        return MazeExplorer.getInstance().TARGET_COVERAGE;
+    }
+
+    //if anything goes wrong,return false
+    public boolean setCoverageLimit(String input){
+        double value;
+        boolean error = false;
+        try{
+            value = Double.parseDouble(input);
+            if(value<0||value>1)throw new Exception("Incorrect Value (Less than 0 or more than 1) "+value);
+        }
+        catch(Exception ex){
+            value = MazeExplorer.DEFAULT_TARGET_COVERAGE;
+            error = true;
+        }
+        MazeExplorer.getInstance().TARGET_COVERAGE = value;
+        return error;
+    }
+
+    //if anything goes wrong,return false
+    public boolean setTimeLimit(String input){
+        int time;
+        boolean error = false;
+        try{
+            time = Integer.parseInt(input);
+            if(time<=0)throw new Exception("Incorrect Value (Less than or equal to 0) "+time);
+            time*=1000;
+        }
+        catch(Exception ex){
+            time = MazeExplorer.DEFAULT_TIME_LIMIT;
+            error = true;
+        }
+        MazeExplorer.getInstance().TIME_LIMIT = time;
+        return error;
+    }
+
+    public int getTimeLimit(){
+        return MazeExplorer.getInstance().TIME_LIMIT/1000;
+    }
 }

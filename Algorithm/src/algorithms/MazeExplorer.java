@@ -26,8 +26,11 @@ public class MazeExplorer {
     private static final int CALIBRATE_LIMIT = 5;
     private int calibrate_age;
 
+    public static final int DEFAULT_TIME_LIMIT = 6*60*1000;
+    public static final double DEFAULT_TARGET_COVERAGE = 1;
+
     public int TIME_LIMIT = 6 * 60 * 1000;   // 6 minutes
-    public int TARGET_COVERAGE = 1;           // 100%
+    public double TARGET_COVERAGE = 1;           // 100%
     private MazeExplorer(){}
 
     public static MazeExplorer getInstance(){
