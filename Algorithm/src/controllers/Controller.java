@@ -1,6 +1,5 @@
 package controllers;
 import algorithms.MazeExplorer;
-import algorithms.PathFinder;
 import algorithms.PathRunner;
 import models.*;
 import utilities.Orientation;
@@ -271,6 +270,14 @@ public class Controller {
         }
     }
 
+    public void saveMap() throws Exception{
+        FileController.getInstance().writeTo(FileController.MAP_FILE_NAME,arena.toMapDescriptor());
+    }
+
+    public void loadMap()throws Exception{
+        arena.loadMapDescriptor(FileController.getInstance().readFrom(FileController.MAP_FILE_NAME));
+    }
+
     public void setRobotOrientation(int orientation){robot.setOrientation(orientation);}
     public boolean isDone(){return isDone;}
     public boolean isStopped(){return isStopped;}
@@ -279,5 +286,13 @@ public class Controller {
     public void setSimulationSpeed(int speed){simulationSpeed = speed;}
     public Arena getArena() {
         return arena;
+    }
+    public boolean[][] getArenaInformation(){
+        boolean[][] arena_maze = new boolean[Arena.ROW][Arena.COL];
+        Arena.mazeState[][] maze = arena.getMaze();
+        for(int i = 0; i< maze.length; i++)
+            for(int j=0;j<maze[i].length;j++)
+                arena_maze[i][j] = maze[i][j]==Arena.mazeState.obstacle;
+        return arena_maze;
     }
 }

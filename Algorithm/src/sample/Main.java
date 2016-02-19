@@ -229,16 +229,11 @@ public class Main extends Application {
         draw_gc = c.getGraphicsContext2D();
 
         //initialize Maze canvas
-        for(int i=0;i<Arena.ROW;i++)
-            for(int j=0;j<Arena.COL;j++)
-                drawGrid(draw_gc,i,j,COLOR_PATH);
+        drawMaze(draw_gc);
+
         //start goal
-        for(int j=0;j<2;j++)
-            for(int i:controller.getStartGoalLoc(j%2==0)){
-                int row = i/Arena.COL;
-                int col = i%Arena.COL;
-                drawGrid(draw_gc,row,col,j%2==0?COLOR_START:COLOR_GOAL);
-            }
+        drawStartGoal(draw_gc);
+
         return c;
     }
 
@@ -249,11 +244,25 @@ public class Main extends Application {
         robot_gc = c.getGraphicsContext2D();
 
         //initialize Maze canvas
-        for(int i=0;i<Arena.ROW;i++)
-            for(int j=0;j<Arena.COL;j++)
-                drawGrid(robot_gc,i,j,COLOR_PATH);
+        drawMaze(robot_gc);
         //start goal
         return c;
+    }
+
+    private void drawMaze(GraphicsContext gc){
+        boolean[][] map_data = controller.getArenaInformation();
+        for(int i=0;i<map_data.length;i++)
+            for(int j=0;j<map_data[i].length;j++)
+                drawGrid(gc,i,j,map_data[i][j]?COLOR_OBSTACLE:COLOR_PATH);
+    }
+
+    private void drawStartGoal(GraphicsContext gc){
+        for(int j=0;j<2;j++)
+            for(int i:controller.getStartGoalLoc(j%2==0)){
+                int row = i/Arena.COL;
+                int col = i%Arena.COL;
+                drawGrid(gc,row,col,j%2==0?COLOR_START:COLOR_GOAL);
+            }
     }
 
     private void drawGrid(GraphicsContext gc,int row,int col,Color color){
@@ -300,10 +309,29 @@ public class Main extends Application {
         time = 0;
         EventHandler handler = (event)-> {
             if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[0])){
+                //Save map
+                try{
+                    controller.saveMap();
+                    System.out.println("Map Saved");
+                }
+                catch(Exception ex){
+                    //Create dialog
+                    ex.printStackTrace();
+                }
 
             }
             else if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[1])){
-
+                //Load map
+                try{
+                    controller.loadMap();
+                    drawMaze(draw_gc);
+                    drawStartGoal(draw_gc);
+                    System.out.println("Map Loaded");
+                }
+                catch(Exception ex){
+                    //Create dialog
+                    ex.printStackTrace();
+                }
             }
             else if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[2])){
                 drawRobot(robot_gc);
