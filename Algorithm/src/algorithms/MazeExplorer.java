@@ -23,6 +23,9 @@ public class MazeExplorer {
     private RPiServiceInterface rpiService;
     private SensorServiceInterface sensorService;
 
+    private static final int CALIBRATE_LIMIT = 5;
+    private int calibrate_age;
+
     private MazeExplorer(){}
 
     public static MazeExplorer getInstance(){
@@ -263,5 +266,27 @@ public class MazeExplorer {
         controller.detect(readings);
     }
 
+    //return (RELATIVE) orientation that can use to calibrate
+    //behind is not considered
+    //return -1 for unable/unecessary  to calibrate
+    private int checkCalibrate(){
+        if(calibrate_age++<CALIBRATE_LIMIT) return -1;//still too early to calibrate
 
+        if(locateObstacle("topLeft", Orientation.FRONT)==1&&locateObstacle("topCenter", Orientation.FRONT)==1
+                &&locateObstacle("topRight", Orientation.FRONT)==1)
+            return Orientation.FRONT;
+        else if(locateObstacle("topLeft", Orientation.LEFT)==1&&locateObstacle("middleLeft", Orientation.LEFT)==1
+                &&locateObstacle("bottomLeft", Orientation.LEFT)==1)
+            return Orientation.LEFT;
+        else if(locateObstacle("topRight", Orientation.RIGHT)==1&&locateObstacle("middleRight", Orientation.RIGHT)==1
+                &&locateObstacle("bottomRight", Orientation.RIGHT)==1)
+            return Orientation.RIGHT;
+        return -1;
+    }
+
+
+    private void calibrate(int orientation){
+        rpiService.turn(orientation);//turn to face the wall/long obstacle
+        rpiService.callibrate();
+    }
 }
