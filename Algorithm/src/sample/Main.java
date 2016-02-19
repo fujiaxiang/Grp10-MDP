@@ -124,6 +124,7 @@ public class Main extends Application {
         g.getChildren().add(createTimeLimitLabel());
         g.getChildren().add(createCoverageLimitLabel());
         g.getChildren().add(createCoveragePercentageLabel());
+        g.getChildren().add(createLimitButton());
         return g;
     }
 
@@ -444,38 +445,16 @@ public class Main extends Application {
             timelimit_input.setLayoutX(TEXTFIELD_X);
             timelimit_input.setLayoutY(TEXTFIELD_Y);
             timelimit_input.setPrefSize(TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT);
-            timelimit_input.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    if(event.getCode()== KeyCode.ENTER){
-                        if(controller.setTimeLimit(timelimit_input.getText())){
-                            System.err.println("ERROR INPUT");
-                           timelimit_input.setText(Integer.toString(controller.getTimeLimit()));
-                        }
-                    }
-                }
-            });
         }
         return timelimit_input;
     }
 
     private TextField getCoverageLimitInput(){
         if(coveragelimit_input == null) {
-            coveragelimit_input = new TextField(Double.toString(controller.getCoverageLimit()));
+            coveragelimit_input = new TextField(Integer.toString(controller.getCoverageLimit()));
             coveragelimit_input.setLayoutX(TEXTFIELD_X);
             coveragelimit_input.setLayoutY(TEXTFIELD_Y+TEXTFIELD_HEIGHT);
             coveragelimit_input.setPrefSize(TEXTFIELD_WIDTH-20, TEXTFIELD_HEIGHT);
-            coveragelimit_input.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    if(event.getCode()== KeyCode.ENTER){
-                        if(controller.setCoverageLimit(coveragelimit_input.getText())){
-                            System.err.println("ERROR INPUT");
-                            coveragelimit_input.setText(Double.toString(controller.getCoverageLimit()));
-                        }
-                    }
-                }
-            });
         }
         return coveragelimit_input;
     }
@@ -501,6 +480,24 @@ public class Main extends Application {
         coverage_percentage_label.setLayoutY(getCoverageLimitInput().getLayoutY());
         coverage_percentage_label.setPrefSize(20, TEXTFIELD_HEIGHT);
         return coverage_percentage_label;
+    }
+
+    //Create all side buttons
+    private Button createLimitButton(){
+        Button button;
+        EventHandler handler = (event)->{
+            if(controller.setCoverageLimit(coveragelimit_input.getText())){
+                System.err.println("ERROR INPUT@CoverageLimit");
+                coveragelimit_input.setText(Integer.toString(controller.getCoverageLimit()));
+            }
+            if(controller.setTimeLimit(timelimit_input.getText())){
+                System.err.println("ERROR INPUT@TimeLimit");
+                timelimit_input.setText(Integer.toString(controller.getTimeLimit()));
+            }
+        };
+        //insert button
+        button = createButton("Update",BOTTOM_LABEL_X,getCoverageLimitInput().getLayoutY()+getCoverageLimitInput().getPrefHeight(),null,handler);
+        return button;
     }
 
 
