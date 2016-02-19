@@ -78,7 +78,6 @@ public class Main extends Application {
     private Label text_timer;
     private int draw_mode = OBSTACLE;
     private int[][] robot_loc_array;
-    private long time;
     private int clicked_row,clicked_col;//for robot drag effect
     private final int DRAG_THRESHOLD = 3;
 
@@ -306,7 +305,6 @@ public class Main extends Application {
     //Create bottom buttons
     private Button[] createBottomButtons(){
         Button[] buttons = new Button[BOTTOM_BUTTON_TEXT.length];
-        time = 0;
         EventHandler handler = (event)-> {
             if(event.getTarget().toString().contains(BOTTOM_BUTTON_TEXT[0])){
                 //Save map
@@ -397,9 +395,9 @@ public class Main extends Application {
                 timer_timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        time+=100;
+                        controller.updateTime(TIMER_UPDATE_DURATION);
                         Platform.runLater(()->{
-                            getTextTimer().setText(Long.toString(time));
+                            getTextTimer().setText(Long.toString(controller.getTime()));
                         });
                     }
                 },0,TIMER_UPDATE_DURATION);

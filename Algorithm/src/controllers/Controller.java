@@ -18,9 +18,11 @@ public class Controller {
     private boolean isDone;//indicate an action issued is done
     private boolean update;//indicate whether an udpate is needed
     private boolean isStopped;
+    private int time;
     public static int simulationSpeed = 10; //10 being the standard speed
     private final int NUMBER_OF_SENSOR = 5;
     private static Controller instance;
+
 
     public static final int ABSOLUTE_ROW = 0;
     public static final int ABSOLUTE_COL = 1;
@@ -59,6 +61,8 @@ public class Controller {
         location = new int[9][2];
         for(int i=0;i<location.length;i++)
             location[i][0] = -1;//used as a block to previous
+
+        time = 0;
     }
 
     public Arena.mazeState[][] getMaze(){
@@ -204,6 +208,7 @@ public class Controller {
 
 
     public void startRobot() {
+        resetTime();
         isDone = false;
         isStopped = false;
 
@@ -298,4 +303,8 @@ public class Controller {
                 arena_maze[i][j] = maze[i][j]==Arena.mazeState.obstacle;
         return arena_maze;
     }
+
+    public int getTime(){return time;}
+    public void updateTime(int time_elapse){time+=time_elapse;}
+    public void resetTime(){time = 0;}
 }
