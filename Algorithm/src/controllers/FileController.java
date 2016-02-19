@@ -32,6 +32,7 @@ public class FileController {
         while((k=fis.read())!=-1)
            b[i++] = (byte)k;
         result = new String(b);
+        fis.close();
         return result;
     }
 }
