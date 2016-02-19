@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -442,10 +444,15 @@ public class Main extends Application {
             timelimit_input.setLayoutX(TEXTFIELD_X);
             timelimit_input.setLayoutY(TEXTFIELD_Y);
             timelimit_input.setPrefSize(TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT);
-            timelimit_input.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
+            timelimit_input.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    System.out.println(newValue);
+                public void handle(KeyEvent event) {
+                    if(event.getCode()== KeyCode.ENTER){
+                        if(!controller.setTimeLimit(timelimit_input.getText())){
+                            System.err.println("ERROR INPUT");
+                           timelimit_input.setText(Integer.toString(controller.getTimeLimit()));
+                        }
+                    }
                 }
             });
         }
@@ -458,6 +465,17 @@ public class Main extends Application {
             coveragelimit_input.setLayoutX(TEXTFIELD_X);
             coveragelimit_input.setLayoutY(TEXTFIELD_Y+TEXTFIELD_HEIGHT);
             coveragelimit_input.setPrefSize(TEXTFIELD_WIDTH-20, TEXTFIELD_HEIGHT);
+            coveragelimit_input.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    if(event.getCode()== KeyCode.ENTER){
+                        if(!controller.setCoverageLimit(coveragelimit_input.getText())){
+                            System.err.println("ERROR INPUT");
+                            coveragelimit_input.setText(Double.toString(controller.getCoverageLimit()));
+                        }
+                    }
+                }
+            });
         }
         return coveragelimit_input;
     }
