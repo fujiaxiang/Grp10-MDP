@@ -53,6 +53,7 @@ public class MazeExplorer {
         robot.printStatus();
 
         int moves = 0; //keeping track of the moves robot has made
+        calibrate_age = 0;
         while(!controller.isStopped()){
 
             observe();
@@ -288,5 +289,6 @@ public class MazeExplorer {
     private void calibrate(int orientation){
         rpiService.turn(orientation);//turn to face the wall/long obstacle
         rpiService.callibrate();
+        calibrate_age = 0;
     }
 }
