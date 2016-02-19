@@ -9,6 +9,7 @@ public class FileController {
     private static FileController instance;
 
     public static String MAP_FILE_NAME = "map.txt";
+    public static String PERCEIVED_MAP_NAME = "perceived_map.txt";
 
     public static FileController getInstance(){
         if(instance==null){
