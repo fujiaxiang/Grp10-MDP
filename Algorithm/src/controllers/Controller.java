@@ -308,8 +308,8 @@ public class Controller {
     public void updateTime(int time_elapse){time+=time_elapse;}
     public void resetTime(){time = 0;}
 
-    public double getCoverageLimit(){
-        return MazeExplorer.getInstance().TARGET_COVERAGE;
+    public int getCoverageLimit(){
+        return (int)MazeExplorer.getInstance().TARGET_COVERAGE*100;
     }
 
     //if anything goes wrong,return false
@@ -317,8 +317,9 @@ public class Controller {
         double value;
         boolean error = false;
         try{
-            value = Double.parseDouble(input);
-            if(value<0||value>1)throw new Exception("Incorrect Value (Less than 0 or more than 1) "+value);
+            value = Double.parseDouble(input)/100;
+            System.out.println(value);
+            if(value<0||value>1)throw new Exception("Incorrect Value (Less than 0 or more than 100) "+value);
         }
         catch(Exception ex){
             value = MazeExplorer.DEFAULT_TARGET_COVERAGE;
