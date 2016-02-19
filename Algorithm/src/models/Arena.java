@@ -151,4 +151,14 @@ public class Arena {
             counter2++;
         }
     }
+
+    public double coverage(){
+        int cover = 0;
+        for(int i=0; i<ROW; i++)
+            for(int j=0; j<COL; j++){
+                if(maze[i][j] != mazeState.unknown)
+                    cover++;
+            }
+        return cover / (ROW * COL);
+    }
 }

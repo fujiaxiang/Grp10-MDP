@@ -26,6 +26,8 @@ public class MazeExplorer {
     private static final int CALIBRATE_LIMIT = 5;
     private int calibrate_age;
 
+    public int TIME_LIMIT = 6 * 60 * 1000;   // 6 minutes
+    public int TARGET_COVERAGE = 1;           // 100%
     private MazeExplorer(){}
 
     public static MazeExplorer getInstance(){
@@ -57,6 +59,17 @@ public class MazeExplorer {
 
         while(!controller.isStopped()){
 
+            if(controller.getTime()>TIME_LIMIT){
+                System.out.print("Explorations exceeds time limit, taking action...");
+                notEnoughTimeAction();
+                break;
+            }
+
+            if(robot.getPerceivedArena().coverage()>TARGET_COVERAGE){
+                System.out.print("Explorations reached coverage target, taking action...");
+                targetCoverageReachedAction();
+            }
+
             observe();
 
             analyzeAndMove();
@@ -75,6 +88,9 @@ public class MazeExplorer {
         return shortestPath;
 
     }
+
+    private void notEnoughTimeAction(){}
+    private void targetCoverageReachedAction(){}
 
 
     private void observe(){

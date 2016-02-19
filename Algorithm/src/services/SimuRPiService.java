@@ -59,7 +59,7 @@ public class SimuRPiService implements RPiServiceInterface{
         System.out.println("Robot calibrating calibrating");
         robot.printStatus();
         try {
-            Thread.sleep(1000/Controller.simulationSpeed);
+            Thread.sleep(2000/Controller.simulationSpeed);
         }catch (InterruptedException e){
             e.printStackTrace();
         }
