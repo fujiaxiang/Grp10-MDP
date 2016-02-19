@@ -40,6 +40,8 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public int turn(int direction) {
+        if(direction == Orientation.FRONT)
+            return -1;
         try {
             Thread.sleep(500/Controller.simulationSpeed);
         } catch (InterruptedException e) {
@@ -54,11 +56,14 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public int callibrate() {
+        System.out.println("Robot calibrating calibrating");
+        robot.printStatus();
         try {
-            Thread.sleep(10000/Controller.simulationSpeed);
+            Thread.sleep(1000/Controller.simulationSpeed);
         }catch (InterruptedException e){
             e.printStackTrace();
         }
+        System.out.println("Robot calibrated!!");
         return 0;
     }
 

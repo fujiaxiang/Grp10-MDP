@@ -1,5 +1,7 @@
 package services;
 
+import utilities.Orientation;
+
 /**
  * Created by Jiaxiang on 22/1/16.
  */
@@ -22,6 +24,8 @@ public class RealRPiService implements RPiServiceInterface {
 
     @Override
     public int turn(int direction) {
+        if(direction == Orientation.FRONT)
+            return -1;
         return 0;
     }
 

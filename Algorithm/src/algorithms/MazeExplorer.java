@@ -53,7 +53,8 @@ public class MazeExplorer {
         robot.printStatus();
 
         int moves = 0; //keeping track of the moves robot has made
-        calibrate_age = 0;
+        calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
+
         while(!controller.isStopped()){
 
             observe();
@@ -73,52 +74,6 @@ public class MazeExplorer {
 
         return shortestPath;
 
-    }
-
-    //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
-    public Path getReadyForShortestPath(){
-
-        Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
-        int[] start = robot.getPerceivedArena().getStart();
-        int[] goal = robot.getPerceivedArena().getGoal();
-
-        Path pathStartFacingNorth, pathStartFacingEast;
-
-        boolean treatUnknownAsObstacle = true;
-
-
-
-        //get path if robot starts facing north
-        pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
-
-        //if path does not exist
-        if(pathStartFacingNorth == null){
-            treatUnknownAsObstacle = false;
-            //get path again
-            pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
-        }
-        //if path still does not exist even if unknown areas are treated free space
-        if(pathStartFacingNorth == null)
-            return null;
-
-        //get path if robot starts facing east
-        pathStartFacingEast = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.EAST);
-
-        int targetFacingDirection;
-        Path idealPath;
-
-        if(pathStartFacingNorth.getTotalCost() < pathStartFacingEast.getTotalCost())
-            idealPath = pathStartFacingNorth;
-        else
-            idealPath = pathStartFacingEast;
-
-        targetFacingDirection = idealPath.getPathNodes().get(0).orientation;
-
-        while(robot.getOrientation() != targetFacingDirection)
-            rpiService.turn(Orientation.LEFT);
-
-        //return the ideal path
-        return idealPath;
     }
 
 
@@ -173,9 +128,9 @@ public class MazeExplorer {
         }catch (Exception e){
             e.printStackTrace();
 
-            //if something goes wrong, retry after 0.5 second
+            //if something goes wrong, retry after 1 milisecond
             try{
-                Thread.sleep(500);
+                Thread.sleep(1);
             }catch (InterruptedException expt){
                 expt.printStackTrace();
             }
@@ -187,7 +142,8 @@ public class MazeExplorer {
 
 
     private void analyzeAndMove(){
-        //update data
+
+        analyzeAndCalibrate();
 
         if(isRightEmpty()) {
             rpiService.turn(Orientation.RIGHT);
@@ -231,7 +187,7 @@ public class MazeExplorer {
     }
 
     //This method reads data stored in Robot.getInstance().getPerceivedArena() rather than sensor readings
-    //and locates the obstacle given a absolute relative location and relative orientation
+    //and locates the obstacle given a relative location and relative orientation
     private int locateObstacle(String relativeLocation, int relativeOrientation) {
         Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
         for(int step=1; step<Math.max(Arena.ROW,Arena.COL); step++){
@@ -257,6 +213,52 @@ public class MazeExplorer {
         return absoluteLocation;
     }
 
+    //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
+    public Path getReadyForShortestPath(){
+
+        Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
+        int[] start = robot.getPerceivedArena().getStart();
+        int[] goal = robot.getPerceivedArena().getGoal();
+
+        Path pathStartFacingNorth, pathStartFacingEast;
+
+        boolean treatUnknownAsObstacle = true;
+
+
+
+        //get path if robot starts facing north
+        pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
+
+        //if path does not exist
+        if(pathStartFacingNorth == null){
+            treatUnknownAsObstacle = false;
+            //get path again
+            pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
+        }
+        //if path still does not exist even if unknown areas are treated free space
+        if(pathStartFacingNorth == null)
+            return null;
+
+        //get path if robot starts facing east
+        pathStartFacingEast = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.EAST);
+
+        int targetFacingDirection;
+        Path idealPath;
+
+        if(pathStartFacingNorth.getTotalCost() < pathStartFacingEast.getTotalCost())
+            idealPath = pathStartFacingNorth;
+        else
+            idealPath = pathStartFacingEast;
+
+        targetFacingDirection = idealPath.getPathNodes().get(0).orientation;
+
+        while(robot.getOrientation() != targetFacingDirection)
+            rpiService.turn(Orientation.LEFT);
+
+        //return the ideal path
+        return idealPath;
+    }
+
     //notify UI a change is made to the robot
     public void notifyUIChange() {
         controller.setUpdate(true);
@@ -265,6 +267,13 @@ public class MazeExplorer {
     //update UI after getting sensor readings
     private void markObstaclesOnUI(int[] readings){
         controller.detect(readings);
+    }
+
+
+    private void analyzeAndCalibrate(){
+        int orientation = checkCalibrate();
+        if(orientation >= Orientation.FRONT)
+            calibrate(orientation);
     }
 
     //return (RELATIVE) orientation that can use to calibrate
@@ -276,19 +285,21 @@ public class MazeExplorer {
         if(locateObstacle("topLeft", Orientation.FRONT)==1&&locateObstacle("topCenter", Orientation.FRONT)==1
                 &&locateObstacle("topRight", Orientation.FRONT)==1)
             return Orientation.FRONT;
-        else if(locateObstacle("topLeft", Orientation.LEFT)==1&&locateObstacle("middleLeft", Orientation.LEFT)==1
-                &&locateObstacle("bottomLeft", Orientation.LEFT)==1)
-            return Orientation.LEFT;
         else if(locateObstacle("topRight", Orientation.RIGHT)==1&&locateObstacle("middleRight", Orientation.RIGHT)==1
                 &&locateObstacle("bottomRight", Orientation.RIGHT)==1)
             return Orientation.RIGHT;
+        else if(locateObstacle("topLeft", Orientation.LEFT)==1&&locateObstacle("middleLeft", Orientation.LEFT)==1
+                &&locateObstacle("bottomLeft", Orientation.LEFT)==1)
+            return Orientation.LEFT;
         return -1;
     }
 
 
     private void calibrate(int orientation){
-        rpiService.turn(orientation);//turn to face the wall/long obstacle
+        rpiService.turn(orientation);  //turn to face the wall/long obstacle
         rpiService.callibrate();
+        if(orientation != Orientation.FRONT)
+            rpiService.turn(Orientation.oppositeOrientation(orientation));
         calibrate_age = 0;
     }
 }
