@@ -448,7 +448,7 @@ public class Main extends Application {
                 @Override
                 public void handle(KeyEvent event) {
                     if(event.getCode()== KeyCode.ENTER){
-                        if(!controller.setTimeLimit(timelimit_input.getText())){
+                        if(controller.setTimeLimit(timelimit_input.getText())){
                             System.err.println("ERROR INPUT");
                            timelimit_input.setText(Integer.toString(controller.getTimeLimit()));
                         }
@@ -469,7 +469,7 @@ public class Main extends Application {
                 @Override
                 public void handle(KeyEvent event) {
                     if(event.getCode()== KeyCode.ENTER){
-                        if(!controller.setCoverageLimit(coveragelimit_input.getText())){
+                        if(controller.setCoverageLimit(coveragelimit_input.getText())){
                             System.err.println("ERROR INPUT");
                             coveragelimit_input.setText(Double.toString(controller.getCoverageLimit()));
                         }

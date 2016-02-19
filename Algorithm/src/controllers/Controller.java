@@ -323,6 +323,7 @@ public class Controller {
         catch(Exception ex){
             value = MazeExplorer.DEFAULT_TARGET_COVERAGE;
             error = true;
+            ex.printStackTrace();
         }
         MazeExplorer.getInstance().TARGET_COVERAGE = value;
         return error;
@@ -340,6 +341,7 @@ public class Controller {
         catch(Exception ex){
             time = MazeExplorer.DEFAULT_TIME_LIMIT;
             error = true;
+            ex.printStackTrace();
         }
         MazeExplorer.getInstance().TIME_LIMIT = time;
         return error;
