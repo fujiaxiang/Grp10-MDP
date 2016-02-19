@@ -60,14 +60,15 @@ public class MazeExplorer {
         while(!controller.isStopped()){
 
             if(controller.getTime()>TIME_LIMIT){
-                System.out.print("Explorations exceeds time limit, taking action...");
+                System.out.println("Explorations exceeds time limit, taking action...");
                 notEnoughTimeAction();
-                break;
+                return null;   // need to change if robot want to do something after terminated
             }
 
             if(robot.getPerceivedArena().coverage()>TARGET_COVERAGE){
-                System.out.print("Explorations reached coverage target, taking action...");
+                System.out.println("Explorations reached coverage target, taking action...");
                 targetCoverageReachedAction();
+                return null;   // need to change if robot want to do something after terminated
             }
 
             observe();
