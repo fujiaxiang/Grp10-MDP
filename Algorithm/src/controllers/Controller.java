@@ -227,9 +227,12 @@ public class Controller {
         System.out.println("The path cost is " + shortestPath.getTotalCost());
 
         try{
+            FileController.getInstance().writeTo(FileController.PERCEIVED_MAP_NAME, robot.getPerceivedArena().toMapDescriptor());
             Thread.sleep(1000);
         }catch (InterruptedException e){
             e.printStackTrace();
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
 
         PathRunner.getInstance().runPath(shortestPath, isRealRun);
