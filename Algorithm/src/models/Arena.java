@@ -152,6 +152,7 @@ public class Arena {
         }
     }
 
+    //returns the percentage of map that has been covered by detected areas
     public double coverage(){
         int cover = 0;
         for(int i=0; i<ROW; i++)
@@ -159,6 +160,6 @@ public class Arena {
                 if(maze[i][j] != mazeState.unknown)
                     cover++;
             }
-        return cover / (ROW * COL);
+        return (double) cover / (ROW * COL);
     }
 }
