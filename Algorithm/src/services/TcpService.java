@@ -13,7 +13,7 @@ import java.util.Scanner;
  */
 public class TcpService {
 
-    public static final String RPI_IP_ADDRESS = "192.168.10.88";
+    public static final String RPI_IP_ADDRESS = "192.168.10.10";
     public static final int RPI_PORT = 5182;
 
     private static TcpService instance;
@@ -21,69 +21,81 @@ public class TcpService {
     private PrintWriter toRPi;
     private Scanner fromRPi;
 
-    private TcpService() {
+    private TcpService(){}
 
-    }
-
-    public static TcpService getInstance() {
+    public static TcpService getInstance(){
         if (instance == null) {
             instance = new TcpService();
         }
         return instance;
     }
 
-    public static void main (String[] args) throws IOException {
+    public static void main (String[] args){
 
         TcpService tcpService = TcpService.getInstance();
-        try {
-            tcpService.connectToHost(RPI_IP_ADDRESS, RPI_PORT);
-        }catch (IOException e){
-            e.printStackTrace();
-            tcpService.connectToHost(RPI_IP_ADDRESS, RPI_PORT);
-        }
-        System.out.println("RPi successfully connected");
+        tcpService.connectToHost();
+
         int tests = 0;
-        while (tests < 10) {
+        while (tests < 10){
             tcpService.sendMessage("Message successfully sent from pc to rpi");
             String msgReceived = tcpService.readMessage();
             System.out.println("Message received: "+ msgReceived);
             tests++;
         }
         tcpService.closeConnection();
+
+    }
+
+    public void connectToHost(){
+        try {
+            clientSocket = new Socket(RPI_IP_ADDRESS, RPI_PORT);
+            toRPi = new PrintWriter(clientSocket.getOutputStream());
+            fromRPi = new Scanner(clientSocket.getInputStream());
+        }catch (IOException ioe){
+            ioe.printStackTrace();
+            connectToHost();
+        }
+        System.out.println("RPi successfully connected");
+    }
+
+    public void closeConnection(){
+        try {
+            if (!clientSocket.isClosed()){
+                clientSocket.close();
+            }
+        }catch (IOException ioe){
+            ioe.printStackTrace();
+            closeConnection();
+        }
         System.out.println("Connection closed");
     }
 
-    public void connectToHost(String IPAddress, int portNumber) throws IOException{
-        clientSocket = new Socket(RPI_IP_ADDRESS, RPI_PORT);
-        toRPi = new PrintWriter(clientSocket.getOutputStream());
-        fromRPi = new Scanner(clientSocket.getInputStream());
-    }
-
-    public void closeConnection() throws IOException {
-        if (!clientSocket.isClosed()) {
-            clientSocket.close();
-        }
-    }
-
-    public void sendMessage(String message) throws IOException {
-        try{
-            connectToHost(RPI_IP_ADDRESS, RPI_PORT);
-        }catch (IOException e){
+    public void sendMessage(String message){
+        try {
+            toRPi.print(message);
+            toRPi.flush();
+        }catch (Exception e){
             e.printStackTrace();
-            connectToHost(RPI_IP_ADDRESS, RPI_PORT);
+            connectToHost();
+            sendMessage(message);
         }
-        toRPi.print(message);
-        toRPi.flush();
 
         System.out.println("Message sent: " + message);
-
-        closeConnection();
     }
 
-    public String readMessage() throws IOException {
+    public String readMessage(){
 
-        String messageReceived = fromRPi.nextLine();
-        System.out.println("Message received: " + messageReceived);
+        String messageReceived = "";
+
+        try {
+            messageReceived = fromRPi.nextLine();
+            System.out.println("Message received: " + messageReceived);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            closeConnection();
+            readMessage();
+        }
 
         return messageReceived;
     }
