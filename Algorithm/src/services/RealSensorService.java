@@ -1,6 +1,7 @@
 package services;
 
 import models.Sensor;
+import utilities.Messages;
 
 /**
  * Created by Jiaxiang on 22/1/16.
@@ -8,6 +9,8 @@ import models.Sensor;
 public class RealSensorService implements SensorServiceInterface{
 
     private static RealSensorService instance;
+
+    private TcpService tcpService = TcpService.getInstance();
 
     public static RealSensorService getInstance(){
         if(instance==null)
@@ -19,9 +22,16 @@ public class RealSensorService implements SensorServiceInterface{
 
     @Override
     public String detect() {
-        return null;
+
+        tcpService.sendMessage(Messages.arduinoCode + Messages.detectObstacles());
+
+        String returnMessage = tcpService.readMessage();
+        
+        return returnMessage;
     }
 
+
+    //this function is not used in real run
     @Override
     public int detectObstacle(Sensor sensor) {
         return 0;
