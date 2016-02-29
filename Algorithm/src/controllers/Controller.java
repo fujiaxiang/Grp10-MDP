@@ -234,16 +234,16 @@ public class Controller {
         try{
             FileController.getInstance().writeTo(FileController.PERCEIVED_MAP_NAME, robot.getPerceivedArena().toMapDescriptor());
             Thread.sleep(1000);
-        }catch (InterruptedException e){
+        }catch (InterruptedException ite){
+            ite.printStackTrace();
+        }catch (Exception e){
             e.printStackTrace();
-        }catch (Exception ex){
-            ex.printStackTrace();
         }
 
         PathRunner.getInstance().runPath(shortestPath, isRealRun);
 
         isDone = true;
-//        isStopped = true;
+        isStopped = true;
     }
 
     public int[][] getDetected(){

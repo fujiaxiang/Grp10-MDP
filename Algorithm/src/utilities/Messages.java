@@ -5,37 +5,62 @@ package utilities;
  */
 public class Messages {
 
+    //general constants
     public static final String androidCode = "a";
 
     public static final String arduinoCode = "h";
 
-    public static final String androidTest = "aMessage is sent from PC, ahahaha, you have been hacked!";
 
+
+    //messages related to Android
+    public static String startExploration(){
+        return "explore";
+    }
+
+    public static String startShortestPath(){
+        return "shortestPath";
+    }
+
+
+    //messages ralated to Arduino
     public static String moveRobotForward(int n){
-        return "move " + n + " steps";
+        return "W" + n + "|";
     }
 
     public static String robotMovedForward(int n){
-        return "moved " + n + "\n";
+        return "W" + n + "done";
     }
 
     public static String turnRobot(int direction){
-        return "turned into direction " + direction;
+        if(direction==Orientation.LEFT)
+            return "A90|";
+        else if(direction==Orientation.RIGHT)
+            return "D90|";
+        else if(direction==Orientation.BACK)
+            return "D180|";
+        return null;
     }
 
     public static String robotTurned(int direction){
-        return "robot turned direction" + direction + "\n";
+        if(direction==Orientation.LEFT)
+            return "A90done";
+        else if(direction==Orientation.RIGHT)
+            return "D90done";
+        else if(direction==Orientation.BACK)
+            return "D180done";
+        return null;
     }
 
     public static String callibrate(){
-        return "callibrate";
+        return "C|";
     }
 
     public static String callibrated(){
-        return "callibrated" + "\n";
+        return "Cdone";
     }
 
+
     public static String detectObstacles(){
-        return "detectObstacles";
+        return "S|";
     }
 }

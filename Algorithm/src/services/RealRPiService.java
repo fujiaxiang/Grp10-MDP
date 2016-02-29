@@ -28,14 +28,15 @@ public class RealRPiService implements RPiServiceInterface {
     public int moveForward(int steps) {
         tcpService.sendMessage(Messages.arduinoCode + Messages.moveRobotForward(steps));  //send to Arduino
         String returnMessage = tcpService.readMessage();
-
-        if(returnMessage.equals(Messages.robotMovedForward(steps))) {     //if the return message matches
-            robot.moveForward(steps);
-            notifyUIChange();
-            return 0;
+        System.out.println("The return message is supposed to be **" + Messages.robotMovedForward(steps) + "**");
+        if(!returnMessage.equals(Messages.robotMovedForward(steps))) {     //if the return message matches
+            System.out.println("The move forward action is unsuccessful");
+            return -1;
         }
+        robot.moveForward(steps);
+        notifyUIChange();
         robot.printStatus();
-        return -1;
+        return 0;
     }
 
     @Override
@@ -47,13 +48,14 @@ public class RealRPiService implements RPiServiceInterface {
         tcpService.sendMessage(Messages.arduinoCode + Messages.turnRobot(direction));
 
         String returnMessage = tcpService.readMessage();
-        if(returnMessage.equals(Messages.robotTurned(direction))) {     //if the return message matches
-            robot.turn(direction);
-            notifyUIChange();
-            return 0;
+        if(!returnMessage.equals(Messages.robotTurned(direction))) {     //if the return message matches
+            System.out.println("The turning action is unsuccessful");
+            return -1;
         }
+        robot.turn(direction);
+        notifyUIChange();
         robot.printStatus();
-        return -1;
+        return 0;
     }
 
     @Override
@@ -65,11 +67,13 @@ public class RealRPiService implements RPiServiceInterface {
         robot.printStatus();
 
         String returnMessage = tcpService.readMessage();
-        if(returnMessage.equals(Messages.callibrated())) {     //if the return message matches
-            System.out.println("Robot calibrated!!");
-            return 0;
+        if(!returnMessage.equals(Messages.callibrated())) {     //if the return message matches
+            System.out.println("The callibration action is unsuccessful");
+            return -1;
         }
-        return -1;
+        System.out.println("Robot calibrated!!");
+        return 0;
+
     }
 
     @Override

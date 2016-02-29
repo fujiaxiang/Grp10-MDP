@@ -40,15 +40,20 @@ public class TcpService {
         tcpService.connectToHost();
 
         int tests = 0;
-        while (tests < 10){
-            tcpService.sendMessage(Messages.androidTest);
-            System.out.println("Start to read...");
-            String msgReceived = tcpService.readMessage();
-            System.out.println("Message received: "+ msgReceived);
+        while (tests < 2){
+
+            RealRPiService.getInstance().moveForward(10);
+
             tests++;
         }
-        tcpService.closeConnection();
 
+        try{
+            Thread.sleep(1000000);
+        }catch (InterruptedException ite){
+            ite.printStackTrace();
+        }
+
+        tcpService.closeConnection();
     }
 
     public void connectToHost(){
@@ -100,7 +105,7 @@ public class TcpService {
             sendMessage(message);
         }
 
-        System.out.println("****Message sent: " + message + "****");
+        System.out.println("Message sent: ****" + message + "****");
     }
 
     public String readMessage(){
@@ -108,14 +113,14 @@ public class TcpService {
         String messageReceived = "";
         try {
             messageReceived = fromRPi.nextLine();
-            System.out.println("****Message received: " + messageReceived + "****");
+            System.out.println("Message received: ****" + messageReceived + "****");
 
         }catch (Exception e){
             e.printStackTrace();
             try{
                 Thread.sleep(timeToRetry);
             }catch (InterruptedException ite){
-                e.printStackTrace();
+                ite.printStackTrace();
             }
             connectToHost();
             readMessage();

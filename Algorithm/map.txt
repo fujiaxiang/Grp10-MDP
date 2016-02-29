@@ -1,4 +1,0 @@
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-
-;
-00000000000000000000f8001806100e102420c4410c82090602040c043007c000000000000f
