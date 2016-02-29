@@ -1,5 +1,7 @@
 package models;
 
+import utilities.Convertor;
+
 /**
  * Created by Jiaxiang on 22/1/16.
  */
@@ -120,22 +122,28 @@ public class Arena {
             descriptorPart1 += "\n";
             descriptorPart2 += "\n";
         }
-        descriptorPart1 += "\n11";
+        descriptorPart1 += "11";
         for(int i = 0; i< (8- (descriptorPart2.length() % 8)); i++)
             descriptorPart2 += "1";
 
         String separate = "";
         for(int i = 0; i< BREAKS_TO_SEPARATE_DESCRIPTOR_PARTS; i++)
             separate += "\n";
-        return descriptorPart1 + separate + ";\n"+ descriptorPart2;
+        //return descriptorPart1 + separate + ";\n"+ descriptorPart2;
+        return Convertor.convertToHex(descriptorPart1) + separate + ";\n"+ Convertor.convertToHex(descriptorPart2);
     }
 
     public void loadMapDescriptor(String descriptor){
         String[] descriptors = descriptor.split(";");
-        int counter1 = 3;
-        int counter2 = 1;
+        descriptors[0] = Convertor.convertFromHex(descriptors[0].replaceAll("\n",""));
+        descriptors[1] = Convertor.convertFromHex(descriptors[1].replaceAll("\n",""));
+        //int counter1 = 3;
+        //int counter2 = 1
+        int counter1 = 2;
+        int counter2 = 0;
         for(int i= ROW-1; i>=0; i--) {
             for (int j = 0; j < COL; j++) {
+                System.out.println(counter1+" "+counter2);
                 if(descriptors[0].charAt(counter1) == '1'){
                     if(descriptors[1].charAt(counter2) == '1')
                         maze[i][j] = mazeState.obstacle;
@@ -147,8 +155,6 @@ public class Arena {
                 counter1++;
                 counter2++;
             }
-            counter1++;
-            counter2++;
         }
     }
 

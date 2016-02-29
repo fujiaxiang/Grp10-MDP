@@ -10,15 +10,28 @@ public class Convertor {
         //remove breakline carriage return
         map = map.replaceAll("\r","");
         map = map.replaceAll("\n","");
-        return new BigInteger(map,2).toString(16);
+        String map_desc = "";
+        for(int i=0;i<map.length();i+=4)
+            map_desc+=new BigInteger(map.substring(i,i+4),2).toString(16);
+        return map_desc;
     }
 
     public static String convertFromHex(String hex){
-        String ret =  new BigInteger(hex,16).toString(2);
-        //append back 0
-        System.out.println((ret.length()%4) + "");
-        for(int i=ret.length()%4;i<4;i++)
-            ret = "0"+ret;
+        hex = hex.replaceAll("\r","");
+        hex = hex.replaceAll("\n","");
+        String ret =  "";
+        for(int i=0;i<hex.length();i++){
+            String bits = new BigInteger(Character.toString(hex.charAt(i)),16).toString(2);
+            //append back 0
+            if(bits.length()!=4)
+                for(int j=bits.length();j<4;j++)
+                    bits = "0"+bits;
+            ret+=bits;
+        }
+        /*
+        for(int i=0;i<ret.length()/15;i++){
+            System.out.println(ret.substring(i*15,(i+1)*15));
+        }*/
         return ret;
     }
 
