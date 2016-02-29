@@ -2,6 +2,7 @@ package services;
 
 
 import utilities.Messages;
+import utilities.Orientation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,14 +39,25 @@ public class TcpService {
 
         TcpService tcpService = TcpService.getInstance();
         tcpService.connectToHost();
+        AndroidServiceInterface androidService = RealAndroidService.getInstance();
+        RPiServiceInterface rpiService = RealRPiService.getInstance();
 
         int tests = 0;
+        androidService.waitToStartExploration();
         while (tests < 2){
 
-            RealRPiService.getInstance().moveForward(10);
+            rpiService.moveForward(10);
 
             tests++;
         }
+
+        androidService.waitToRunShortestPath();
+
+        rpiService.turn(Orientation.LEFT);
+
+        rpiService.turn(Orientation.RIGHT);
+
+        rpiService.turn(Orientation.BACK);
 
         try{
             Thread.sleep(1000000);

@@ -36,6 +36,7 @@ public class RealRPiService implements RPiServiceInterface {
         robot.moveForward(steps);
         notifyUIChange();
         robot.printStatus();
+        System.out.println("The move forward action is successful");
         return 0;
     }
 
@@ -48,10 +49,12 @@ public class RealRPiService implements RPiServiceInterface {
         tcpService.sendMessage(Messages.arduinoCode + Messages.turnRobot(direction));
 
         String returnMessage = tcpService.readMessage();
+        System.out.println("The return message is supposed to be **" + Messages.robotTurned(direction) + "**");
         if(!returnMessage.equals(Messages.robotTurned(direction))) {     //if the return message matches
             System.out.println("The turning action is unsuccessful");
             return -1;
         }
+        System.out.println("The turning action is successful");
         robot.turn(direction);
         notifyUIChange();
         robot.printStatus();

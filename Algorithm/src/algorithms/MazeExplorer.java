@@ -22,6 +22,7 @@ public class MazeExplorer {
 
     private RPiServiceInterface rpiService;
     private SensorServiceInterface sensorService;
+    private AndroidServiceInterface androidService;
 
     private static final int CALIBRATE_LIMIT = 5;
     private int calibrate_age;
@@ -44,10 +45,12 @@ public class MazeExplorer {
         if(isRealRun){
             rpiService = RealRPiService.getInstance();
             sensorService = RealSensorService.getInstance();
+            androidService = RealAndroidService.getInstance();
         }
         else{
             rpiService = SimuRPiService.getInstance();
             sensorService = SimuSensorService.getInstance();
+            androidService = SimuAndroidService.getInstance();
         }
     }
 
@@ -59,6 +62,8 @@ public class MazeExplorer {
 
         int moves = 0; //keeping track of the moves robot has made
         calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
+
+        androidService.waitToStartExploration();
 
         while(!controller.isStopped()){
 

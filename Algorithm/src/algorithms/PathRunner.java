@@ -17,6 +17,7 @@ public class PathRunner {
 
     private RPiServiceInterface rpiService;
     private SensorServiceInterface sensorService;
+    private AndroidServiceInterface androidService;
 
     private PathRunner(){}
 
@@ -31,10 +32,12 @@ public class PathRunner {
         if(isRealRun){
             rpiService = RealRPiService.getInstance();
             sensorService = RealSensorService.getInstance();
+            androidService = RealAndroidService.getInstance();
         }
         else{
             rpiService = SimuRPiService.getInstance();
             sensorService = SimuSensorService.getInstance();
+            androidService = SimuAndroidService.getInstance();
         }
     }
 
@@ -45,10 +48,12 @@ public class PathRunner {
         while(robot.getOrientation() != path.getPathNodes().get(0).orientation)
             rpiService.turn(Orientation.LEFT);
 
-
         int stepsToMove = 0;
         //start from the second node
         int i=1;
+
+        androidService.waitToRunShortestPath();
+
         while(i<path.getPathNodes().size()){
             stepsToMove = 0;
             while(i< path.getPathNodes().size() &&
