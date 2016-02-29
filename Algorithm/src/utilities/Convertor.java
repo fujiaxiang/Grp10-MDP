@@ -14,7 +14,12 @@ public class Convertor {
     }
 
     public static String convertFromHex(String hex){
-        return new BigInteger(hex,16).toString(2);
+        String ret =  new BigInteger(hex,16).toString(2);
+        //append back 0
+        System.out.println((ret.length()%4) + "");
+        for(int i=ret.length()%4;i<4;i++)
+            ret = "0"+ret;
+        return ret;
     }
 
     public static void main(String args[]){
@@ -37,6 +42,8 @@ public class Convertor {
         System.out.println(hex);
         String ret = convertFromHex(hex);
         System.out.println(ret);
+        System.out.println(a);
         System.out.println(ret.compareTo(a));
+        System.out.println(convertToHex(ret));
     }
 }
