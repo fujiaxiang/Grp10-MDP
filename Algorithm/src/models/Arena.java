@@ -143,7 +143,7 @@ public class Arena {
         int counter2 = 0;
         for(int i= ROW-1; i>=0; i--) {
             for (int j = 0; j < COL; j++) {
-                System.out.println(counter1+" "+counter2);
+
                 if(descriptors[0].charAt(counter1) == '1'){
                     if(descriptors[1].charAt(counter2) == '1')
                         maze[i][j] = mazeState.obstacle;
