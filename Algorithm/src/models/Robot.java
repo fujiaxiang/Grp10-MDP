@@ -16,7 +16,7 @@ public class Robot {
     //Specify the basic information of sensors here
     private final int NUMBER_OF_SENSORS = 5;
     //The format of sensorString format: "relativeLocation;relativeOrientation;maxRange;minRange", example "topLeft;0;5;1"
-    private final String[] SENSOR_STRINGS = {"topLeft;0;5;1", "topCenter;0;5;1", "topRight;0;5;1", "topLeft;3;5;1", "topRight;1;5;1"};
+    private final String[] SENSOR_STRINGS = {"topLeft;0;4;1", "topCenter;0;4;1", "topRight;0;4;1", "topLeft;3;4;1", "topRight;1;4;1"};
 
 
     private Arena perceivedArena;
