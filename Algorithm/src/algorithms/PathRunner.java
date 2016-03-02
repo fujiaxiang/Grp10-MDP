@@ -53,6 +53,7 @@ public class PathRunner {
         //if starting orientation is different from starting orientation, turn to that orientation
         if(path==null){
             System.out.println("The path is null...");
+            return;
         }
         while(robot.getOrientation() != path.getPathNodes().get(0).orientation)
             rpiService.turn(Orientation.LEFT);
