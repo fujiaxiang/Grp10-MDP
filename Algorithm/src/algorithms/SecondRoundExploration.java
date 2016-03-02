@@ -26,7 +26,7 @@ public class SecondRoundExploration {
     private SensorServiceInterface sensorService;
     private AndroidServiceInterface androidService;
 
-    public static final double MINIMUM_COVERAGE = 0.99;
+    public static final double MINIMUM_COVERAGE = 1;
 
 
     public static SecondRoundExploration getInstance(){
@@ -77,7 +77,7 @@ public class SecondRoundExploration {
             Path path = pathToDetectUnknown(block);
             if(path!=null) {
                 PathRunner.getInstance().runPath(path, Controller.isRealRun);
-                rpiService.turn(Orientation.relativeOrientation(block, robot.getLocation()));
+                rpiService.turn(Orientation.whichDirectionToTurn(Orientation.relativeOrientation(block, robot.getLocation()), robot.getOrientation()));
                 MazeExplorer.getInstance().observe();
                 unknownBlocks = unknownBlocks();
             }
@@ -116,7 +116,7 @@ public class SecondRoundExploration {
 
         for(int n=0; n<4; n++){
             try{
-                System.out.println("trying path to this node: " + indices[n][0] + " " + indices[n][1]);
+                //System.out.println("trying path to this node: " + indices[n][0] + " " + indices[n][1]);
                 path = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getLocation(), indices[n], true, robot.getOrientation());
                 if(path!=null)
                     return path;
