@@ -166,6 +166,30 @@ public class MazeExplorer {
     }
 
 
+//    private void analyzeAndMove(){
+//
+//        analyzeAndCalibrate();
+//
+//        if(isLeftEmpty()) {
+//            rpiService.turn(Orientation.LEFT);
+//            observe();
+//            rpiService.moveForward(1);
+//
+//        } else if(isFrontEmpty()) {
+//            rpiService.moveForward(1);
+//
+//        } else if(isRightEmpty()) {
+//            rpiService.turn(Orientation.RIGHT);
+//            observe();
+//            rpiService.moveForward(1);
+//
+//        } else {
+//            rpiService.turn(Orientation.LEFT);
+//
+//        }
+//
+//    }
+
     private void analyzeAndMove(){
 
         analyzeAndCalibrate();

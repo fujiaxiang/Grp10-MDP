@@ -12,6 +12,8 @@ public class RealRPiService implements RPiServiceInterface {
 
     private static RealRPiService instance;
 
+    private final int TIME_TO_RESEND = 10;
+
     private TcpService tcpService = TcpService.getInstance();
 
     private Robot robot = Robot.getInstance();
@@ -26,12 +28,22 @@ public class RealRPiService implements RPiServiceInterface {
 
     @Override
     public int moveForward(int steps) {
-        tcpService.sendMessage(Messages.arduinoCode + Messages.moveRobotForward(steps));  //send to Arduino
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps));  //send to Arduino
         String returnMessage = tcpService.readMessage();
         System.out.println("The return message is supposed to be **" + Messages.robotMovedForward(steps) + "**");
-        if(!returnMessage.equals(Messages.robotMovedForward(steps))) {     //if the return message matches
-            System.out.println("The move forward action is unsuccessful");
-            return -1;
+        while(!returnMessage.equals(Messages.robotMovedForward(steps))) {     //if the return message matches
+            if(returnMessage.equals(Messages.RESEND_CODE)){
+                try{
+                    Thread.sleep(TIME_TO_RESEND);
+                }catch (InterruptedException ite){
+                    ite.printStackTrace();
+                }
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps));  //send to Arduino
+                returnMessage = tcpService.readMessage();
+            }else {
+                System.out.println("The move forward return message is incorrect");
+                break;
+            }
         }
         robot.moveForward(steps);
         notifyUIChange();
@@ -46,33 +58,53 @@ public class RealRPiService implements RPiServiceInterface {
         if(direction == Orientation.FRONT)
             return -1;
 
-        tcpService.sendMessage(Messages.arduinoCode + Messages.turnRobot(direction));
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction));
 
         String returnMessage = tcpService.readMessage();
         System.out.println("The return message is supposed to be **" + Messages.robotTurned(direction) + "**");
-        if(!returnMessage.equals(Messages.robotTurned(direction))) {     //if the return message matches
-            System.out.println("The turning action is unsuccessful");
-            return -1;
+        while(!returnMessage.equals(Messages.robotTurned(direction))) {     //if the return message matches
+            if(returnMessage.equals(Messages.RESEND_CODE)){
+                try{
+                    Thread.sleep(TIME_TO_RESEND);
+                }catch (InterruptedException ite){
+                    ite.printStackTrace();
+                }
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction));
+                returnMessage = tcpService.readMessage();
+            }else {
+                System.out.println("The turning action return message is incorrect");
+                break;
+            }
         }
-        System.out.println("The turning action is successful");
         robot.turn(direction);
         notifyUIChange();
         robot.printStatus();
+        System.out.println("The turning action is successful");
         return 0;
     }
 
     @Override
     public int callibrate() {
 
-        tcpService.sendMessage(Messages.arduinoCode + Messages.callibrate());
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
 
-        System.out.println("Robot calibrating calibrating");
+        System.out.println("Robot calibrating...");
         robot.printStatus();
 
         String returnMessage = tcpService.readMessage();
-        if(!returnMessage.equals(Messages.callibrated())) {     //if the return message matches
-            System.out.println("The callibration action is unsuccessful");
-            return -1;
+        while(!returnMessage.equals(Messages.callibrated())) {     //if the return message matches
+            if(returnMessage.equals(Messages.RESEND_CODE)){
+                try{
+                    Thread.sleep(TIME_TO_RESEND);
+                }catch (InterruptedException ite){
+                    ite.printStackTrace();
+                }
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
+                returnMessage = tcpService.readMessage();
+            }else {
+                System.out.println("The callibration action return message is incorrect");
+                break;
+            }
         }
         System.out.println("Robot calibrated!!");
         return 0;

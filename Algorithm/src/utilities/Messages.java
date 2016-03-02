@@ -6,9 +6,11 @@ package utilities;
 public class Messages {
 
     //general constants
-    public static final String androidCode = "a";
+    public static final String ANDROID_CODE = "a";
 
-    public static final String arduinoCode = "h";
+    public static final String ARDUINO_CODE = "h";
+
+    public static final String RESEND_CODE = "resend";
 
 
 
@@ -19,6 +21,14 @@ public class Messages {
 
     public static String startShortestPath(){
         return "shortestPath";
+    }
+
+    public static String mapDescriptor(){
+        return "testing";
+    }
+
+    public static String mapDescriptorReceived(){
+        return "mapReceived";
     }
 
 

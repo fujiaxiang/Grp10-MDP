@@ -1,13 +1,9 @@
 package services;
 
 
-import utilities.Messages;
-import utilities.Orientation;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 
@@ -24,7 +20,7 @@ public class TcpService {
     private PrintWriter toRPi;
     private Scanner fromRPi;
 
-    private int timeToRetry = 1000;       //wait for 1 second to retry
+    private final int TIME_TO_RETRY = 1000;       //wait for 1 second to retry
 
     private TcpService(){}
 
@@ -44,20 +40,31 @@ public class TcpService {
 
         int tests = 0;
         androidService.waitToStartExploration();
-        while (tests < 2){
+        while (tests < 10){
 
-            rpiService.moveForward(10);
+            try{
+                Thread.sleep(5000);
+            }catch (InterruptedException ite){
+                ite.printStackTrace();
+            }
 
+            androidService.sendMapDescriptor();
+//            rpiService.moveForward(10);
+            try{
+                Thread.sleep(5000);
+            }catch (InterruptedException ite){
+                ite.printStackTrace();
+            }
             tests++;
         }
 
-        androidService.waitToRunShortestPath();
-
-        rpiService.turn(Orientation.LEFT);
-
-        rpiService.turn(Orientation.RIGHT);
-
-        rpiService.turn(Orientation.BACK);
+//        androidService.waitToRunShortestPath();
+//
+//        rpiService.turn(Orientation.LEFT);
+//
+//        rpiService.turn(Orientation.RIGHT);
+//
+//        rpiService.turn(Orientation.BACK);
 
         try{
             Thread.sleep(1000000);
@@ -76,7 +83,7 @@ public class TcpService {
         }catch (IOException ioe){
             ioe.printStackTrace();
             try{
-                Thread.sleep(timeToRetry);
+                Thread.sleep(TIME_TO_RETRY);
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -93,7 +100,7 @@ public class TcpService {
         }catch (IOException ioe){
             ioe.printStackTrace();
             try{
-                Thread.sleep(timeToRetry);
+                Thread.sleep(TIME_TO_RETRY);
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -109,7 +116,7 @@ public class TcpService {
         }catch (Exception e){
             e.printStackTrace();
             try{
-                Thread.sleep(timeToRetry);
+                Thread.sleep(TIME_TO_RETRY);
             }catch (InterruptedException ite){
                 ite.printStackTrace();
             }
@@ -130,7 +137,7 @@ public class TcpService {
         }catch (Exception e){
             e.printStackTrace();
             try{
-                Thread.sleep(timeToRetry);
+                Thread.sleep(TIME_TO_RETRY);
             }catch (InterruptedException ite){
                 ite.printStackTrace();
             }
