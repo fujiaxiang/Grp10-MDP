@@ -140,6 +140,11 @@ public class Main extends Application {
             ddl.setLayoutX(DRAW_CANVAS_X);
             ddl.setLayoutY(BUTTON_BOTTOM_Y+2*BUTTON_HEIGHT);
             ddl.setValue(list[0]);
+
+            EventHandler handler = (event)->{
+                Controller.isRealRun = ddl.getSelectionModel().getSelectedItem().equals(list[1]);
+            };
+            ddl.setOnAction(handler);
         }
         return ddl;
     }

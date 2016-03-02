@@ -2,6 +2,7 @@ package controllers;
 import algorithms.MazeExplorer;
 import algorithms.PathRunner;
 import models.*;
+import services.TcpService;
 import utilities.Orientation;
 
 /**
@@ -219,6 +220,9 @@ public class Controller {
 
         update = false;
         //update = true;//to show first update
+
+        if(isRealRun)
+            TcpService.getInstance().connectToHost();
 
         Path shortestPath = MazeExplorer.getInstance().explore(isRealRun);
 

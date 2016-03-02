@@ -91,6 +91,11 @@ public class MazeExplorer {
                 break;
 
         }
+
+        //**************Testing
+//        SecondRoundExploration.getInstance().runToUnknownPlace();
+        //*****************
+
         Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
 
@@ -141,7 +146,7 @@ public class MazeExplorer {
 
     private int[] getSensorReadings(){
         String sensorReadings = sensorService.detect();
-        System.out.println("The reading is: " + sensorReadings + "\n");
+        System.out.println("The reading is: **" + sensorReadings + "**\n");
         String[] parts = sensorReadings.split(":");
         int[] readings = new int[parts.length];
         try{

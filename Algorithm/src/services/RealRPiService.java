@@ -83,32 +83,37 @@ public class RealRPiService implements RPiServiceInterface {
         return 0;
     }
 
+//    @Override
+//    public int callibrate() {
+//
+//        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
+//
+//        System.out.println("Robot calibrating...");
+//        robot.printStatus();
+//
+//        String returnMessage = tcpService.readMessage();
+//        while(!returnMessage.equals(Messages.callibrated())) {     //if the return message matches
+//            if(returnMessage.equals(Messages.RESEND_CODE)){
+//                try{
+//                    Thread.sleep(TIME_TO_RESEND);
+//                }catch (InterruptedException ite){
+//                    ite.printStackTrace();
+//                }
+//                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
+//                returnMessage = tcpService.readMessage();
+//            }else {
+//                System.out.println("The callibration action return message is incorrect");
+//                break;
+//            }
+//        }
+//        System.out.println("Robot calibrated!!");
+//        return 0;
+//
+//    }
+
     @Override
     public int callibrate() {
-
-        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
-
-        System.out.println("Robot calibrating...");
-        robot.printStatus();
-
-        String returnMessage = tcpService.readMessage();
-        while(!returnMessage.equals(Messages.callibrated())) {     //if the return message matches
-            if(returnMessage.equals(Messages.RESEND_CODE)){
-                try{
-                    Thread.sleep(TIME_TO_RESEND);
-                }catch (InterruptedException ite){
-                    ite.printStackTrace();
-                }
-                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
-                returnMessage = tcpService.readMessage();
-            }else {
-                System.out.println("The callibration action return message is incorrect");
-                break;
-            }
-        }
-        System.out.println("Robot calibrated!!");
         return 0;
-
     }
 
     @Override
