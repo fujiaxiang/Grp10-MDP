@@ -123,7 +123,8 @@ public class Arena {
             descriptorPart2 += "\n";
         }
         descriptorPart1 += "11";
-        for(int i = 0; i< (8- (descriptorPart2.length() % 8)); i++)
+        int append = (8- (descriptorPart2.length() % 8));
+        for(int i = 0; i< append; i++)
             descriptorPart2 += "1";
 
         String separate = "";

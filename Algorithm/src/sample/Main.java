@@ -104,6 +104,9 @@ public class Main extends Application {
         primaryStage.setTitle(SCENE_TITLE);
         primaryStage.setScene(new Scene(createGroup(), SCENE_WIDTH,SCENE_HEIGHT,Color.LIGHTGRAY));
         primaryStage.show();
+        primaryStage.setOnCloseRequest((event)->{
+            System.exit(0);
+        });
     }
 
     private Group createGroup(){
