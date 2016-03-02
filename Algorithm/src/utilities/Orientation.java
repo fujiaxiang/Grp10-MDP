@@ -53,11 +53,12 @@ public class Orientation {
         return new int[] {x, y};
     }
 
-    //returns the relative orientation of destination relative to origin, they must be neighbours to be correct
+    //returns the relative orientation of destination relative to origin
     public static int relativeOrientation(int[] destinationIndex, int[] originIndex){
         int xDifference = destinationIndex[0] - originIndex[0];
         int yDifference = destinationIndex[1] - originIndex[1];
-        return yDifference==0 ? (1+xDifference) : (2-yDifference);
+        //return yDifference==0 ? (1+xDifference) : (2-yDifference);
+        return yDifference==0 ? (xDifference>0? 2 : 0) : (yDifference>0?1:3);
     }
 
     public static int oppositeOrientation(int orientation){

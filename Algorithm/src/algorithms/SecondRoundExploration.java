@@ -4,11 +4,13 @@ import controllers.Controller;
 import models.Arena;
 import models.Path;
 import models.Robot;
-import services.AndroidServiceInterface;
-import services.RPiServiceInterface;
-import services.SensorServiceInterface;
+import services.*;
+import utilities.Orientation;
 
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by Jiaxiang on 2/3/16.
@@ -24,7 +26,7 @@ public class SecondRoundExploration {
     private SensorServiceInterface sensorService;
     private AndroidServiceInterface androidService;
 
-    public static final double MINIMUM_COVERAGE = 0.95;
+    public static final double MINIMUM_COVERAGE = 0.99;
 
 
     public static SecondRoundExploration getInstance(){
@@ -35,6 +37,20 @@ public class SecondRoundExploration {
 
     private SecondRoundExploration(){}
 
+    //initialises the two types of services based on simulation or real run
+    private void initialiseServices(boolean isRealRun){
+        if(isRealRun){
+            rpiService = RealRPiService.getInstance();
+            sensorService = RealSensorService.getInstance();
+            androidService = RealAndroidService.getInstance();
+        }
+        else{
+            rpiService = SimuRPiService.getInstance();
+            sensorService = SimuSensorService.getInstance();
+            androidService = SimuAndroidService.getInstance();
+        }
+    }
+
 
     public boolean needSecondRound(){
         if(robot.getPerceivedArena().coverage()> MINIMUM_COVERAGE)
@@ -43,29 +59,40 @@ public class SecondRoundExploration {
         return true;
     }
 
-    public void runToUnknownPlace(){
+    public void runToUnknownPlace(boolean isRealRun){
         if(!needSecondRound())
             return;
-        ArrayList<int[]> unknownBlocks = unknownBlocks();
-        System.out.println("the size of unknown blocks is " + unknownBlocks.size());
-        for(int[] block : unknownBlocks){
-            Path path = pathToDetectUnknown(block);
-            if(path!=null)
-                PathRunner.getInstance().runPath(path, Controller.isRealRun);
 
-            else
-                System.out.println("hahahahaha NULL");
+        initialiseServices(isRealRun);
+
+        Queue<int[]> unknownBlocks = unknownBlocks();
+        System.out.println("the size of unknown blocks is " + unknownBlocks.size());
+
+        int[] block;
+        while(unknownBlocks.size()>0){
+            block = unknownBlocks.poll();
+
+            //System.out.println("generating path for block "+ block[0] + " " + block[1]);
+
+            Path path = pathToDetectUnknown(block);
+            if(path!=null) {
+                PathRunner.getInstance().runPath(path, Controller.isRealRun);
+                rpiService.turn(Orientation.relativeOrientation(block, robot.getLocation()));
+                MazeExplorer.getInstance().observe();
+                unknownBlocks = unknownBlocks();
+            }
+
             if(!needSecondRound())
                 break;
         }
-        Path path = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getLocation(), Controller.getInstance().getStartGoalLoc(true), true, robot.getOrientation());
+        Path path = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getLocation(), robot.getPerceivedArena().getStart(), true, robot.getOrientation());
         PathRunner.getInstance().runPath(path, Controller.isRealRun);
+
     }
 
-    public ArrayList<int[]> unknownBlocks(){
+    public Queue<int[]> unknownBlocks(){
         Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
-        int size = (int) Math.ceil(Arena.COL * Arena.ROW * robot.getPerceivedArena().coverage());
-        ArrayList<int[]> unknowns = new ArrayList<int[]>();
+        Queue<int[]> unknowns = new LinkedBlockingDeque<>();
         for(int i=maze.length-1; i>=0; i--)
             for(int j=0; j<maze[i].length; j++){
                 if(maze[i][j] == Arena.mazeState.unknown)
@@ -78,7 +105,7 @@ public class SecondRoundExploration {
     public Path pathToDetectUnknown(int[] node){
 
         int[][] indices = new int[4][2];
-        int[] index = new int[2];
+        //int[] index = new int[2];
 
         indices[0] = new int[]{node[0] + 2, node[1]};
         indices[1] = new int[]{node[0], node[1] - 2};
@@ -89,7 +116,8 @@ public class SecondRoundExploration {
 
         for(int n=0; n<4; n++){
             try{
-                path = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getLocation(), index, true, robot.getOrientation());
+                System.out.println("trying path to this node: " + indices[n][0] + " " + indices[n][1]);
+                path = PathFinder.getInstance().aStarStraight(robot.getPerceivedArena().getMaze(), robot.getLocation(), indices[n], true, robot.getOrientation());
                 if(path!=null)
                     return path;
             }catch (ArrayIndexOutOfBoundsException aiobe){

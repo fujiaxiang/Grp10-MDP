@@ -41,6 +41,12 @@ public class PathRunner {
         }
     }
 
+    public void runShortestPath(Path path, boolean isRealRun){
+        initialiseServices(isRealRun);
+        androidService.waitToRunShortestPath();
+        runPath(path, isRealRun);
+    }
+
     public void runPath(Path path, boolean isRealRun){
         initialiseServices(isRealRun);
 
@@ -54,8 +60,6 @@ public class PathRunner {
         int stepsToMove = 0;
         //start from the second node
         int i=1;
-
-        androidService.waitToRunShortestPath();
 
         while(i<path.getPathNodes().size()){
             stepsToMove = 0;

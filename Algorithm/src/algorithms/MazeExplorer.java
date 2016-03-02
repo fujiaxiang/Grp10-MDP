@@ -93,7 +93,7 @@ public class MazeExplorer {
         }
 
         //**************Testing
-//        SecondRoundExploration.getInstance().runToUnknownPlace();
+        SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
 
         Path shortestPath = getReadyForShortestPath();
@@ -107,7 +107,7 @@ public class MazeExplorer {
     private void targetCoverageReachedAction(){}
 
 
-    private void observe(){
+    public void observe(){
         int[] readings = getSensorReadings();
         Sensor[] sensors = robot.getSensors();
         for(int i=0; i<robot.getSensors().length; i++){
