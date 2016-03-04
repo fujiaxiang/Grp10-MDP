@@ -199,6 +199,36 @@ public class MazeExplorer {
 
     private void analyzeAndMove(){
 
+//        if(locateObstacle("topRight", Orientation.FRONT)==1){
+//            rpiService.turn(Orientation.LEFT);
+//            rpiService.moveForward(1);
+//            rpiService.turn(Orientation.RIGHT);
+//            rpiService.moveForward(4);
+//            rpiService.turn(Orientation.RIGHT);
+//            rpiService.moveForward(1);
+//            rpiService.turn(Orientation.LEFT);
+//            rpiService.moveForward(2);
+//        }
+//        else if(locateObstacle("topLeft", Orientation.FRONT)==1){
+//            rpiService.turn(Orientation.RIGHT);
+//            rpiService.moveForward(1);
+//            rpiService.turn(Orientation.LEFT);
+//            rpiService.moveForward(4);
+//            rpiService.turn(Orientation.LEFT);
+//            rpiService.moveForward(1);
+//            rpiService.turn(Orientation.RIGHT);
+//            rpiService.moveForward(2);
+//        }else if(locateObstacle("topCenter", Orientation.FRONT)==1){
+//            rpiService.turn(Orientation.RIGHT);
+//            rpiService.moveForward(2);
+//            rpiService.turn(Orientation.LEFT);
+//            rpiService.moveForward(4);
+//            rpiService.turn(Orientation.LEFT);
+//            rpiService.moveForward(2);
+//            rpiService.turn(Orientation.RIGHT);
+//            rpiService.moveForward(2);
+//        }else
+//            rpiService.moveForward(1);
         analyzeAndCalibrate();
 
         if(isRightEmpty()) {

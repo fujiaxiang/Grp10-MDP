@@ -42,13 +42,9 @@ public class TcpService {
         androidService.waitToStartExploration();
         while (tests < 10){
 
-            try{
-                Thread.sleep(5000);
-            }catch (InterruptedException ite){
-                ite.printStackTrace();
-            }
+            rpiService.moveForward(1);
 
-            androidService.sendMapDescriptor();
+
 //            rpiService.moveForward(10);
             try{
                 Thread.sleep(5000);
