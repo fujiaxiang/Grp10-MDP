@@ -58,6 +58,14 @@ public class RealRPiService implements RPiServiceInterface {
         if(direction == Orientation.FRONT)
             return -1;
 
+        //Testing hard code*****************
+        if(direction == Orientation.BACK){
+            turn(Orientation.RIGHT);
+            turn(Orientation.RIGHT);
+            return 0;
+        }
+        //Testing hard code**********
+
         tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction));
 
         String returnMessage = tcpService.readMessage();
