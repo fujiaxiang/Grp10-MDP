@@ -58,7 +58,7 @@ public class Orientation {
         int xDifference = destinationIndex[0] - originIndex[0];
         int yDifference = destinationIndex[1] - originIndex[1];
         //return yDifference==0 ? (1+xDifference) : (2-yDifference);
-        return yDifference==0 ? (xDifference>0? 2 : 0) : (yDifference>0?1:3);
+        return yDifference==0 ? (xDifference>0? Orientation.SOUTH : Orientation.NORTH) : (yDifference>0?Orientation.EAST:Orientation.WEST);
     }
 
     public static int oppositeOrientation(int orientation){

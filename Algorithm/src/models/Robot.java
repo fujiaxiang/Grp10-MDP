@@ -37,6 +37,16 @@ public class Robot {
         return instance;
     }
 
+    public int[][] getRobotBlocks(){
+        int[][] blocks = new int[9][2];
+        int n = 0;
+        for(int i=-(SIZE/2); i<=SIZE/2; i++)
+            for(int j=-(SIZE/2); j<=SIZE/2; j++){
+                blocks[n++] = new int[]{this.getLocation()[0]+i, this.getLocation()[1]+j};
+            }
+        return blocks;
+    }
+
     public void initialize(int[] location, int orientation){
         int[] start = {Arena.ROW-2,1};
         int[] goal = {1,Arena.COL-2};

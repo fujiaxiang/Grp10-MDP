@@ -55,6 +55,7 @@ public class PathFinder {
 
         while(queue.size()>0){    //repeatedly polling from the queue and expand
             expandingNode = queue.poll();
+            virtualMap.printExpanded();
             expand(expandingNode, virtualMap, queue);
 
             if(GlobalUtilities.sameLocation(expandingNode.index, goal)) {
@@ -105,10 +106,8 @@ public class PathFinder {
             if (previousNode.pathCost + stepCost < thisNode.pathCost) {
                 if(thisNode.pathCost == Integer.MAX_VALUE){
                     queue.offer(thisNode);
-                }else {
-                    thisNode.pathCostUpdated = true;
                 }
-
+                thisNode.pathCostUpdated = true;
                 thisNode.pathCost = previousNode.pathCost + stepCost;
                 thisNode.previousNode = previousNode.index;
                 thisNode.orientation = orientation;

@@ -94,6 +94,7 @@ public class SecondRoundExploration {
         Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
         Queue<int[]> unknowns = new LinkedBlockingDeque<>();
         for(int i=maze.length-1; i>=0; i--)
+        //for(int i=0; i<maze.length; i++)
             for(int j=0; j<maze[i].length; j++){
                 if(maze[i][j] == Arena.mazeState.unknown)
                     unknowns.add(new int[]{i,j});

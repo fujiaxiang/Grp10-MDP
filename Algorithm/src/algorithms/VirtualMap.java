@@ -85,6 +85,7 @@ public class VirtualMap{
 
 
     public void print(){
+        System.out.println("*************************");
         for(int i = 0; i < virtualMap.length; i++) {
             for (int j = 0; j < virtualMap[i].length; j++) {
 
@@ -93,6 +94,20 @@ public class VirtualMap{
             }
             System.out.println();
         }
+        System.out.println("*************************");
+    }
+
+    public void printExpanded(){
+        System.out.println("*************************");
+        for(int i = 0; i < virtualMap.length; i++) {
+            for (int j = 0; j < virtualMap[i].length; j++) {
+
+                System.out.print(virtualMap[i][j].expanded?"T ":"  ");
+
+            }
+            System.out.println();
+        }
+        System.out.println("*************************");
     }
 
     public PathNode[][] getVirtualMap() {

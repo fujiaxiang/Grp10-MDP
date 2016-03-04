@@ -169,4 +169,10 @@ public class Arena {
             }
         return (double) cover / (ROW * COL);
     }
+
+    public void makeBlocksFree(int[][] blocks){
+        for(int[] block : blocks){
+            maze[block[0]][block[1]] = mazeState.freeSpace;
+        }
+    }
 }

@@ -65,6 +65,8 @@ public class MazeExplorer {
 
         androidService.waitToStartExploration();
 
+        robot.getPerceivedArena().makeBlocksFree(robot.getRobotBlocks());
+
         while(!controller.isStopped()){
 
             if(controller.getTime()>TIME_LIMIT){
@@ -93,7 +95,7 @@ public class MazeExplorer {
         }
 
         //**************Testing
-        SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
+        //SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
 
         Path shortestPath = getReadyForShortestPath();
@@ -334,17 +336,23 @@ public class MazeExplorer {
     //behind is not considered
     //return -1 for unable/unecessary  to calibrate
     private int checkCalibrate(){
+
+        final int CALIBRATE_DISTANCE = 2;
         if(calibrate_age++<CALIBRATE_LIMIT) return -1;//still too early to calibrate
 
-        if(locateObstacle("topLeft", Orientation.FRONT)==1&&locateObstacle("topCenter", Orientation.FRONT)==1
-                &&locateObstacle("topRight", Orientation.FRONT)==1)
+        if(locateObstacle("topLeft", Orientation.FRONT)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT)==CALIBRATE_DISTANCE
+                &&locateObstacle("topRight", Orientation.FRONT)==CALIBRATE_DISTANCE)
             return Orientation.FRONT;
-        else if(locateObstacle("topRight", Orientation.RIGHT)==1&&locateObstacle("middleRight", Orientation.RIGHT)==1
-                &&locateObstacle("bottomRight", Orientation.RIGHT)==1)
+        else if(locateObstacle("topRight", Orientation.RIGHT)==CALIBRATE_DISTANCE&&locateObstacle("middleRight", Orientation.RIGHT)==CALIBRATE_DISTANCE
+                &&locateObstacle("bottomRight", Orientation.RIGHT)==CALIBRATE_DISTANCE)
             return Orientation.RIGHT;
-        else if(locateObstacle("topLeft", Orientation.LEFT)==1&&locateObstacle("middleLeft", Orientation.LEFT)==1
-                &&locateObstacle("bottomLeft", Orientation.LEFT)==1)
+        else if(locateObstacle("topLeft", Orientation.LEFT)==CALIBRATE_DISTANCE&&locateObstacle("middleLeft", Orientation.LEFT)==CALIBRATE_DISTANCE
+                &&locateObstacle("bottomLeft", Orientation.LEFT)==CALIBRATE_DISTANCE)
             return Orientation.LEFT;
+        else if(locateObstacle("bottomLeft", Orientation.BACK)==CALIBRATE_DISTANCE&&locateObstacle("bottomCenter", Orientation.BACK)==CALIBRATE_DISTANCE
+                &&locateObstacle("bottomRight", Orientation.BACK)==CALIBRATE_DISTANCE)
+            return Orientation.BACK;
+        System.out.println(locateObstacle("bottomLeft", Orientation.BACK) + " " + locateObstacle("bottomCenter", Orientation.BACK)+ " " + locateObstacle("bottomRight", Orientation.BACK));
         return -1;
     }
 
@@ -352,8 +360,10 @@ public class MazeExplorer {
     private void calibrate(int orientation){
         rpiService.turn(orientation);  //turn to face the wall/long obstacle
         rpiService.callibrate();
-        if(orientation != Orientation.FRONT)
+        if(orientation != Orientation.FRONT && orientation != Orientation.BACK)
             rpiService.turn(Orientation.oppositeOrientation(orientation));
+        else if(orientation == Orientation.BACK)
+            rpiService.turn(Orientation.BACK);
         calibrate_age = 0;
     }
 }
