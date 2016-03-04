@@ -6,6 +6,7 @@ import models.Path;
 import models.Robot;
 import models.Sensor;
 import services.*;
+import utilities.Convertor;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
 
@@ -25,6 +26,7 @@ public class MazeExplorer {
     private AndroidServiceInterface androidService;
 
     private static final int CALIBRATE_LIMIT = 5;
+    private static final int CALIBRATE_DISTANCE = 2;
     private int calibrate_age;
 
     public static final int DEFAULT_TIME_LIMIT = 6*60*1000;
@@ -66,6 +68,8 @@ public class MazeExplorer {
         androidService.waitToStartExploration();
 
         robot.getPerceivedArena().makeBlocksFree(robot.getRobotBlocks());
+        //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getStart(),Arena.START_GOAL_SIZE));
+        //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getGoal(),Arena.START_GOAL_SIZE));
 
         while(!controller.isStopped()){
 
@@ -245,6 +249,7 @@ public class MazeExplorer {
             rpiService.moveForward(1);
 
         } else {
+            //rpiService.turn(Orientation.LEFT);
             rpiService.turn(Orientation.RIGHT);
             System.out.println("DEFAULT CASE");
         }
@@ -366,8 +371,6 @@ public class MazeExplorer {
     //behind is not considered
     //return -1 for unable/unecessary  to calibrate
     private int checkCalibrate(){
-
-        final int CALIBRATE_DISTANCE = 2;
         if(calibrate_age++<CALIBRATE_LIMIT) return -1;//still too early to calibrate
 
         if(locateObstacle("topLeft", Orientation.FRONT)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT)==CALIBRATE_DISTANCE

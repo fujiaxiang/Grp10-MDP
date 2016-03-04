@@ -102,6 +102,7 @@ public class Controller {
         return 0;
     }
 
+
     public boolean isValidForStartGoal(boolean setStart,int row,int col){
         int[] relative = {row,col};
         int[] compare  = setStart?arena.getGoal():arena.getStart();

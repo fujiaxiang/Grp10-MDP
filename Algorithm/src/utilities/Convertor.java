@@ -35,6 +35,17 @@ public class Convertor {
         return ret;
     }
 
+    /*
+    public static int[][] convertToBlock(int[] point,int size){
+        int[][] blocks = new int[9][2];
+        int n = 0;
+        for(int i=-(size/2);i<=size/2;i++)
+            for(int j=-(size/2);j<=size/2;j++)
+                blocks[n++] = new int[]{point[0]+j,point[1]+i};
+        return blocks;
+    }
+    */
+
     public static void main(String args[]){
         String a = "0001" +
                 "0010" +
