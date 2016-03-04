@@ -366,10 +366,12 @@ public class Main extends Application {
                     @Override
                     public void run() {
                         if(controller.needUpdate()) {
-                            for (int i = 0; i < controller.getPrevious().length; i++) {
-                                if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
-                                    break;
-                                drawGrid(robot_gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
+                            if(controller.getPrevious()!=null) {
+                                for (int i = 0; i < controller.getPrevious().length; i++) {
+                                    //if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
+                                     //   break;
+                                    drawGrid(robot_gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
+                                }
                             }
 
                             //update detected

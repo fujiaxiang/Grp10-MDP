@@ -246,7 +246,7 @@ public class MazeExplorer {
 
         } else {
             rpiService.turn(Orientation.RIGHT);
-
+            System.out.println("DEFAULT CASE");
         }
 
     }

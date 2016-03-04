@@ -51,9 +51,9 @@ public class Controller {
 //        arena.initialize(start,goal,maze);
         robot = Robot.getInstance();
         robot.initialize(start, Orientation.EAST);
-        previous = new int[6][2];//Stops using -1 for any
-        for(int i=0;i<previous.length;i++)
-            previous[i][0] = -1;
+//        previous = new int[6][2];//Stops using -1 for any
+//        for(int i=0;i<previous.length;i++)
+//            previous[i][0] = -1;
 
         detected = new int[NUMBER_OF_SENSOR][5];//Stops using -1 for any
         for(int i=0;i<detected.length;i++)
@@ -177,31 +177,32 @@ public class Controller {
     }
 
     public void savePrevious(){
-        int orientation = robot.getOrientation();
-        if(orientation==Orientation.NORTH){
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = robot.getLocation()[0]+1;
-                previous[i][1] = robot.getLocation()[1]-1+i;
-            }
-        }
-        else if(orientation==Orientation.WEST){
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = robot.getLocation()[0]-1+i;
-                previous[i][1] = robot.getLocation()[1]+1;
-            }
-        }
-        else if(orientation==Orientation.EAST){
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = robot.getLocation()[0]-1+i;
-                previous[i][1] = robot.getLocation()[1]-1;
-            }
-        }
-        else{
-            for(int i=0;i<Robot.SIZE;i++) {
-                previous[i][0] = robot.getLocation()[0]-1;
-                previous[i][1] = robot.getLocation()[1]-1+i;
-            }
-        }
+        previous = robot.getRobotBlocks();
+//        int orientation = robot.getOrientation();
+//        if(orientation==Orientation.NORTH){
+//            for(int i=0;i<Robot.SIZE;i++) {
+//                previous[i][0] = robot.getLocation()[0]+1;
+//                previous[i][1] = robot.getLocation()[1]-1+i;
+//            }
+//        }
+//        else if(orientation==Orientation.WEST){
+//            for(int i=0;i<Robot.SIZE;i++) {
+//                previous[i][0] = robot.getLocation()[0]-1+i;
+//                previous[i][1] = robot.getLocation()[1]+1;
+//            }
+//        }
+//        else if(orientation==Orientation.EAST){
+//            for(int i=0;i<Robot.SIZE;i++) {
+//                previous[i][0] = robot.getLocation()[0]-1+i;
+//                previous[i][1] = robot.getLocation()[1]-1;
+//            }
+//        }
+//        else{
+//            for(int i=0;i<Robot.SIZE;i++) {
+//                previous[i][0] = robot.getLocation()[0]-1;
+//                previous[i][1] = robot.getLocation()[1]-1+i;
+//            }
+//        }
     }
     public int[][] getPrevious(){
         return previous;
@@ -213,8 +214,9 @@ public class Controller {
         isDone = false;
         isStopped = false;
 
-        for(int i=0;i<previous.length;i++)
-            previous[i][0] = -1;
+        previous = null;
+        //for(int i=0;i<previous.length;i++)
+        //    previous[i][0] = -1;
         for(int i=0;i<location.length;i++)
             location[i][0] = -1;//used as a block to previous
 
