@@ -26,8 +26,10 @@ public class MazeExplorer {
     private AndroidServiceInterface androidService;
 
     private static final int CALIBRATE_LIMIT = 5;
+    private static final int DOUBLE_CALIBRATE_LIMIT = 5;
     private static final int CALIBRATE_DISTANCE = 2;
     private int calibrate_age;
+    private int double_calibrate_age;
 
     public static final int DEFAULT_TIME_LIMIT = 6*60*1000;
     public static final double DEFAULT_TARGET_COVERAGE = 1;
@@ -64,6 +66,7 @@ public class MazeExplorer {
 
         int moves = 0; //keeping track of the moves robot has made
         calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
+        double_calibrate_age = DOUBLE_CALIBRATE_LIMIT;
 
         androidService.waitToStartExploration();
 
@@ -362,9 +365,32 @@ public class MazeExplorer {
 
 
     private void analyzeAndCalibrate(){
-        int orientation = checkCalibrate();
+        int orientation;
+        orientation = checkDoubleCalibrate();
+        if(orientation>= Orientation.FRONT){
+            doubleCalibrate(orientation);
+            return;
+        }
+
+        //unable to perform double, check if single is possible
+        orientation = checkCalibrate();
         if(orientation >= Orientation.FRONT)
             calibrate(orientation);
+    }
+
+    //we will skip using behind for calibration
+    private int checkDoubleCalibrate(){
+        if(double_calibrate_age++<DOUBLE_CALIBRATE_LIMIT) return -1;
+        if(locateObstacle("topLeft", Orientation.FRONT)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT)==CALIBRATE_DISTANCE
+                &&locateObstacle("topRight", Orientation.FRONT)==CALIBRATE_DISTANCE){
+            if(locateObstacle("topRight", Orientation.RIGHT)==CALIBRATE_DISTANCE&&locateObstacle("middleRight", Orientation.RIGHT)==CALIBRATE_DISTANCE
+                    &&locateObstacle("bottomRight", Orientation.RIGHT)==CALIBRATE_DISTANCE)
+                return Orientation.RIGHT;
+            if(locateObstacle("topLeft", Orientation.LEFT)==CALIBRATE_DISTANCE&&locateObstacle("middleLeft", Orientation.LEFT)==CALIBRATE_DISTANCE
+                    &&locateObstacle("bottomLeft", Orientation.LEFT)==CALIBRATE_DISTANCE)
+                return Orientation.LEFT;
+        }
+        return -1;
     }
 
     //return (RELATIVE) orientation that can use to calibrate
@@ -398,5 +424,29 @@ public class MazeExplorer {
         else if(orientation == Orientation.BACK)
             rpiService.turn(Orientation.BACK);
         calibrate_age = 0;
+    }
+
+    //Use front,then left/right to calibrate
+    private void doubleCalibrate(int orientation){
+        calibrate(Orientation.FRONT);
+        calibrate(orientation);
+        double_calibrate_age = 0;
+    }
+
+    private void forcePerformDoubleCalibrate(){
+        int[] robot_loc = robot.getLocation();
+        int[] start = controller.getArena().getStart();
+        if(robot_loc[0]==start[0]-1&& //row-1
+        robot_loc[1]==start[1]+1)//if diagonal offset from start
+        {
+            if(robot.getOrientation()!=Orientation.NORTH&&robot.getOrientation()!=Orientation.EAST)return;
+
+            rpiService.turn(Orientation.BACK);//turn to back
+            //force update perceived arena
+
+
+            analyzeAndCalibrate();
+            rpiService.turn(Orientation.BACK);
+        }
     }
 }
