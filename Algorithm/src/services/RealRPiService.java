@@ -29,6 +29,7 @@ public class RealRPiService implements RPiServiceInterface {
     @Override
     public int moveForward(int steps) {
         tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps));  //send to Arduino
+
         String returnMessage = tcpService.readMessage();
         System.out.println("The return message is supposed to be **" + Messages.robotMovedForward(steps) + "**");
         while(!returnMessage.equals(Messages.robotMovedForward(steps))) {     //if the return message matches
@@ -45,6 +46,9 @@ public class RealRPiService implements RPiServiceInterface {
                 break;
             }
         }
+        //************testing code
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.moveRobotForward(steps));    //send to Android
+        //************
         robot.moveForward(steps);
         notifyUIChange();
         robot.printStatus();

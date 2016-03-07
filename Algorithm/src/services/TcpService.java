@@ -19,6 +19,7 @@ public class TcpService {
     private Socket clientSocket;
     private PrintWriter toRPi;
     private Scanner fromRPi;
+    private final int DELAY_IN_SENDING_MESSAGE = 1;
 
     private final int TIME_TO_RETRY = 1000;       //wait for 1 second to retry
 
@@ -107,9 +108,12 @@ public class TcpService {
 
     public void sendMessage(String message){
         try {
+            Thread.sleep(DELAY_IN_SENDING_MESSAGE);
             toRPi.print(message);
             toRPi.flush();
-        }catch (Exception e){
+        }catch (InterruptedException ite){
+            ite.printStackTrace();
+        } catch (Exception e){
             e.printStackTrace();
             try{
                 Thread.sleep(TIME_TO_RETRY);
