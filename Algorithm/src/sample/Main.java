@@ -1,5 +1,6 @@
 package sample;
 
+import algorithms.MazeExplorer;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -378,6 +379,7 @@ public class Main extends Application {
                             for(int i = 0;i<controller.getDetected().length;i++) {
                                 int offset_row = 0, offset_col = 0;
                                 int[] detected = controller.getDetected()[i];
+                                if(detected[Controller.DISTANCE]== MazeExplorer.IGNORE_DISTANCE)continue;
                                 switch (detected[Controller.ABSOLUTE_ORIENTATION]) {
                                     case Orientation.NORTH:
                                         offset_row = -1;
