@@ -46,9 +46,9 @@ public class RealRPiService implements RPiServiceInterface {
                 break;
             }
         }
-        //************testing code
+
         tcpService.sendMessage(Messages.ANDROID_CODE + Messages.moveRobotForward(steps));    //send to Android
-        //************
+
         robot.moveForward(steps);
         notifyUIChange();
         robot.printStatus();
@@ -88,6 +88,9 @@ public class RealRPiService implements RPiServiceInterface {
                 break;
             }
         }
+
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.turnRobot(direction));
+
         robot.turn(direction);
         notifyUIChange();
         robot.printStatus();
@@ -118,15 +121,14 @@ public class RealRPiService implements RPiServiceInterface {
                 break;
             }
         }
+
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.callibrate());
+        
         System.out.println("Robot calibrated!!");
         return 0;
 
     }
 
-//    @Override
-//    public int callibrate() {
-//        return 0;
-//    }
 
     @Override
     public void notifyUIChange() {
