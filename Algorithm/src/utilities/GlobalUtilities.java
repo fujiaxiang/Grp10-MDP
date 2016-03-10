@@ -2,6 +2,7 @@ package utilities;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Jiaxiang on 22/1/16.
@@ -10,27 +11,27 @@ public class GlobalUtilities {
 
 
     public static int[] locationParser(int[] origin, int orientation, int steps){
-
+        int[] originCopy = origin.clone();
         switch(orientation){
             case Orientation.NORTH:
-                origin[0] -= steps;
+                originCopy[0] -= steps;
                 break;
             case Orientation.SOUTH:
-                origin[0] += steps;
+                originCopy[0] += steps;
                 break;
             case Orientation.EAST:
-                origin[1] += steps;
+                originCopy[1] += steps;
                 break;
             case Orientation.WEST:
-                origin[1] -= steps;
+                originCopy[1] -= steps;
                 break;
             default:
                 System.out.println("In class GlobalUtilities, case does not exist. The current orientation is: " + orientation);
-                origin[0] = -1;
-                origin[1] = -1;
+                originCopy[0] = -1;
+                originCopy[1] = -1;
                 break;
         }
-        return origin;
+        return originCopy;
     }
 
     public static HashMap<String, int[] > relativeLocation = new HashMap<String, int[]>(){{
