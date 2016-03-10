@@ -10,14 +10,24 @@ public class Sensor {
     private int relativeOrientation;
     private int maxRange;
     private int minRange;
+    private int index;
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     private final Robot robot = Robot.getInstance();
 
-    public Sensor(int[] relativeLocation, int relativeOrientation, int maxRange, int minRange) {
+    public Sensor(int[] relativeLocation, int relativeOrientation, int maxRange, int minRange, int index) {
         this.relativeLocation = relativeLocation;
         this.relativeOrientation = relativeOrientation;
         this.maxRange = maxRange;
         this.minRange = minRange;
+        this.index = index;
     }
 
     //The format of sensorString format: "relativeLocation;relativeOrientation;maxRange;minRange", example "topLeft;0;5;1"
@@ -27,6 +37,7 @@ public class Sensor {
         this.relativeOrientation = Integer.parseInt(sensorStringSplits[1]);
         this.maxRange = Integer.parseInt(sensorStringSplits[2]);
         this.minRange = Integer.parseInt(sensorStringSplits[3]);
+        this.index = Integer.parseInt(sensorStringSplits[4]);
 
     }
 

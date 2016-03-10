@@ -112,10 +112,11 @@ public class Arena {
         for(int i= ROW-1; i>=0; i--) {
             for (int j = 0; j < COL; j++) {
                 if (maze[i][j] == mazeState.obstacle)
-                    descriptorPart1 += "1 ";      //space after characters
-                else {
-                    descriptorPart1 += "0 ";      //space after characters
-                }
+                    descriptorPart1 += "1 ";      //there is a space after character '1'
+                else if (maze[i][j] == mazeState.freeSpace){
+                    descriptorPart1 += "0 ";      //there is a space after character '0'
+                }else
+                    descriptorPart1 += "2 ";      //2 for unknown arean, there is a space after the character '2'
             }
         }
         return descriptorPart1.substring(0, descriptorPart1.length()-1);   //removing the last space

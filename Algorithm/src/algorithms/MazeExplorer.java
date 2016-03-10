@@ -26,7 +26,7 @@ public class MazeExplorer {
 
     private static final int CALIBRATE_LIMIT = 5;
     private static final int DOUBLE_CALIBRATE_LIMIT = 5;
-    private static final int CALIBRATE_DISTANCE = 2;
+    private static final int CALIBRATE_DISTANCE = 1;
     private int calibrate_age;
     private int double_calibrate_age;
 
@@ -80,8 +80,6 @@ public class MazeExplorer {
         int moves = 0; //keeping track of the moves robot has made
         calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
         double_calibrate_age = DOUBLE_CALIBRATE_LIMIT;
-        calibrate_age_ns = CALIBRATE_LIMIT;
-        calibrate_age_we = CALIBRATE_LIMIT;
 
         androidService.waitToStartExploration();
 
@@ -89,22 +87,21 @@ public class MazeExplorer {
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getStart(),Arena.START_GOAL_SIZE));
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getGoal(),Arena.START_GOAL_SIZE));
 
-        if(forcePerformDoubleCalibrate())
-            moves++;
+        forcePerformDoubleCalibrate();
 
         while(!controller.isStopped()){
 
-            if(controller.getTime()>TIME_LIMIT){
-                System.out.println("Explorations exceeds time limit, taking action...");
-                notEnoughTimeAction();
-                return null;   // need to change if robot want to do something after terminated
-            }
-
-            if(robot.getPerceivedArena().coverage()>TARGET_COVERAGE){
-                System.out.println("Explorations reached coverage target, taking action...");
-                targetCoverageReachedAction();
-                return null;   // need to change if robot want to do something after terminated
-            }
+//            if(controller.getTime()>TIME_LIMIT){
+//                System.out.println("Explorations exceeds time limit, taking action...");
+//                notEnoughTimeAction();
+//                return null;   // need to change if robot want to do something after terminated
+//            }
+//
+//            if(robot.getPerceivedArena().coverage()>TARGET_COVERAGE){
+//                System.out.println("Explorations reached coverage target, taking action...");
+//                targetCoverageReachedAction();
+//                return null;   // need to change if robot want to do something after terminated
+//            }
 
             observe();
             androidService.sendObstacleInfo();
@@ -124,6 +121,7 @@ public class MazeExplorer {
         //SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
         androidService.sendMapDescriptor();
+        System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
         Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
 
@@ -139,8 +137,10 @@ public class MazeExplorer {
         int[] readings = getSensorReadings();
         Sensor[] sensors = robot.getSensors();
         for(int i=0; i<robot.getSensors().length; i++){
-            markMaze(sensors[i], readings[i]);
+            markMaze(sensors[i], readings[i], readings);
         }
+
+        markObstaclesOnUI(readings);
     }
 
 
@@ -150,34 +150,41 @@ public class MazeExplorer {
      * @param sensor
      * @param steps
      */
-    private void markMaze(Sensor sensor, int steps){
+    private void markMaze(Sensor sensor, int steps,int[] readings){
         try {
             if(steps == IGNORE_DISTANCE)return;
             Arena arena = robot.getPerceivedArena();
             if (steps < 0) {
                 for (int i = sensor.getMinRange(); i <= sensor.getMaxRange(); i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
-//                    if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.obstacle) {
-//                        setMazeStateOverridenOrientation(sensor.getrelativeOrientation());
-//                    }
-                    arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
 
+                    //original code
+                    //arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
 
+                    if(i != sensor.getMaxRange()) {         //override the original obstacle info only when sensor reading does not equal to max range
+                        arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
+                    } else if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.unknown)
+                        arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
+                    else{
+                        if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.obstacle)
+                            readings[sensor.getIndex()] = sensor.getMaxRange();
+                    }
                 }
             } else if (sensor.getMinRange() <= steps && steps <= sensor.getMaxRange()) {
                 for (int i = sensor.getMinRange(); i < steps; i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
-//                    if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.obstacle) {
-//                        setMazeStateOverridenOrientation(sensor.getrelativeOrientation());
-//                    }
-                    robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
-
+                    arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                 }
                 int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps);
-//                if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.freeSpace) {
-//                    setMazeStateOverridenOrientation(sensor.getrelativeOrientation());
-//                }
-                robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.obstacle);
+
+                if(steps != sensor.getMaxRange()) {      //override the original obstacle info only when sensor reading does not equal to max range
+                    arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
+                } else if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.unknown)
+                    arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
+                else{
+                    if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.freeSpace)
+                        readings[sensor.getIndex()] = -1;
+                }
             }
         }catch (ArrayIndexOutOfBoundsException e){
 //            System.out.println("This message comes from MazeExplorer method markMaze. This is normal and please ignore this message");
@@ -209,7 +216,6 @@ public class MazeExplorer {
             }
             return getSensorReadings();
         }
-        markObstaclesOnUI(readings);
         return readings;
     }
 
@@ -243,7 +249,7 @@ public class MazeExplorer {
         //if(getMazeStateOverridenOrientation()>=Orientation.NORTH){
         preemptRobotCircling(Orientation.RIGHT);
         //}
-        //analyzeAndCalibrate();
+        analyzeAndCalibrate();
 
         if(isRightEmpty()) {
             rpiService.turn(Orientation.RIGHT);
@@ -391,6 +397,10 @@ public class MazeExplorer {
             idealPath = pathStartFacingNorth;
         else
             idealPath = pathStartFacingEast;
+
+        if(robot.getOrientation()==Orientation.SOUTH)
+            rpiService.turn(Orientation.RIGHT);
+        forcePerformDoubleCalibrate();  //force a double calibration before shortest
 
         targetFacingDirection = idealPath.getPathNodes().get(0).orientation;
 
@@ -581,15 +591,55 @@ public class MazeExplorer {
         System.out.println("Double Calibrated");
     }
 
+//    private boolean forcePerformDoubleCalibrate(){
+//        int[] robot_loc = robot.getLocation();
+//        int[] start = controller.getArena().getStart();
+//        if(robot_loc[0]==start[0]-1&& //row-1
+//                robot_loc[1]==start[1]+1)//if diagonal offset from start
+//        {
+//            //if(robot.getOrientation()!=Orientation.NORTH&&robot.getOrientation()!=Orientation.EAST)return;
+//            if(robot.getOrientation()!=Orientation.WEST)return false;
+//            int orientation = robot.getOrientation();
+//
+//            //force update perceived arena
+//            int[] reading = new int[robot.getSensors().length];
+//            for(int i=0;i<reading.length;i++)
+//                reading[i] = robot.getSensors()[i].getrelativeOrientation()==Orientation.FRONT ? CALIBRATE_DISTANCE : IGNORE_DISTANCE;
+//
+//            //turn to back
+//            for(int i=0;i<2;i++){
+//                //rpiService.turn(orientation==Orientation.NORTH?Orientation.LEFT:Orientation.RIGHT);
+//                markObstaclesOnUI(reading);
+//                for(int j=0;j<reading.length;j++)
+//                    if( robot.getSensors()[i].getrelativeOrientation()==Orientation.FRONT ){
+//                        markMaze(robot.getSensors()[j],reading[j]);
+//                    }
+//                analyzeAndCalibrate(i%2==1);
+//                if(i==1)rpiService.moveForward(CALIBRATE_DISTANCE-1);//move to wall
+//                rpiService.turn(Orientation.LEFT);
+//            }
+//
+//            return true;
+//            //rpiService.turn(Orientation.BACK);
+//        }
+//        return false;
+//    }
+
+
     private boolean forcePerformDoubleCalibrate(){
+
+        calibrate_age_ns = CALIBRATE_LIMIT;     //force the robot to calibrate
+        calibrate_age_we = CALIBRATE_LIMIT;     //force the robot to calibrate
+
         int[] robot_loc = robot.getLocation();
         int[] start = controller.getArena().getStart();
-        if(robot_loc[0]==start[0]-1&& //row-1
-        robot_loc[1]==start[1]+1)//if diagonal offset from start
+
+        if(robot_loc[0]==start[0]&& //row-1
+        robot_loc[1]==start[1])//if diagonal offset from start
         {
             //if(robot.getOrientation()!=Orientation.NORTH&&robot.getOrientation()!=Orientation.EAST)return;
-            if(robot.getOrientation()!=Orientation.WEST)return false;
-            int orientation = robot.getOrientation();
+            while(robot.getOrientation()!=Orientation.WEST)
+                rpiService.turn(Orientation.LEFT);
 
             //force update perceived arena
             int[] reading = new int[robot.getSensors().length];
@@ -602,10 +652,10 @@ public class MazeExplorer {
                 markObstaclesOnUI(reading);
                 for(int j=0;j<reading.length;j++)
                     if( robot.getSensors()[i].getrelativeOrientation()==Orientation.FRONT ){
-                        markMaze(robot.getSensors()[j],reading[j]);
+                        markMaze(robot.getSensors()[j],reading[j], reading);
                     }
+                markObstaclesOnUI(reading);
                 analyzeAndCalibrate(i%2==1);
-                if(i==1)rpiService.moveForward(CALIBRATE_DISTANCE-1);//move to wall
                 rpiService.turn(Orientation.LEFT);
             }
 
