@@ -37,6 +37,8 @@ public class MazeExplorer {
     public static final double DEFAULT_TARGET_COVERAGE = 1;
     public static final int IGNORE_DISTANCE = -3004;
 
+    private int mazeStateOverridenOrientation = -1;
+
     public int TIME_LIMIT = 6 * 60 * 1000;   // 6 minutes
     public double TARGET_COVERAGE = 1;           // 100%
     private MazeExplorer(){}
@@ -45,6 +47,14 @@ public class MazeExplorer {
         if(instance==null)
             instance = new MazeExplorer();
         return instance;
+    }
+
+    public void setMazeStateOverridenOrientation(int mazeStateOverridenOrientation) {
+        this.mazeStateOverridenOrientation = mazeStateOverridenOrientation;
+    }
+
+    public int getMazeStateOverridenOrientation() {
+        return mazeStateOverridenOrientation;
     }
 
     //initialises the two types of services based on simulation or real run
@@ -133,6 +143,7 @@ public class MazeExplorer {
         }
     }
 
+
     /**
      * This function takes in a sensor and the readings it has returned. Based on the sensor location, orientation
      * and its range, the function marks cells in perceivedMaze to be freeSpace or obstacles
@@ -142,18 +153,30 @@ public class MazeExplorer {
     private void markMaze(Sensor sensor, int steps){
         try {
             if(steps == IGNORE_DISTANCE)return;
-
+            Arena arena = robot.getPerceivedArena();
             if (steps < 0) {
                 for (int i = sensor.getMinRange(); i <= sensor.getMaxRange(); i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
-                    robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
+                    if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.obstacle) {
+                        setMazeStateOverridenOrientation(sensor.getrelativeOrientation());
+                    }
+                    arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
+
+
                 }
             } else if (sensor.getMinRange() <= steps && steps <= sensor.getMaxRange()) {
                 for (int i = sensor.getMinRange(); i < steps; i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
+                    if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.obstacle) {
+                        setMazeStateOverridenOrientation(sensor.getrelativeOrientation());
+                    }
                     robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
+
                 }
                 int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps);
+                if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.freeSpace) {
+                    setMazeStateOverridenOrientation(sensor.getrelativeOrientation());
+                }
                 robot.getPerceivedArena().setObstacle(location[0], location[1], Arena.mazeState.obstacle);
             }
         }catch (ArrayIndexOutOfBoundsException e){
@@ -209,7 +232,7 @@ public class MazeExplorer {
 //            rpiService.moveForward(1);
 //
 //        } else {
-//            rpiService.turn(Orientation.LEFT);
+//            rpiService.turn(Orientation.RIGHT);
 //
 //        }
 //
@@ -217,37 +240,10 @@ public class MazeExplorer {
 
     private void analyzeAndMove(){
 
-//        if(locateObstacle("topRight", Orientation.FRONT)==1){
-//            rpiService.turn(Orientation.LEFT);
-//            rpiService.moveForward(1);
-//            rpiService.turn(Orientation.RIGHT);
-//            rpiService.moveForward(4);
-//            rpiService.turn(Orientation.RIGHT);
-//            rpiService.moveForward(1);
-//            rpiService.turn(Orientation.LEFT);
-//            rpiService.moveForward(2);
-//        }
-//        else if(locateObstacle("topLeft", Orientation.FRONT)==1){
-//            rpiService.turn(Orientation.RIGHT);
-//            rpiService.moveForward(1);
-//            rpiService.turn(Orientation.LEFT);
-//            rpiService.moveForward(4);
-//            rpiService.turn(Orientation.LEFT);
-//            rpiService.moveForward(1);
-//            rpiService.turn(Orientation.RIGHT);
-//            rpiService.moveForward(2);
-//        }else if(locateObstacle("topCenter", Orientation.FRONT)==1){
-//            rpiService.turn(Orientation.RIGHT);
-//            rpiService.moveForward(2);
-//            rpiService.turn(Orientation.LEFT);
-//            rpiService.moveForward(4);
-//            rpiService.turn(Orientation.LEFT);
-//            rpiService.moveForward(2);
-//            rpiService.turn(Orientation.RIGHT);
-//            rpiService.moveForward(2);
-//        }else
-//            rpiService.moveForward(1);
-        analyzeAndCalibrate();
+        if(getMazeStateOverridenOrientation()>=Orientation.NORTH){
+            preemptRobotCircling(Orientation.RIGHT);
+        }
+        //analyzeAndCalibrate();
 
         if(isRightEmpty()) {
             rpiService.turn(Orientation.RIGHT);
@@ -268,6 +264,33 @@ public class MazeExplorer {
             System.out.println("DEFAULT CASE");
         }
 
+    }
+
+    private void preemptRobotCircling(int orientation){
+        setMazeStateOverridenOrientation(-1);
+        if(isRightEmpty()&&isBottomRigthCornerEmpty()){
+            rpiService.turn(orientation);
+            observe();
+            rpiService.moveForward(1);
+            observe();
+            preemptRobotCircling(Orientation.FRONT);
+            if(!isFrontEmpty()){
+                rpiService.turn(Orientation.LEFT);
+            }
+        }
+    }
+
+    private boolean isBottomRigthCornerEmpty(){
+        try {
+            int[] rightSide = GlobalUtilities.locationParser(robot.getLocation(), Orientation.turn(robot.getOrientation(), Orientation.RIGHT), Robot.HALF_SIZE + 1);
+            int[] bottomRightCorner = GlobalUtilities.locationParser(rightSide, Orientation.oppositeOrientation(robot.getOrientation()), Robot.HALF_SIZE + 1);
+            if (robot.getPerceivedArena().getMaze()[bottomRightCorner[0]][bottomRightCorner[1]] == Arena.mazeState.freeSpace)
+                return true;
+        }catch (ArrayIndexOutOfBoundsException aiobe){
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean isRightEmpty(){
