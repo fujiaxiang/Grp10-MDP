@@ -123,7 +123,7 @@ public class RealRPiService implements RPiServiceInterface {
         }
 
         tcpService.sendMessage(Messages.ANDROID_CODE + Messages.callibrate());
-        
+
         System.out.println("Robot calibrated!!");
         return 0;
 

@@ -6,7 +6,6 @@ import models.Path;
 import models.Robot;
 import models.Sensor;
 import services.*;
-import utilities.Convertor;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
 
@@ -98,6 +97,7 @@ public class MazeExplorer {
             }
 
             observe();
+            androidService.sendObstacleInfo();
 
             analyzeAndMove();
 
@@ -113,7 +113,7 @@ public class MazeExplorer {
         //**************Testing
         //SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
-
+        androidService.sendMapDescriptor();
         Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
 
@@ -263,8 +263,8 @@ public class MazeExplorer {
             rpiService.moveForward(1);
 
         } else {
-            //rpiService.turn(Orientation.LEFT);
-            rpiService.turn(Orientation.RIGHT);
+            rpiService.turn(Orientation.LEFT);
+            //rpiService.turn(Orientation.RIGHT);
             System.out.println("DEFAULT CASE");
         }
 

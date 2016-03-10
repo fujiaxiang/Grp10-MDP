@@ -117,4 +117,5 @@ public class VirtualMap{
     public PathNode getPathNode(int[] index){
         return virtualMap[index[0]][index[1]];
     }
+
 }

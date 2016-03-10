@@ -1,6 +1,8 @@
 package services;
 
 
+import utilities.Messages;
+
 /**
  * Created by Jiaxiang on 29/2/16.
  */
@@ -39,7 +41,13 @@ public class SimuAndroidService implements AndroidServiceInterface {
 
     @Override
     public int sendMapDescriptor() {
-        System.out.println("(Simulation)Sent map descriptor to Android");
+        System.out.println("(Simulation) Sent map descriptor to Android");
+        return 0;
+    }
+
+    @Override
+    public int sendObstacleInfo() {
+        System.out.println("(Simulation) Sent obstacle info to Android");
         return 0;
     }
 }

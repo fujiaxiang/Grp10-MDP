@@ -55,7 +55,10 @@ public class PathFinder {
 
         while(queue.size()>0){    //repeatedly polling from the queue and expand
             expandingNode = queue.poll();
-            virtualMap.printExpanded();
+
+            //*********debugging code
+            //virtualMap.printExpanded();
+
             expand(expandingNode, virtualMap, queue);
 
             if(GlobalUtilities.sameLocation(expandingNode.index, goal)) {

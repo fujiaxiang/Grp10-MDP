@@ -9,4 +9,6 @@ public interface AndroidServiceInterface {
     int waitToRunShortestPath();
 
     int sendMapDescriptor();
+
+    int sendObstacleInfo();
 }

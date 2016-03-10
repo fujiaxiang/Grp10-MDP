@@ -1,5 +1,8 @@
 package utilities;
 
+
+import models.Robot;
+
 /**
  * Created by Jiaxiang on 29/2/16.
  */
@@ -23,12 +26,14 @@ public class Messages {
         return "shortestPath";
     }
 
-    public static String mapDescriptor(){
-        return "testing";
+    public static String obstacleInfo(){
+        String message = Robot.getInstance().getPerceivedArena().toObstacleInfo();
+        return message;
     }
 
-    public static String mapDescriptorReceived(){
-        return "mapReceived";
+    public static String mapDescriptor(){
+        String message = Robot.getInstance().getPerceivedArena().toMapDescriptor();
+        return message;
     }
 
 

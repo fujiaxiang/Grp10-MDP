@@ -104,6 +104,24 @@ public class Arena {
 
     private final int BREAKS_TO_SEPARATE_DESCRIPTOR_PARTS = 2;
 
+
+    //************temparary code to test android
+    public String toObstacleInfo(){
+        String descriptorPart1 = "";
+        String descriptorPart2 = "";
+        for(int i= ROW-1; i>=0; i--) {
+            for (int j = 0; j < COL; j++) {
+                if (maze[i][j] == mazeState.obstacle)
+                    descriptorPart1 += "1 ";      //space after characters
+                else {
+                    descriptorPart1 += "0 ";      //space after characters
+                }
+            }
+        }
+        return descriptorPart1.substring(0, descriptorPart1.length()-1);   //removing the last space
+    }
+    //************temparary code to test android
+
     public String toMapDescriptor(){
         String descriptorPart1 = "11\n";
         String descriptorPart2 = "";

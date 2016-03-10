@@ -49,26 +49,34 @@ public class RealAndroidService implements AndroidServiceInterface {
     }
 
     @Override
+    public int sendObstacleInfo() {
+
+        System.out.println("Sending map info...");
+
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.obstacleInfo());
+//        String returnMessage = tcpService.readMessage();
+//        while(!returnMessage.equals(Messages.mapDescriptorReceived())) {     //if the return message matches
+//            if(returnMessage.equals(Messages.RESEND_CODE)){
+//                try{
+//                    Thread.sleep(TIME_TO_RESEND);
+//                }catch (InterruptedException ite){
+//                    ite.printStackTrace();
+//                }
+//                tcpService.sendMessage(Messages.ANDROID_CODE + Messages.mapDescriptor());
+//                returnMessage = tcpService.readMessage();
+//            }else {
+//                System.out.println("The map descriptor return message is incorrect");
+//                break;
+//            }
+//        }
+        System.out.println("Map info sent!!");
+        return 0;
+    }
+
+    @Override
     public int sendMapDescriptor() {
-        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.mapDescriptor());
-
         System.out.println("Sending map descriptor...");
-
-        String returnMessage = tcpService.readMessage();
-        while(!returnMessage.equals(Messages.mapDescriptorReceived())) {     //if the return message matches
-            if(returnMessage.equals(Messages.RESEND_CODE)){
-                try{
-                    Thread.sleep(TIME_TO_RESEND);
-                }catch (InterruptedException ite){
-                    ite.printStackTrace();
-                }
-                tcpService.sendMessage(Messages.ANDROID_CODE + Messages.mapDescriptor() + "(resent)");
-                returnMessage = tcpService.readMessage();
-            }else {
-                System.out.println("The map descriptor return message is incorrect");
-                break;
-            }
-        }
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.mapDescriptor());
         System.out.println("Map descriptor sent!!");
         return 0;
     }
