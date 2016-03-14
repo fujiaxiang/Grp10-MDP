@@ -35,6 +35,47 @@ public class Convertor {
         return ret;
     }
 
+    //super decimal is numbers based on 27, created by myself
+    public static char toSuperDecimal(char[] ternary){
+
+        int value = 9 * (ternary[0] - '0') + 3 * (ternary[1] - '0') + (ternary[2] - '0');
+        if(value < 10)
+            return (char) ('0' + value);
+        else          //value is from 10 to 26
+            return (char) ('a' + value - 10);
+    }
+
+    public static String fromObstacleInfo(String obstacleInfo){         //this method is meant to be used by android
+        int i=0;
+        String obstacleInfoWithSpace = "";
+        for(; i< obstacleInfo.length()-1; i++){
+            obstacleInfoWithSpace += fromSuperDecimal(obstacleInfo.charAt(i)) + " ";
+        }
+        obstacleInfoWithSpace += fromSuperDecimal(obstacleInfo.charAt(i));
+        return obstacleInfoWithSpace;
+    }
+
+    public static String fromSuperDecimal(char superDecimal){           //this method is meant to be used by android
+        char[] ternary = new char[5];
+        int value;
+        if(superDecimal <= '9')
+            value = superDecimal - '0';
+        else
+            value = superDecimal - 'a' + 10;
+        ternary[0] = (char) (value / 9 + '0');
+        ternary[1] = ' ';
+        ternary[2] = (char) ((value / 3) % 3 + '0');
+        ternary[3] = ' ';
+        ternary[4] = (char) (value % 3 + '0');
+        return new String(ternary);
+    }
+
+//    public static void main(String[] args){
+//        char a = toSuperDecimal(new char[]{'2','2','1'});
+//        System.out.println(a);
+//        System.out.println(fromSuperDecimal(a));
+//    }
+
     /*
     public static int[][] convertToBlock(int[] point,int size){
         int[][] blocks = new int[9][2];
@@ -46,28 +87,28 @@ public class Convertor {
     }
     */
 
-    public static void main(String args[]){
-        String a = "0001" +
-                "0010" +
-                "0011" +
-                "0100" +
-                "0101" +
-                "0110" +
-                "0111" +
-                "1000" +
-                "1001" +
-                "1010" +
-                "1011" +
-                "1100" +
-                "1101" +
-                "1110" +
-                "1111";
-        String hex = convertToHex(a);
-        System.out.println(hex);
-        String ret = convertFromHex(hex);
-        System.out.println(ret);
-        System.out.println(a);
-        System.out.println(ret.compareTo(a));
-        System.out.println(convertToHex(ret));
-    }
+//    public static void main(String args[]){
+//        String a = "0001" +
+//                "0010" +
+//                "0011" +
+//                "0100" +
+//                "0101" +
+//                "0110" +
+//                "0111" +
+//                "1000" +
+//                "1001" +
+//                "1010" +
+//                "1011" +
+//                "1100" +
+//                "1101" +
+//                "1110" +
+//                "1111";
+//        String hex = convertToHex(a);
+//        System.out.println(hex);
+//        String ret = convertFromHex(hex);
+//        System.out.println(ret);
+//        System.out.println(a);
+//        System.out.println(ret.compareTo(a));
+//        System.out.println(convertToHex(ret));
+//    }
 }

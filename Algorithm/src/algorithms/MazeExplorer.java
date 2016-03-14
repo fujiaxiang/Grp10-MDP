@@ -161,7 +161,7 @@ public class MazeExplorer {
                     //original code
                     //arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
 
-                    if(i != sensor.getMaxRange()) {         //override the original obstacle info only when sensor reading does not equal to max range
+                    if(i != sensor.getMaxRange() /*&& i != sensor.getMaxRange()-1*/) {         //override the original obstacle info only when sensor reading does not equal to max range
                         arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                     } else if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.unknown)
                         arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
@@ -177,7 +177,7 @@ public class MazeExplorer {
                 }
                 int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps);
 
-                if(steps != sensor.getMaxRange()) {      //override the original obstacle info only when sensor reading does not equal to max range
+                if(steps != sensor.getMaxRange()/* && steps != sensor.getMaxRange()-1*/) {      //override the original obstacle info only when sensor reading does not equal to max range
                     arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
                 } else if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.unknown)
                     arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);

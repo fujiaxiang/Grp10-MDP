@@ -53,7 +53,7 @@ public class RealAndroidService implements AndroidServiceInterface {
 
         System.out.println("Sending map info...");
 
-        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.obstacleInfo());
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.obstacleInfo() + Messages.ANDROID_END_CODE);
 //        String returnMessage = tcpService.readMessage();
 //        while(!returnMessage.equals(Messages.mapDescriptorReceived())) {     //if the return message matches
 //            if(returnMessage.equals(Messages.RESEND_CODE)){
@@ -76,7 +76,7 @@ public class RealAndroidService implements AndroidServiceInterface {
     @Override
     public int sendMapDescriptor() {
         System.out.println("Sending map descriptor...");
-        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.mapDescriptor());
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.mapDescriptor() + Messages.ANDROID_END_CODE);
         System.out.println("Map descriptor sent!!");
         return 0;
     }

@@ -28,7 +28,7 @@ public class RealRPiService implements RPiServiceInterface {
 
     @Override
     public int moveForward(int steps) {
-        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps));  //send to Arduino
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps) + Messages.ARDUINO_END_CODE);  //send to Arduino
 
         String returnMessage = tcpService.readMessage();
         System.out.println("The return message is supposed to be **" + Messages.robotMovedForward(steps) + "**");
@@ -39,7 +39,7 @@ public class RealRPiService implements RPiServiceInterface {
                 }catch (InterruptedException ite){
                     ite.printStackTrace();
                 }
-                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps));  //send to Arduino
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveRobotForward(steps) + Messages.ARDUINO_END_CODE);  //send to Arduino
                 returnMessage = tcpService.readMessage();
             }else {
                 System.out.println("The move forward return message is incorrect");
@@ -47,7 +47,7 @@ public class RealRPiService implements RPiServiceInterface {
             }
         }
 
-        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.moveRobotForward(steps));    //send to Android
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.moveRobotForward(steps) + Messages.ANDROID_END_CODE);    //send to Android
 
         robot.moveForward(steps);
         notifyUIChange();
@@ -70,7 +70,7 @@ public class RealRPiService implements RPiServiceInterface {
         }
         //Testing hard code**********
 
-        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction));
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction) + Messages.ARDUINO_END_CODE);
 
         String returnMessage = tcpService.readMessage();
         System.out.println("The return message is supposed to be **" + Messages.robotTurned(direction) + "**");
@@ -81,7 +81,7 @@ public class RealRPiService implements RPiServiceInterface {
                 }catch (InterruptedException ite){
                     ite.printStackTrace();
                 }
-                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction));
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnRobot(direction) + Messages.ARDUINO_END_CODE);
                 returnMessage = tcpService.readMessage();
             }else {
                 System.out.println("The turning action return message is incorrect");
@@ -89,7 +89,7 @@ public class RealRPiService implements RPiServiceInterface {
             }
         }
 
-        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.turnRobot(direction));
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.turnRobot(direction) + Messages.ANDROID_END_CODE);
 
         robot.turn(direction);
         notifyUIChange();
@@ -101,7 +101,7 @@ public class RealRPiService implements RPiServiceInterface {
     @Override
     public int callibrate() {
 
-        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate() + Messages.ARDUINO_END_CODE);
 
         System.out.println("Robot calibrating...");
         robot.printStatus();
@@ -114,7 +114,7 @@ public class RealRPiService implements RPiServiceInterface {
                 }catch (InterruptedException ite){
                     ite.printStackTrace();
                 }
-                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate());
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.callibrate() + Messages.ARDUINO_END_CODE);
                 returnMessage = tcpService.readMessage();
             }else {
                 System.out.println("The callibration action return message is incorrect");
@@ -122,7 +122,7 @@ public class RealRPiService implements RPiServiceInterface {
             }
         }
 
-        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.callibrate());
+        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.callibrate() + Messages.ANDROID_END_CODE);
 
         System.out.println("Robot calibrated!!");
         return 0;

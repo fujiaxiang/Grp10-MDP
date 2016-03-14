@@ -23,7 +23,7 @@ public class RealSensorService implements SensorServiceInterface{
     @Override
     public String detect() {
 
-        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.detectObstacles());
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.detectObstacles() + Messages.ARDUINO_END_CODE);
 
         String returnMessage = tcpService.readMessage();
         

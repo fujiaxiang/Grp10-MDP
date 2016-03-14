@@ -105,23 +105,54 @@ public class Arena {
     private final int BREAKS_TO_SEPARATE_DESCRIPTOR_PARTS = 2;
 
 
-    //************temparary code to test android
-    public String toObstacleInfo(){
-        String descriptorPart1 = "";
-        String descriptorPart2 = "";
-        for(int i= ROW-1; i>=0; i--) {
+
+    public String toObstacleInfo() {
+        String obstacleInfo = "";
+        char[] ternary = new char[3];
+        int index = 0;
+        for (int i = ROW - 1; i >= 0; i--) {
             for (int j = 0; j < COL; j++) {
                 if (maze[i][j] == mazeState.obstacle)
-                    descriptorPart1 += "1 ";      //there is a space after character '1'
-                else if (maze[i][j] == mazeState.freeSpace){
-                    descriptorPart1 += "0 ";      //there is a space after character '0'
-                }else
-                    descriptorPart1 += "2 ";      //2 for unknown arean, there is a space after the character '2'
+                    ternary[index] = '1';
+                else if (maze[i][j] == mazeState.freeSpace) {
+                    ternary[index] = '0';
+                } else
+                    ternary[index] = '2';
+
+                if (++index == 3) {
+                    index = 0;
+                    obstacleInfo += String.valueOf(Convertor.toSuperDecimal(ternary));
+                }
             }
         }
-        return descriptorPart1.substring(0, descriptorPart1.length()-1);   //removing the last space
+        return obstacleInfo;
     }
-    //************temparary code to test android
+
+//    public String toObstacleInfoTest() {
+//        String obstacleInfo = "";
+//        for (int i = ROW - 1; i >= 0; i--) {
+//            for (int j = 0; j < COL; j++) {
+//                if (maze[i][j] == mazeState.obstacle)
+//                    obstacleInfo += "1 ";
+//                else if (maze[i][j] == mazeState.freeSpace) {
+//                    obstacleInfo += "0 ";
+//                } else
+//                    obstacleInfo += "2 ";
+//            }
+//        }
+//        return obstacleInfo;
+//    }
+
+    public String addSpace(String mdf){
+        String mdfWithSpace = "";
+        int i = 0;
+        for(; i<mdf.length()-1; i++){
+            mdfWithSpace += mdf.charAt(i) + " ";
+        }
+        mdfWithSpace += mdf.charAt(i);
+        return mdfWithSpace;
+    }
+
 
     public String toMapDescriptor(){
         String descriptorPart1 = "11\n";
@@ -194,4 +225,6 @@ public class Arena {
             maze[block[0]][block[1]] = mazeState.freeSpace;
         }
     }
+
+
 }

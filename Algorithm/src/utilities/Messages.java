@@ -11,7 +11,11 @@ public class Messages {
     //general constants
     public static final String ANDROID_CODE = "a";
 
+    public static final String ANDROID_END_CODE = "|";
+
     public static final String ARDUINO_CODE = "h";
+
+    public static final String ARDUINO_END_CODE = "|";
 
     public static final String RESEND_CODE = "resend";
 
@@ -39,7 +43,7 @@ public class Messages {
 
     //messages ralated to Arduino
     public static String moveRobotForward(int n){
-        return "W" + n + "|";
+        return "W" + n;
     }
 
     public static String robotMovedForward(int n){
@@ -48,11 +52,11 @@ public class Messages {
 
     public static String turnRobot(int direction){
         if(direction==Orientation.LEFT)
-            return "A90|";
+            return "A90";
         else if(direction==Orientation.RIGHT)
-            return "D90|";
+            return "D90";
         else if(direction==Orientation.BACK)
-            return "D180|";
+            return "D180";
         return null;
     }
 
@@ -67,7 +71,7 @@ public class Messages {
     }
 
     public static String callibrate(){
-        return "C|";
+        return "C";
     }
 
     public static String callibrated(){
@@ -76,6 +80,6 @@ public class Messages {
 
 
     public static String detectObstacles(){
-        return "S|";
+        return "S";
     }
 }
