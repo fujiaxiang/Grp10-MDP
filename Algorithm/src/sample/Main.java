@@ -33,6 +33,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Main extends Application {
+    private static Main instance;
     private Controller controller;
 
     private final int SCENE_WIDTH = 800;
@@ -101,6 +102,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        instance = this;
         controller = Controller.getInstance();
         primaryStage.setTitle(SCENE_TITLE);
         primaryStage.setScene(new Scene(createGroup(), SCENE_WIDTH,SCENE_HEIGHT,Color.LIGHTGRAY));
@@ -108,6 +110,10 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest((event)->{
             System.exit(0);
         });
+    }
+
+    public static Main getInstance(){
+        return instance;
     }
 
     private Group createGroup(){
@@ -370,39 +376,47 @@ public class Main extends Application {
                             if(controller.getPrevious()!=null) {
                                 for (int i = 0; i < controller.getPrevious().length; i++) {
                                     //if (controller.getPrevious()[i][0] < 0)//Shoult noe happen || controller.getPrevious()[i][0] >= Arena.ROW)
-                                     //   break;
+                                    //   break;
                                     drawGrid(robot_gc, controller.getPrevious()[i][0], controller.getPrevious()[i][1], COLOR_EXPLORED);
                                 }
                             }
 
                             //update detected
-                            for(int i = 0;i<controller.getDetected().length;i++) {
-                                int offset_row = 0, offset_col = 0;
-                                int[] detected = controller.getDetected()[i];
-                                if(detected[Controller.DISTANCE]== MazeExplorer.IGNORE_DISTANCE)continue;
-                                switch (detected[Controller.ABSOLUTE_ORIENTATION]) {
-                                    case Orientation.NORTH:
-                                        offset_row = -1;
-                                        break;
-                                    case Orientation.SOUTH:
-                                        offset_row = +1;
-                                        break;
-                                    case Orientation.WEST:
-                                        offset_col = -1;
-                                        break;
-                                    case Orientation.EAST:
-                                        offset_col = 1;
-                                        break;
+//                            for(int i = 0;i<controller.getDetected().length;i++) {
+//                                int offset_row = 0, offset_col = 0;
+//                                int[] detected = controller.getDetected()[i];
+//                                if(detected[Controller.DISTANCE]== MazeExplorer.IGNORE_DISTANCE)continue;
+//                                switch (detected[Controller.ABSOLUTE_ORIENTATION]) {
+//                                    case Orientation.NORTH:
+//                                        offset_row = -1;
+//                                        break;
+//                                    case Orientation.SOUTH:
+//                                        offset_row = +1;
+//                                        break;
+//                                    case Orientation.WEST:
+//                                        offset_col = -1;
+//                                        break;
+//                                    case Orientation.EAST:
+//                                        offset_col = 1;
+//                                        break;
+//                                }
+//                                int distance;
+//                                if(detected[Controller.DISTANCE]==-1)distance = detected[Controller.DETECT_RANGE]+1;
+//                                else{
+//                                    //if detected obstalce
+//                                    distance = detected[Controller.DISTANCE];
+//                                    drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * distance, detected[Controller.ABSOLUTE_COL] + offset_col * distance, COLOR_OBSTACLE);
+//                                }
+//                                for (int j = 1; j < distance; j++)
+//                                    drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * j, detected[Controller.ABSOLUTE_COL] + offset_col * j, COLOR_EXPLORED);
+//                            }
+                            int[][][] data = controller.getPerceivedMapData();
+                            for(int i=0;i<data.length;i++){
+                                for(int j=0;j<data[i].length;j++){
+                                    int[] target = data[i][j];
+                                    if(target[Controller.PERCEIVE_DAT]==Controller.UNKNOWN)continue;
+                                    drawGrid(robot_gc, target[Controller.PERCEIVE_ROW],target[Controller.PERCEIVE_COL],target[Controller.PERCEIVE_DAT] == Controller.PATH?COLOR_EXPLORED:COLOR_OBSTACLE);
                                 }
-                                int distance;
-                                if(detected[Controller.DISTANCE]==-1)distance = detected[Controller.DETECT_RANGE]+1;
-                                else{
-                                    //if detected obstalce
-                                    distance = detected[Controller.DISTANCE];
-                                    drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * distance, detected[Controller.ABSOLUTE_COL] + offset_col * distance, COLOR_OBSTACLE);
-                                }
-                                for (int j = 1; j < distance; j++)
-                                    drawGrid(robot_gc, detected[Controller.ABSOLUTE_ROW] + offset_row * j, detected[Controller.ABSOLUTE_COL] + offset_col * j, COLOR_EXPLORED);
                             }
                             drawRobot(robot_gc);
                             controller.updated();
@@ -423,22 +437,27 @@ public class Main extends Application {
                     }
                 },SLEEP_DURATION);
 
-                timer_timer = new Timer();//for update label
-                timer_timer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        controller.updateTime(TIMER_UPDATE_DURATION);
-                        Platform.runLater(()->{
-                            getTextTimer().setText(Long.toString(controller.getTime()));
-                        });
-                    }
-                },0,TIMER_UPDATE_DURATION);
+
             }
         };
         //insert button
         for(int i=0;i<BOTTOM_BUTTON_TEXT.length;i++)
             buttons[i] = createButton(BOTTOM_BUTTON_TEXT[i],BUTTON_BOTTOM_X+(i%2)*BUTTON_WIDTH,BUTTON_BOTTOM_Y+i/2*BUTTON_HEIGHT,null,handler);
         return buttons;
+    }
+
+
+    public void startTimer(){
+        timer_timer = new Timer();//for update label
+        timer_timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                controller.updateTime(TIMER_UPDATE_DURATION);
+                Platform.runLater(()->{
+                    getTextTimer().setText(Long.toString(controller.getTime()));
+                });
+            }
+        },0,TIMER_UPDATE_DURATION);
     }
 
     private Button createButton(String text, double x, double y, Color c,EventHandler listener){

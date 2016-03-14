@@ -27,7 +27,7 @@ public class Sensor {
         this.relativeOrientation = relativeOrientation;
         this.maxRange = maxRange;
         this.minRange = minRange;
-        this.index = index;
+//        this.index = index;
     }
 
     //The format of sensorString format: "relativeLocation;relativeOrientation;maxRange;minRange", example "topLeft;0;5;1"
@@ -37,7 +37,7 @@ public class Sensor {
         this.relativeOrientation = Integer.parseInt(sensorStringSplits[1]);
         this.maxRange = Integer.parseInt(sensorStringSplits[2]);
         this.minRange = Integer.parseInt(sensorStringSplits[3]);
-        this.index = Integer.parseInt(sensorStringSplits[4]);
+//        this.index = Integer.parseInt(sensorStringSplits[4]);
 
     }
 

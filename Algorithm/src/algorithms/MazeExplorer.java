@@ -24,11 +24,11 @@ public class MazeExplorer {
     private SensorServiceInterface sensorService;
     private AndroidServiceInterface androidService;
 
-    private static final int CALIBRATE_LIMIT = 5;
-    private static final int DOUBLE_CALIBRATE_LIMIT = 5;
+    private static final int CALIBRATE_LIMIT = 6;
+    //private static final int DOUBLE_CALIBRATE_LIMIT = 5;
     private static final int CALIBRATE_DISTANCE = 1;
-    private int calibrate_age;
-    private int double_calibrate_age;
+//    private int calibrate_age;
+//    private int double_calibrate_age;
 
     private int calibrate_age_ns;
     private int calibrate_age_we;
@@ -78,10 +78,11 @@ public class MazeExplorer {
         robot.printStatus();
 
         int moves = 0; //keeping track of the moves robot has made
-        calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
-        double_calibrate_age = DOUBLE_CALIBRATE_LIMIT;
+        //calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
+        //double_calibrate_age = DOUBLE_CALIBRATE_LIMIT;
 
         androidService.waitToStartExploration();
+        controller.startTimer();
 
         robot.getPerceivedArena().makeBlocksFree(robot.getRobotBlocks());
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getStart(),Arena.START_GOAL_SIZE));
@@ -137,7 +138,7 @@ public class MazeExplorer {
         int[] readings = getSensorReadings();
         Sensor[] sensors = robot.getSensors();
         for(int i=0; i<robot.getSensors().length; i++){
-            markMaze(sensors[i], readings[i], readings);
+            markMaze(sensors[i], readings[i]);
         }
 
         markObstaclesOnUI(readings);
@@ -150,7 +151,7 @@ public class MazeExplorer {
      * @param sensor
      * @param steps
      */
-    private void markMaze(Sensor sensor, int steps,int[] readings){
+    private void markMaze(Sensor sensor, int steps){
         try {
             if(steps == IGNORE_DISTANCE)return;
             Arena arena = robot.getPerceivedArena();
@@ -166,10 +167,7 @@ public class MazeExplorer {
                         arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                     } else if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.unknown)
                         arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
-                    else{
-                        if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.obstacle)
-                            readings[sensor.getIndex()] = sensor.getMaxRange();
-                    }
+
                 }
             } else if (sensor.getMinRange() <= steps && steps <= sensor.getMaxRange()) {
                 for (int i = sensor.getMinRange(); i < steps; i++) {
@@ -187,10 +185,7 @@ public class MazeExplorer {
                         arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
                     } else if (arena.getMaze()[location[0]][location[1]] == Arena.mazeState.unknown)
                         arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
-                    else {
-                        if (arena.getMaze()[location[0]][location[1]] == Arena.mazeState.freeSpace)
-                            readings[sensor.getIndex()] = -1;
-                    }
+
                 }
             }
         }catch (ArrayIndexOutOfBoundsException e){
@@ -595,7 +590,7 @@ public class MazeExplorer {
     private void doubleCalibrate(int orientation){
         calibrate(Orientation.FRONT);
         calibrate(orientation);
-        double_calibrate_age = 0;
+        //double_calibrate_age = 0;
         System.out.println("Double Calibrated");
     }
 
@@ -660,7 +655,7 @@ public class MazeExplorer {
                 markObstaclesOnUI(reading);
                 for(int j=0;j<reading.length;j++)
                     if( robot.getSensors()[i].getrelativeOrientation()==Orientation.FRONT ){
-                        markMaze(robot.getSensors()[j],reading[j], reading);
+                        markMaze(robot.getSensors()[j],reading[j]);
                     }
                 markObstaclesOnUI(reading);
                 analyzeAndCalibrate(i%2==1);

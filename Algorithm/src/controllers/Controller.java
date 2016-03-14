@@ -2,7 +2,9 @@ package controllers;
 import algorithms.MazeExplorer;
 import algorithms.PathRunner;
 import models.*;
+import sample.Main;
 import services.TcpService;
+import utilities.GlobalUtilities;
 import utilities.Orientation;
 
 /**
@@ -31,6 +33,14 @@ public class Controller {
     public static final int DISTANCE = 3;
     public static final int DETECT_RANGE = 4;
 
+    private int[][][] data;
+    public static final int PERCEIVE_ROW = 0;
+    public static final int PERCEIVE_COL = 1;
+    public static final int PERCEIVE_DAT = 2;
+    public static final int UNKNOWN = -1;
+    public static final int PATH = 0;
+    public static final int OBSTACLE = 1;
+
     public static boolean isRealRun = false;
 
     public static Controller getInstance(){
@@ -54,6 +64,12 @@ public class Controller {
 //        previous = new int[6][2];//Stops using -1 for any
 //        for(int i=0;i<previous.length;i++)
 //            previous[i][0] = -1;
+
+        int max_sensor_range = 0;
+        for(Sensor s:robot.getSensors()){
+            if(max_sensor_range<s.getMaxRange())max_sensor_range = s.getMaxRange();
+        }
+        data = new int[robot.getSensors().length][max_sensor_range][3];
 
         detected = new int[NUMBER_OF_SENSOR][5];//Stops using -1 for any
         for(int i=0;i<detected.length;i++)
@@ -354,5 +370,32 @@ public class Controller {
 
     public int getTimeLimit(){
         return MazeExplorer.getInstance().TIME_LIMIT/1000;
+    }
+
+    public void startTimer(){
+        Main.getInstance().startTimer();
+    }
+
+    public int[][][] getPerceivedMapData(){
+        //1 = ROW 2 = COL 3 = DATA
+        for(int i = 0;i<data.length;i++){
+            int[] sensor_loc = robot.getSensors()[i].getAbsoluteLocation();
+            for(int j=0;j<data[i].length;j++){
+                int[] target_loc = GlobalUtilities.locationParser(sensor_loc,robot.getSensors()[i].getAbsoluteOrientation(),j+1);
+                Arena.mazeState state;
+                try{
+                    state = robot.getPerceivedArena().getMaze()[target_loc[0]][target_loc[1]];
+                }
+                catch(ArrayIndexOutOfBoundsException aiobe){
+                    state = Arena.mazeState.unknown;
+                }
+                data[i][j][PERCEIVE_ROW] = target_loc[0];
+                data[i][j][PERCEIVE_COL] = target_loc[1];
+                if(state == Arena.mazeState.unknown)data[i][j][PERCEIVE_DAT] = Controller.UNKNOWN;
+                else if(state == Arena.mazeState.obstacle)data[i][j][PERCEIVE_DAT] = Controller.OBSTACLE;
+                else data[i][j][PERCEIVE_DAT] = Controller.PATH;
+            }
+        }
+        return data;
     }
 }
