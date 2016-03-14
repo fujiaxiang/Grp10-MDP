@@ -158,8 +158,9 @@ public class MazeExplorer {
                 for (int i = sensor.getMinRange(); i <= sensor.getMaxRange(); i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
 
-                    //original code
-                    //arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
+                    //adding maze state type: path
+                    if(arena.getMaze()[location[0]][location[1]] == Arena.mazeState.path)
+                        continue;
 
                     if(i != sensor.getMaxRange() /*&& i != sensor.getMaxRange()-1*/) {         //override the original obstacle info only when sensor reading does not equal to max range
                         arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
@@ -173,17 +174,23 @@ public class MazeExplorer {
             } else if (sensor.getMinRange() <= steps && steps <= sensor.getMaxRange()) {
                 for (int i = sensor.getMinRange(); i < steps; i++) {
                     int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), i);
+                    //adding maze state type: path
+                    if(arena.getMaze()[location[0]][location[1]] == Arena.mazeState.path)
+                        continue;
                     arena.setObstacle(location[0], location[1], Arena.mazeState.freeSpace);
                 }
                 int[] location = locationParser(sensor.getAbsoluteLocation(), sensor.getAbsoluteOrientation(), steps);
 
-                if(steps != sensor.getMaxRange()/* && steps != sensor.getMaxRange()-1*/) {      //override the original obstacle info only when sensor reading does not equal to max range
-                    arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
-                } else if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.unknown)
-                    arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
-                else{
-                    if(arena.getMaze()[location[0]][location[1]]== Arena.mazeState.freeSpace)
-                        readings[sensor.getIndex()] = -1;
+                //adding maze state type: path
+                if(arena.getMaze()[location[0]][location[1]] != Arena.mazeState.path) {
+                    if (steps != sensor.getMaxRange()/* && steps != sensor.getMaxRange()-1*/) {      //override the original obstacle info only when sensor reading does not equal to max range
+                        arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
+                    } else if (arena.getMaze()[location[0]][location[1]] == Arena.mazeState.unknown)
+                        arena.setObstacle(location[0], location[1], Arena.mazeState.obstacle);
+                    else {
+                        if (arena.getMaze()[location[0]][location[1]] == Arena.mazeState.freeSpace)
+                            readings[sensor.getIndex()] = -1;
+                    }
                 }
             }
         }catch (ArrayIndexOutOfBoundsException e){
@@ -293,7 +300,8 @@ public class MazeExplorer {
         try {
             int[] rightSide = GlobalUtilities.locationParser(robot.getLocation(), Orientation.turn(robot.getOrientation(), Orientation.RIGHT), Robot.HALF_SIZE + 1);
             int[] bottomRightCorner = GlobalUtilities.locationParser(rightSide, Orientation.oppositeOrientation(robot.getOrientation()), Robot.HALF_SIZE + 1);
-            if (robot.getPerceivedArena().getMaze()[bottomRightCorner[0]][bottomRightCorner[1]] == Arena.mazeState.freeSpace) {
+            Arena.mazeState state = robot.getPerceivedArena().getMaze()[bottomRightCorner[0]][bottomRightCorner[1]];
+            if (state == Arena.mazeState.freeSpace || state == Arena.mazeState.path) {
                 //System.out.println("isBottomRightCorner");
                 return true;
             }
@@ -337,7 +345,7 @@ public class MazeExplorer {
                 int absoluteOrientation = Orientation.turn(relativeOrientation, robot.getOrientation());
                 int[] tempLocation = locationParser(absoluteLocation, absoluteOrientation, step);
                 Arena.mazeState obstacle = maze[tempLocation[0]][tempLocation[1]];
-                if(obstacle!=Arena.mazeState.freeSpace)
+                if(obstacle!=Arena.mazeState.freeSpace && obstacle!=Arena.mazeState.path)
                     if(treatUnknownAsObstacle)
                         return step;
                     else {

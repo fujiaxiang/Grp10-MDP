@@ -12,7 +12,7 @@ public class Arena {
     public static final int START_GOAL_SIZE = 3;
 
     public enum mazeState{
-        freeSpace, obstacle, unknown, virtualObstacle
+        freeSpace, obstacle, unknown, virtualObstacle, path
     }
 
 //    private static Arena instance = new Arena();
@@ -114,7 +114,7 @@ public class Arena {
             for (int j = 0; j < COL; j++) {
                 if (maze[i][j] == mazeState.obstacle)
                     ternary[index] = '1';
-                else if (maze[i][j] == mazeState.freeSpace) {
+                else if (maze[i][j] == mazeState.freeSpace || maze[i][j] == mazeState.path) {
                     ternary[index] = '0';
                 } else
                     ternary[index] = '2';
@@ -163,7 +163,7 @@ public class Arena {
                     descriptorPart1 += "0";
                 else {
                     descriptorPart1 += "1";
-                    if(maze[i][j] == mazeState.freeSpace)
+                    if(maze[i][j] == mazeState.freeSpace || maze[i][j] == mazeState.path)
                         descriptorPart2 += "0";
                     else
                         descriptorPart2 += "1";
