@@ -50,7 +50,7 @@ public class SimuAndroidService implements AndroidServiceInterface {
     @Override
     public int sendObstacleInfo() {
         System.out.println("(Simulation) Sent obstacle info to Android");
-        System.out.println("The obstacle info string is ****" + Messages.obstacleInfo() + "****");
+//        System.out.println("The obstacle info string is ****" + Messages.obstacleInfo() + "****");
 //        System.out.println("The converted back string is " + Convertor.fromObstacleInfo(Messages.obstacleInfo()));
 //        if(Robot.getInstance().getPerceivedArena().toObstacleInfoTest().equals(Convertor.fromObstacleInfo(Messages.obstacleInfo()) + " ")){
 //            System.out.println("The convertors are correct");

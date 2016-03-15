@@ -44,6 +44,7 @@ public class PathRunner {
     public void runShortestPath(Path path, boolean isRealRun){
         initialiseServices(isRealRun);
         androidService.waitToRunShortestPath();
+        //controller.startTimer();
         runPath(path, isRealRun);
     }
 

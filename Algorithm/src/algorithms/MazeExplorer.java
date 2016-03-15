@@ -123,6 +123,8 @@ public class MazeExplorer {
         //*****************
         androidService.sendMapDescriptor();
         System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
+        controller.stopTimer();
+
         Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
 

@@ -376,6 +376,10 @@ public class Controller {
         Main.getInstance().startTimer();
     }
 
+    public void stopTimer(){
+        Main.getInstance().stopTimer();
+    }
+
     public int[][][] getPerceivedMapData(){
         //1 = ROW 2 = COL 3 = DATA
         for(int i = 0;i<data.length;i++){

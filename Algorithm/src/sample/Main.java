@@ -460,6 +460,12 @@ public class Main extends Application {
         },0,TIMER_UPDATE_DURATION);
     }
 
+    public void stopTimer(){
+        if(timer_timer!=null){
+            timer_timer.cancel();
+        }
+    }
+
     private Button createButton(String text, double x, double y, Color c,EventHandler listener){
         Button button = new Button(text);
         button.setLayoutX(x);
