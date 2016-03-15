@@ -8,6 +8,7 @@ import models.Sensor;
 import services.*;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
+import utilities.VoiceOut;
 
 import static utilities.GlobalUtilities.locationParser;
 
@@ -121,6 +122,7 @@ public class MazeExplorer {
         //**************Testing
         //SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
+        VoiceOut.voiceOut("WLExplorationDone.wav");
         androidService.sendMapDescriptor();
         System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
         controller.stopTimer();

@@ -28,7 +28,7 @@ public class VoiceOut {
 
     public static void main(String[] args){
         System.out.println("Starting...");
-        voiceOut("/Users/Jiaxiang/Downloads/ExplorationDone.wav");
+        voiceOut("WLExplorationDone.wav");
         System.out.println("Ending...");
     }
 }
