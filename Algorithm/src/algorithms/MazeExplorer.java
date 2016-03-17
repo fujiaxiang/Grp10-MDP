@@ -85,7 +85,7 @@ public class MazeExplorer {
         androidService.waitToStartExploration();
         controller.startTimer();
 
-        robot.getPerceivedArena().makeBlocksFree(robot.getRobotBlocks());
+        robot.getPerceivedArena().makeBlocksPath(robot.getRobotBlocks());
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getStart(),Arena.START_GOAL_SIZE));
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getGoal(),Arena.START_GOAL_SIZE));
 
@@ -104,7 +104,8 @@ public class MazeExplorer {
 //                targetCoverageReachedAction();
 //                return null;   // need to change if robot want to do something after terminated
 //            }
-
+            robot.getPerceivedArena().makeBlocksPath(robot.getRobotBlocks());
+            //robot.getPerceivedArena().print();
             observe();
             androidService.sendObstacleInfo();
 

@@ -52,6 +52,7 @@ public class VirtualMap{
                         try {
                             //if this surrounding node is a free space or unknown in the case of treating unknown as free space
                             if (this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.freeSpace
+                                    || this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.path
                                     || (!treatUnknownAsObstacle &&
                                     this.virtualMap[surroundingNodeIndex[0]][surroundingNodeIndex[1]].state == Arena.mazeState.unknown))
 
@@ -65,6 +66,7 @@ public class VirtualMap{
 
                 //if this node is on the side and is a free space or unknown in the case of treating unknown as free space
                 if (isNodeOnSide(i, j, maze) && ((this.virtualMap[i][j].state == Arena.mazeState.freeSpace)
+                        || (this.virtualMap[i][j].state == Arena.mazeState.path)
                         || (!treatUnknownAsObstacle && this.virtualMap[i][j].state == Arena.mazeState.unknown)))
                     this.virtualMap[i][j].state = Arena.mazeState.virtualObstacle;
             }

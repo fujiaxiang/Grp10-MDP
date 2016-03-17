@@ -93,6 +93,9 @@ public class Arena {
                     case virtualObstacle:
                         System.out.print("v\t");
                         break;
+                    case path:
+                        System.out.print("p\t");
+                        break;
                     default:
                         System.out.print("0\t");
                         break;
@@ -220,9 +223,9 @@ public class Arena {
         return (double) cover / (ROW * COL);
     }
 
-    public void makeBlocksFree(int[][] blocks){
+    public void makeBlocksPath(int[][] blocks){
         for(int[] block : blocks){
-            maze[block[0]][block[1]] = mazeState.freeSpace;
+            maze[block[0]][block[1]] = mazeState.path;
         }
     }
 

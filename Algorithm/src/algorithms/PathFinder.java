@@ -91,7 +91,7 @@ public class PathFinder {
     }
 
     private void mark(PathNode thisNode, PathNode previousNode, HeapPriorityQueue<PathNode> queue){
-        if(thisNode.state == Arena.mazeState.freeSpace) {
+        if(thisNode.state == Arena.mazeState.freeSpace || thisNode.state == Arena.mazeState.path) {
             int orientation = Orientation.relativeOrientation(thisNode.index, previousNode.index);
             double stepCost = PathFinder.COST_TO_MOVE_ONE_STEP;
 
