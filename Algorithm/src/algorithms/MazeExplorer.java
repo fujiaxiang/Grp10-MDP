@@ -1,5 +1,6 @@
 package algorithms;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import controllers.Controller;
 import models.Arena;
 import models.Path;
@@ -7,6 +8,7 @@ import models.Robot;
 import models.Sensor;
 import services.*;
 import utilities.GlobalUtilities;
+import utilities.Messages;
 import utilities.Orientation;
 import utilities.VoiceOut;
 
@@ -25,7 +27,7 @@ public class MazeExplorer {
     private SensorServiceInterface sensorService;
     private AndroidServiceInterface androidService;
 
-    private static final int CALIBRATE_LIMIT = 6;
+    private static final int CALIBRATE_LIMIT = 7;
     //private static final int DOUBLE_CALIBRATE_LIMIT = 5;
     private static final int CALIBRATE_DISTANCE = 1;
 //    private int calibrate_age;
@@ -86,6 +88,9 @@ public class MazeExplorer {
         controller.startTimer();
 
         robot.getPerceivedArena().makeBlocksPath(robot.getRobotBlocks());
+        robot.getPerceivedArena().makeBlocksPath(robot.getPerceivedArena().getStartBlocks());
+        robot.getPerceivedArena().makeBlocksPath(robot.getPerceivedArena().getGoalBlocks());
+        robot.getPerceivedArena().print();
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getStart(),Arena.START_GOAL_SIZE));
         //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getGoal(),Arena.START_GOAL_SIZE));
 
@@ -124,7 +129,16 @@ public class MazeExplorer {
         //SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
         VoiceOut.voiceOut("WLExplorationDone.wav");
+//        if(HARD_CODE == 1){
+////            if(!isRealRun)
+////                TcpService.getInstance().connectToHost();
+//            TcpService.getInstance().sendMessage(Messages.ANDROID_CODE + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n" +
+//                    "\n" +
+//                    ";\n" +
+//                    "00000000000010002000600002001c4000c00000001f803f000000007001000000000800120ff" + Messages.ANDROID_END_CODE);
+//        }else
         androidService.sendMapDescriptor();
+
         System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
         controller.stopTimer();
 
@@ -251,12 +265,17 @@ public class MazeExplorer {
 //
 //    }
 
+//    public static final int HARD_CODE = 1;
     private void analyzeAndMove(){
 
         //if(getMazeStateOverridenOrientation()>=Orientation.NORTH){
         preemptRobotCircling(Orientation.RIGHT);
         //}
         analyzeAndCalibrate();
+
+//        if(HARD_CODE==1 && robot.getLocation()[0]==10 && robot.getLocation()[1] == 8){
+//            rpiService.turn(Orientation.LEFT);
+//        }
 
         if(isRightEmpty()) {
             rpiService.turn(Orientation.RIGHT);
@@ -333,6 +352,11 @@ public class MazeExplorer {
                 ||locateObstacle("bottomLeft", Orientation.LEFT,true)==1)
             return false;
         return true;
+    }
+
+    private boolean isDeadEnd(){
+        int orientation = robot.getOrientation();
+        return false;
     }
 
     //This method reads data stored in Robot.getInstance().getPerceivedArena() rather than sensor readings
@@ -415,6 +439,16 @@ public class MazeExplorer {
         while(robot.getOrientation() != targetFacingDirection)
             rpiService.turn(Orientation.LEFT);
 
+        //take the first move before running shortest path, as the center of robot is still within start zone after 1 move
+        if(robot.getOrientation() == idealPath.getPathNodes().get(1).orientation)
+            rpiService.moveForward(1);
+
+        //if the second move is turning, then do this as well
+        if(robot.getOrientation() != idealPath.getPathNodes().get(2).orientation) {
+            int direction = Orientation.whichDirectionToTurn(idealPath.getPathNodes().get(2).orientation, robot.getOrientation());
+            rpiService.turn(direction);
+        }
+        idealPath = PathFinder.getInstance().aStarStraight(maze, robot.getLocation(), goal, treatUnknownAsObstacle, robot.getOrientation());
         //return the ideal path
         return idealPath;
     }
@@ -651,8 +685,8 @@ public class MazeExplorer {
 
             //force update perceived arena
             int[] reading = new int[robot.getSensors().length];
-            for(int i=0;i<reading.length;i++)
-                reading[i] = robot.getSensors()[i].getrelativeOrientation()==Orientation.FRONT ? CALIBRATE_DISTANCE : IGNORE_DISTANCE;
+//            for(int i=0;i<reading.length;i++)
+//                reading[i] = robot.getSensors()[i].getrelativeOrientation()==Orientation.FRONT ? CALIBRATE_DISTANCE : IGNORE_DISTANCE;
 
             //turn to back
             for(int i=0;i<2;i++){

@@ -177,6 +177,9 @@ public class PathNode implements Comparable<PathNode>, Updatable{
             case virtualObstacle:
                 str += "v\t";
                 break;
+            case path:
+                str += "p\t";
+                break;
             default:
                 str += "0\t";
                 break;

@@ -41,6 +41,28 @@ public class Arena {
         }
     }
 
+    public int[][] getStartBlocks(){
+        int[][] blocks = new int[9][2];
+        int n = 0;
+        for(int i=-(Robot.SIZE/2); i<=Robot.SIZE/2; i++)
+            for(int j=-(Robot.SIZE/2); j<=Robot.SIZE/2; j++){
+                blocks[n++] = new int[]{this.getStart()[0]+i, this.getStart()[1]+j};
+            }
+        return blocks;
+    }
+
+    public int[][] getGoalBlocks(){
+        int[][] blocks = new int[9][2];
+        int n = 0;
+        for(int i=-(Robot.SIZE/2); i<=Robot.SIZE/2; i++)
+            for(int j=-(Robot.SIZE/2); j<=Robot.SIZE/2; j++){
+                blocks[n++] = new int[]{this.getGoal()[0]+i, this.getGoal()[1]+j};
+            }
+        return blocks;
+    }
+
+
+
 //    public void initialize(){
 //        this.start = start;
 //        this.goal = goal;

@@ -34,6 +34,7 @@ public class PathFinder {
 
         VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
 
+        virtualMap.print();
         //initializing heuristics
         for(int i=0; i<Arena.ROW; i++) {
             for (int j = 0; j < Arena.COL; j++) {
