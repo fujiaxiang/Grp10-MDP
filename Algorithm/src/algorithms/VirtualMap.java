@@ -1,6 +1,7 @@
 package algorithms;
 
 import models.Arena;
+import models.Path;
 
 /**
  * Created by Jiaxiang on 11/2/16.
@@ -93,6 +94,27 @@ public class VirtualMap{
 
                 System.out.print(virtualMap[i][j]);
 
+            }
+            System.out.println();
+        }
+        System.out.println("*************************");
+    }
+
+    public void printShortestPath(Path path){
+        System.out.println("*************************");
+        String[][] printing = new String[virtualMap.length][virtualMap[0].length];
+        for(int i = 0; i < virtualMap.length; i++) {
+            for (int j = 0; j < virtualMap[i].length; j++) {
+                printing[i][j] = virtualMap[i][j].toString();
+            }
+        }
+        for(PathNode node : path.getPathNodes()){
+            printing[node.index[0]][node.index[1]] = "S\t";   // stands for shortest path
+        }
+
+        for(int i = 0; i < virtualMap.length; i++) {
+            for (int j = 0; j < virtualMap[i].length; j++) {
+                System.out.print(printing[i][j]);
             }
             System.out.println();
         }

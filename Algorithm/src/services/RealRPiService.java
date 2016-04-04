@@ -1,5 +1,6 @@
 package services;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import controllers.Controller;
 import models.Robot;
 import utilities.Messages;
@@ -129,9 +130,76 @@ public class RealRPiService implements RPiServiceInterface {
 
     }
 
+    @Override
+    public int turnDegree(double degree) {
+        int deg = (int) (degree + 0.5);
+        int direction;
+        if(deg < 180){
+            direction = Orientation.RIGHT;
+        }else{
+            direction = Orientation.LEFT;
+            deg = 360 - deg;
+        }
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnDegree(deg, direction) + Messages.ARDUINO_END_CODE);  //send to Arduino
+
+        String returnMessage = tcpService.readMessage();
+        System.out.println("The return message is supposed to be **" + Messages.robotTurnedDegree(deg, direction) + "**");
+        while(!returnMessage.equals(Messages.robotTurnedDegree(deg, direction))) {     //if the return message matches
+            if (returnMessage.equals(Messages.RESEND_CODE)) {
+                try {
+                    Thread.sleep(TIME_TO_RESEND);
+                } catch (InterruptedException ite) {
+                    ite.printStackTrace();
+                }
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnDegree(deg, direction) + Messages.ARDUINO_END_CODE);  //send to Arduino
+                returnMessage = tcpService.readMessage();
+            } else {
+                System.out.println("The move forward return message is incorrect");
+                break;
+            }
+        }
+        double newOrientation = (robot.getFullOrientation() + degree) % 360;
+        robot.setFullOrientation(newOrientation);
+        return 0;
+    }
+
+    @Override
+    public int moveDistance(double distance) {
+        int dis = (int) distance;
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveDistance(dis) + Messages.ARDUINO_END_CODE);  //send to Arduino
+
+        String returnMessage = tcpService.readMessage();
+        System.out.println("The return message is supposed to be **" + Messages.robotMovedDistance(dis) + "**");
+        while(!returnMessage.equals(Messages.robotMovedDistance(dis))) {     //if the return message matches
+            if(returnMessage.equals(Messages.RESEND_CODE)){
+                try{
+                    Thread.sleep(TIME_TO_RESEND);
+                }catch (InterruptedException ite){
+                    ite.printStackTrace();
+                }
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveDistance(dis) + Messages.ARDUINO_END_CODE);  //send to Arduino
+                returnMessage = tcpService.readMessage();
+            }else {
+                System.out.println("The move forward return message is incorrect");
+                break;
+            }
+        }
+
+//        tcpService.sendMessage(Messages.ANDROID_CODE + Messages.moveRobotForward(steps) + Messages.ANDROID_END_CODE);    //send to Android
+
+//        robot.moveForward(steps);
+//        notifyUIChange();
+        robot.printStatus();
+        System.out.println("The move distance action is successful");
+        return 0;
+    }
 
     @Override
     public void notifyUIChange() {
         Controller.getInstance().setUpdate(true);
     }
+
+//    public static void main(String[] args){
+//        System.out.println("375.3 % 360 = " + (375.3 % 360));
+//    }
 }

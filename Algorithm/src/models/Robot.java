@@ -1,5 +1,6 @@
 package models;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import controllers.Controller;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
@@ -12,11 +13,25 @@ public class Robot {
     public static final int HALF_SIZE = SIZE/2;
     private int[] location;
     private int orientation;
+    private double fullOrientation;
+
+    public double getFullOrientation() {
+        return fullOrientation;
+    }
+
+    //update the full orientation based on integer orientation
+    public void updateFullOrientation(){
+        setFullOrientation(Orientation.directionToDegree(getOrientation()));
+    }
+
+    public void setFullOrientation(double fullOrientation) {
+        this.fullOrientation = fullOrientation;
+    }
 
     //Specify the basic information of sensors here
     private final int NUMBER_OF_SENSORS = 5;
     //The format of sensorString format: "relativeLocation;relativeOrientation;maxRange;minRange;index", example "topLeft;0;5;1;0"
-    private final String[] SENSOR_STRINGS = {"topLeft;0;1;1", "topCenter;0;1;1", "topRight;0;1;1", "topLeft;3;3;1", "topRight;1;3;1"};
+    private final String[] SENSOR_STRINGS = {"topLeft;0;3;1", "topCenter;0;3;1", "topRight;0;3;1", "topLeft;3;3;1", "topRight;1;3;1"};
 
 
     private Arena perceivedArena;
@@ -114,5 +129,7 @@ public class Robot {
     public Arena getPerceivedArena() {
         return perceivedArena;
     }
+
+
 }
 

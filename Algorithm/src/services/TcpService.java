@@ -40,20 +40,33 @@ public class TcpService {
         RPiServiceInterface rpiService = RealRPiService.getInstance();
 
         int tests = 0;
-        androidService.waitToStartExploration();
-        while (tests < 10){
 
-            rpiService.moveForward(1);
-
-
-//            rpiService.moveForward(10);
-            try{
-                Thread.sleep(5000);
-            }catch (InterruptedException ite){
-                ite.printStackTrace();
-            }
+        try{
+            Thread.sleep(3000);
+        }catch (InterruptedException ite){
+            ite.printStackTrace();
+        }
+        while(tests < 20) {
+            TcpService.getInstance().sendMessage("hA10|");
+            TcpService.getInstance().readMessage();
+            TcpService.getInstance().sendMessage("hD10|");
+            TcpService.getInstance().readMessage();
             tests++;
         }
+
+//
+//        ****Message sent: hF632|****
+//        ****Message sent: hA79|****
+//        ****Message sent: hF1529|****
+//        ****Message sent: hD0|****
+//        ****Message sent: hF300|****
+//
+//        TcpService.getInstance().sendMessage("hA90|");
+//        TcpService.getInstance().readMessage();
+//        TcpService.getInstance().sendMessage("hW4|");
+//
+
+
 
 //        androidService.waitToRunShortestPath();
 //

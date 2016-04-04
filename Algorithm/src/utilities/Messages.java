@@ -1,6 +1,7 @@
 package utilities;
 
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import models.Robot;
 
 /**
@@ -48,6 +49,40 @@ public class Messages {
 
     public static String robotMovedForward(int n){
         return "W" + n + "done";
+    }
+
+    public static String moveDistance(int distance){
+        return "F" + distance;
+    }
+
+    public static String robotMovedDistance(int distance){
+        return "F" + distance + "done";
+    }
+
+    public static String turnDegree(int degree, int direction){
+        if(direction == Orientation.LEFT)
+            return "A" + degree;
+        else if (direction == Orientation.RIGHT)
+            return "D" + degree;
+        else{
+            System.out.println("In class Messages, method turnDegree, entering default case");
+            return null;
+        }
+    }
+
+    public static String robotTurnedDegree(int degree, int direction){
+        if(direction == Orientation.LEFT)
+            return "A" + degree + "done";
+        else if (direction == Orientation.RIGHT)
+            return "D" + degree + "done";
+        else{
+            System.out.println("In class Messages, method robotTurnedDegree, entering default case");
+            return null;
+        }
+    }
+
+    public static String turnRightDegree(int degree){
+        return "D" + degree;
     }
 
     public static String turnRobot(int direction){

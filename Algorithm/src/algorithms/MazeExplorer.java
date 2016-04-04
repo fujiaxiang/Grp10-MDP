@@ -27,7 +27,7 @@ public class MazeExplorer {
     private SensorServiceInterface sensorService;
     private AndroidServiceInterface androidService;
 
-    private static final int CALIBRATE_LIMIT = 7;
+    private static final int CALIBRATE_LIMIT = 8;
     //private static final int DOUBLE_CALIBRATE_LIMIT = 5;
     private static final int CALIBRATE_DISTANCE = 1;
 //    private int calibrate_age;
@@ -125,24 +125,20 @@ public class MazeExplorer {
 
         }
 
+        robot.getPerceivedArena().print();
+
         //**************Testing
         //SecondRoundExploration.getInstance().runToUnknownPlace(isRealRun);
         //*****************
         VoiceOut.voiceOut("WLExplorationDone.wav");
-//        if(HARD_CODE == 1){
-////            if(!isRealRun)
-////                TcpService.getInstance().connectToHost();
-//            TcpService.getInstance().sendMessage(Messages.ANDROID_CODE + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n" +
-//                    "\n" +
-//                    ";\n" +
-//                    "00000000000010002000600002001c4000c00000001f803f000000007001000000000800120ff" + Messages.ANDROID_END_CODE);
-//        }else
+
         androidService.sendMapDescriptor();
 
         System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
         controller.stopTimer();
 
         Path shortestPath = getReadyForShortestPath();
+//        Path shortestPath = getReadyForShortestPathTemprary();
         System.out.println("Exploration completed");
 
         return shortestPath;
@@ -393,6 +389,61 @@ public class MazeExplorer {
         return absoluteLocation;
     }
 
+
+    //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
+    public Path getReadyForShortestPathTemprary(){
+
+        Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
+        int[] start = robot.getPerceivedArena().getStart();
+        int[] goal = robot.getPerceivedArena().getGoal();
+
+        Path pathStartFacingNorth, pathStartFacingEast;
+
+        boolean treatUnknownAsObstacle = true;
+
+        //get path if robot starts facing north
+        pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
+
+        //if path does not exist
+        if(pathStartFacingNorth == null){
+            treatUnknownAsObstacle = false;
+            //get path again
+            pathStartFacingNorth = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.NORTH);
+        }
+        //if path still does not exist even if unknown areas are treated free space
+        if(pathStartFacingNorth == null)
+            return null;
+
+        //get path if robot starts facing east
+        pathStartFacingEast = PathFinder.getInstance().aStarStraight(maze, start, goal, treatUnknownAsObstacle, Orientation.EAST);
+
+        int targetFacingDirection;
+        Path idealPath;
+
+        if(pathStartFacingNorth.getTotalCost() < pathStartFacingEast.getTotalCost())
+            idealPath = pathStartFacingNorth;
+        else
+            idealPath = pathStartFacingEast;
+
+        if(robot.getOrientation()==Orientation.SOUTH)
+            rpiService.turn(Orientation.RIGHT);
+        forcePerformDoubleCalibrate();  //force a double calibration before shortest
+
+        targetFacingDirection = idealPath.getPathNodes().get(0).orientation;
+
+        while(robot.getOrientation() != targetFacingDirection)
+            rpiService.turn(Orientation.LEFT);
+
+
+        Path diagonalPath = PathFinder.getInstance().diagonalPath(maze, treatUnknownAsObstacle, idealPath);
+        (new VirtualMap(maze, treatUnknownAsObstacle)).printShortestPath(diagonalPath);
+
+        //idealPath = PathFinder.getInstance().aStarStraight(maze, robot.getLocation(), goal, treatUnknownAsObstacle, robot.getOrientation());
+        //return the diagonal path
+        return diagonalPath;
+    }
+
+
     //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
     public Path getReadyForShortestPath(){
 
@@ -448,6 +499,7 @@ public class MazeExplorer {
             int direction = Orientation.whichDirectionToTurn(idealPath.getPathNodes().get(2).orientation, robot.getOrientation());
             rpiService.turn(direction);
         }
+
         idealPath = PathFinder.getInstance().aStarStraight(maze, robot.getLocation(), goal, treatUnknownAsObstacle, robot.getOrientation());
         //return the ideal path
         return idealPath;

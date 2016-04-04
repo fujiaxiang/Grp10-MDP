@@ -3,6 +3,7 @@ package services;
 import controllers.Controller;
 import models.Robot;
 import utilities.GlobalUtilities;
+import utilities.Messages;
 import utilities.Orientation;
 
 /**
@@ -64,6 +65,28 @@ public class SimuRPiService implements RPiServiceInterface{
             e.printStackTrace();
         }
         System.out.println("Robot calibrated!!");
+        return 0;
+    }
+
+    @Override
+    public int moveDistance(double distance) {
+        int dis = (int) distance;
+        System.out.println("****Message sent: " + Messages.ARDUINO_CODE + Messages.moveDistance(dis) + Messages.ARDUINO_END_CODE + "****");  //send to Arduino
+        return 0;
+    }
+
+    @Override
+    public int turnDegree(double degree) {
+        int deg = (int) (degree + 0.5);
+        int direction;
+        if(deg < 180){
+            direction = Orientation.RIGHT;
+        }else{
+            direction = Orientation.LEFT;
+            deg = 360 - deg;
+        }
+        System.out.println("****Message sent: " + Messages.ARDUINO_CODE + Messages.turnDegree(deg, direction) + Messages.ARDUINO_END_CODE + "****");  //send to Arduino
+
         return 0;
     }
 

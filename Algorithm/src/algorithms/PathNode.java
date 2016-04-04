@@ -187,4 +187,11 @@ public class PathNode implements Comparable<PathNode>, Updatable{
         }
         return str;
     }
+
+    public boolean isNodeFree(){
+        if(state == Arena.mazeState.freeSpace || state == Arena.mazeState.path)
+            return true;
+        return false;
+
+    }
 }

@@ -13,5 +13,10 @@ public interface RPiServiceInterface {
 
     int callibrate();
 
+    int turnDegree(double degree);
+
+    int moveDistance(double distance);
+
     void notifyUIChange();
+
 }

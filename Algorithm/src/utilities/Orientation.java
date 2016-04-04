@@ -68,4 +68,46 @@ public class Orientation {
     public static int whichDirectionToTurn(int targetOrientation, int initialOrientation){
         return (targetOrientation - initialOrientation + 4) % 4;
     }
+
+    public static double relativeDegree(int[] from, int[] to){
+        int relativeX = to[0] - from[0];
+        int relativeY = to[1] - from[1];
+        if(relativeX == 0){
+            return relativeY>0 ? 90 : 270;
+        }
+
+        double orientation = Math.atan2(relativeY, relativeX);
+
+        orientation = (orientation / Math.PI) * 180;
+        orientation = 180 - orientation;
+
+        while(orientation < 0){
+            orientation += 360;
+        }
+
+        return orientation;
+    }
+
+    // The degree system: North is 0, East is 90, South is 180 and West is 270
+    public static double directionToDegree(int direction){
+        int degree = 90 * direction;
+        while(degree < 0){
+            degree += 360;
+        }
+        return (double) (degree % 360);
+    }
+
+    public static double degreeToTurn(double from, double to){
+        double degree = to - from;
+        while(degree < 0){
+            degree += 360;
+        }
+        return degree;
+    }
+
+//    public static void main(String[] args){
+//        System.out.println("degree to turn" + relativeDegree(new int[]{0, 0}, new int[]{5, -4}));
+//        System.out.println("degree to turn" + degreeToTurn(40.0, 10.0));
+//        System.out.println("-30 % 360 = " + (-30 % 360));
+//    }
 }

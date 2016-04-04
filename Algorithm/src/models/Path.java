@@ -2,6 +2,8 @@ package models;
 
 import algorithms.PathNode;
 import algorithms.VirtualMap;
+import com.sun.org.apache.bcel.internal.generic.GOTO;
+import utilities.GlobalUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +29,8 @@ public class Path {
         Collections.reverse(pathNodes);
     }
 
+    public Path(){};
+
     public void print(){
         System.out.println("The path is: ");
         for(PathNode node : pathNodes){
@@ -36,6 +40,16 @@ public class Path {
 
     public double getTotalCost(){
         return totalCost;
+    }
+
+    public double getDiagonalPathCost(){
+        final double costToMakeATurn = 0.8;
+        final double costToRunOneMiliMeter = 0.01;
+        double distance = 0;
+        for(int i=0; i<this.getPathNodes().size() - 1; i++){
+            distance += GlobalUtilities.relativeDistance(this.getPathNodes().get(i).index, this.getPathNodes().get(i+1).index);
+        }
+        return  costToMakeATurn * (getPathNodes().size()-2) + distance * costToRunOneMiliMeter;
     }
 
     public int[] getGoalIndex(){

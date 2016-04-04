@@ -50,4 +50,9 @@ public class GlobalUtilities {
         return location1[0]==location2[0] && location1[1]==location2[1];
     }
 
+    public static double relativeDistance(int[] from, int[] to){
+        //return in milimeter
+        return 100 * Math.sqrt((from[0] - to[0])* (from[0] - to[0]) + (from[1] - to[1])* (from[1] - to[1]));
+    }
+
 }

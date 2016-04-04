@@ -252,6 +252,46 @@ public class Controller {
 
         shortestPath.print();
 
+        //System.out.println("The path cost is " + shortestPath.getTotalCost());
+        System.out.println("The path cost is " + shortestPath.getDiagonalPathCost());
+
+        try{
+            FileController.getInstance().writeTo(FileController.PERCEIVED_MAP_NAME, robot.getPerceivedArena().toMapDescriptor());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+//        PathRunner.getInstance().runShortestPath(shortestPath, isRealRun);
+        PathRunner.getInstance().runDiagonalPath(shortestPath, isRealRun);
+
+        isDone = true;
+        isStopped = true;
+    }
+
+    public void startRobotTest() {
+        resetTime();
+        isDone = false;
+        isStopped = false;
+
+        previous = null;
+        //for(int i=0;i<previous.length;i++)
+        //    previous[i][0] = -1;
+        for(int i=0;i<location.length;i++)
+            location[i][0] = -1;//used as a block to previous
+
+        update = false;
+        //update = true;//to show first update
+
+        isRealRun = false;
+        Path shortestPath = MazeExplorer.getInstance().explore(isRealRun);
+
+        if(shortestPath == null){
+            System.out.println("I can't find any path to the goal. I'm sorry!");
+            return;
+        }
+
+        shortestPath.print();
+
         System.out.println("The path cost is " + shortestPath.getTotalCost());
 
         try{
@@ -260,7 +300,13 @@ public class Controller {
             e.printStackTrace();
         }
 
+        isRealRun = true;
+        if(isRealRun)
+            TcpService.getInstance().connectToHost();
+
+
         PathRunner.getInstance().runShortestPath(shortestPath, isRealRun);
+//        PathRunner.getInstance().runDiagonalPath(shortestPath, isRealRun);
 
         isDone = true;
         isStopped = true;

@@ -8,6 +8,8 @@ import utilities.GlobalUtilities;
 import utilities.HeapPriorityQueue;
 import utilities.Orientation;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jiaxiang on 5/2/16.
  */
@@ -34,7 +36,6 @@ public class PathFinder {
 
         VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
 
-        virtualMap.print();
         //initializing heuristics
         for(int i=0; i<Arena.ROW; i++) {
             for (int j = 0; j < Arena.COL; j++) {
@@ -72,6 +73,8 @@ public class PathFinder {
             return null;
 
         Path path = new Path(virtualMap, goal);
+
+        virtualMap.printShortestPath(path);
 
         return path;
     }
@@ -118,6 +121,65 @@ public class PathFinder {
             }
         }
     }
+
+    public Path diagonalPath(Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, Path path){
+        VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
+        Path diagonalPath = new Path();
+        PathNode node = path.getPathNodes().get(0);
+        diagonalPath.getPathNodes().add(node);
+
+        //code to test reachable() method
+//        System.out.println(reachable(virtualMap.getPathNode(new int[]{1,1}), virtualMap.getPathNode(new int[]{9,7}), virtualMap));
+
+        int n = 0;
+        while(n < path.getPathNodes().size()){
+            int i = n + 1;
+            while(i < path.getPathNodes().size()){
+                if(reachable(node, path.getPathNodes().get(i), virtualMap))
+                    n = i;
+                i++;
+            }
+            node = path.getPathNodes().get(n);
+            diagonalPath.getPathNodes().add(node);
+            if(n == path.getPathNodes().size() - 1)
+                break;
+        }
+
+        return diagonalPath;
+    }
+
+    private boolean reachable(PathNode fromNode, PathNode toNode, VirtualMap virtualMap){
+        double fX = fromNode.index[0] + 0.5;
+        double fY = fromNode.index[1] + 0.5;
+        double tX = toNode.index[0] + 0.5;
+        double tY = toNode.index[1] + 0.5;
+
+        final int sectionNumber = 1000;
+        final double errorMargin = 0.01;
+
+        double xSection = (tX - fX)/ sectionNumber;
+        double ySection = (tY - fY)/ sectionNumber;
+
+        for(int i = 0; i < sectionNumber; i++){
+            double x = fX + i * xSection;
+            double y = fY + i * ySection;
+            if(!virtualMap.getPathNode(new int[]{(int) x, (int) y}).isNodeFree()
+                    || !virtualMap.getPathNode(new int[]{(int) (x-errorMargin), (int) y}).isNodeFree()
+                    || !virtualMap.getPathNode(new int[]{(int) x, (int) (y-errorMargin)}).isNodeFree()
+                    || !virtualMap.getPathNode(new int[]{(int) (x-errorMargin), (int) (y-errorMargin)}).isNodeFree()){
+                return false;
+            }
+        }
+        return true;
+
+//        if(fromNode.index[0] == toNode.index[0] || fromNode.index[1] == toNode.index[1])
+//            return true;
+//        return false;
+    }
+
+//    public static void main(String[] args){
+//        System.out.println("****" + (int) 4.000);
+//    }
 
 
     private int calculateHeuristic(int row, int col, int[] goal){

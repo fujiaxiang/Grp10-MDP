@@ -3,6 +3,7 @@ package algorithms;
 import controllers.Controller;
 import models.Path;
 import models.Robot;
+import org.omg.PortableInterceptor.ORBInitInfo;
 import services.*;
 import utilities.GlobalUtilities;
 import utilities.Orientation;
@@ -83,5 +84,27 @@ public class PathRunner {
         }
         System.out.println("Shortest path completed");
     }
+
+    public void runDiagonalPath(Path path, boolean isRealRun){
+        initialiseServices(isRealRun);
+        androidService.waitToRunShortestPath();
+        int i = 0;
+
+        if(!(robot.getLocation()[0]==path.getPathNodes().get(i).index[0] && robot.getLocation()[1]==path.getPathNodes().get(i).index[1])){
+            System.out.println("In PathRunner class, runDiagonaPath method, robot position is not at first node");
+            return;
+        }
+
+        robot.updateFullOrientation();
+
+        while(i < path.getPathNodes().size() -1){
+            double nextDegree = Orientation.relativeDegree(path.getPathNodes().get(i).index, path.getPathNodes().get(i+1).index);
+            rpiService.turnDegree(Orientation.degreeToTurn(robot.getFullOrientation(), nextDegree));
+            rpiService.moveDistance(GlobalUtilities.relativeDistance(path.getPathNodes().get(i).index, path.getPathNodes().get(i+1).index));
+            i++;
+        }
+
+    }
+
 
 }
