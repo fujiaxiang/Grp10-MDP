@@ -194,4 +194,8 @@ public class PathNode implements Comparable<PathNode>, Updatable{
         return false;
 
     }
+
+    public void setPathCost(double pathCost){
+        this.pathCost = pathCost;
+    }
 }

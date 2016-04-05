@@ -14,6 +14,7 @@ import java.util.ArrayList;
  * Created by Jiaxiang on 5/2/16.
  */
 public class PathFinder {
+    private static final double TURN_COST = 0.8;
     private static PathFinder instance = new PathFinder();
     private final Controller controller = Controller.getInstance();
     private final Robot robot = Robot.getInstance();
@@ -161,8 +162,12 @@ public class PathFinder {
         for(int i=current_index+1;i<path.getPathNodes().size();i++){
             targetNode = path.getPathNodes().get(i);
             if(reachable(currentNode,targetNode,virtualMap)){
-                if(targetNode.getTotalCost()>currentNode.getTotalCost()+GlobalUtilities.relativeDistance(targetNode.index,currentNode.index)){
+                double offerCost = currentNode.getTotalCost()+GlobalUtilities.relativeDistance(targetNode.index,currentNode.index) + PathFinder.TURN_COST;
+                if(Orientation.relativeDegree(currentNode.index,targetNode.index)==0)
+                    offerCost += TURN_COST;//Turn Cost
+                if(targetNode.getTotalCost()> offerCost){
                     virtualMap.getVirtualMap()[targetNode.index[0]][targetNode.index[1]].previousNode = currentNode.index;//do update to virtual map
+                    targetNode.setPathCost(offerCost);
                 }
             }
         }
