@@ -1,5 +1,6 @@
 package algorithms;
 
+import com.sun.org.apache.xerces.internal.parsers.CachingParserPool;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import controllers.Controller;
 import models.Arena;
@@ -137,8 +138,8 @@ public class MazeExplorer {
         System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
         controller.stopTimer();
 
-        Path shortestPath = getReadyForShortestPath();
-//        Path shortestPath = getReadyForShortestPathTemprary();
+        Path shortestPath = getReadyForShortestPathTemprary();
+//        Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
 
         return shortestPath;
@@ -434,9 +435,14 @@ public class MazeExplorer {
         while(robot.getOrientation() != targetFacingDirection)
             rpiService.turn(Orientation.LEFT);
 
-
-        Path diagonalPath = PathFinder.getInstance().diagonalPath(maze, treatUnknownAsObstacle, idealPath);
-        (new VirtualMap(maze, treatUnknownAsObstacle)).printShortestPath(diagonalPath);
+        VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
+        long startTime = System.nanoTime();
+        Path diagonalPath = PathFinder.getInstance().getDiagonalPath(robot.getPerceivedArena().getGoal(), idealPath, virtualMap);
+        long endTime = System.nanoTime();
+        System.out.println("The duration is "  + (endTime - startTime));
+        virtualMap.printShortestPath(diagonalPath);
+        System.out.println("The size of the path is " + diagonalPath.getPathNodes().size());
+        //diagonalPath.print();
 
         //idealPath = PathFinder.getInstance().aStarStraight(maze, robot.getLocation(), goal, treatUnknownAsObstacle, robot.getOrientation());
         //return the diagonal path

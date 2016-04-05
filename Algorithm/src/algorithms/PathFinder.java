@@ -149,23 +149,28 @@ public class PathFinder {
         return diagonalPath;
     }
 
-    public Path getDiagonalPath(int[] goalIndex,Path straightShortestPath,VirtualMap virtualMap){
+    public Path getDiagonalPath(int[] goalIndex, Path straightShortestPath, VirtualMap virtualMap){
         prepareDiagonalPath(straightShortestPath,virtualMap,0);
+        virtualMap.getPathNode(goalIndex).setPathCost(straightShortestPath.getPathNodes().get(straightShortestPath.getPathNodes().size()-1).pathCost);
         Path diagonalPath = new Path(virtualMap,goalIndex);
         return diagonalPath;
     }
 
     private void prepareDiagonalPath(Path path,VirtualMap virtualMap,int current_index){
-        if(current_index==path.getPathNodes().size()-1)return;
-        PathNode currentNode = path.getPathNodes().get(current_index);
+        if(current_index==path.getPathNodes().size()-1) {
+            return;
+        }
+        PathNode currentNode = path.getPathNodes().get(current_index);  //node on path
+        //currentNode = virtualMap.getVirtualMap()[currentNode.index[0]][currentNode.index[1]]; //node on virtual map
         PathNode targetNode;
+        path.getPathNodes().get(0).pathCost = -PathFinder.TURN_COST;  // remove the impact of first turning action
         for(int i=current_index+1;i<path.getPathNodes().size();i++){
-            targetNode = path.getPathNodes().get(i);
+            targetNode = path.getPathNodes().get(i);   //node on path
+            //targetNode = virtualMap.getVirtualMap()[targetNode.index[0]][targetNode.index[1]]; //node on virtual map
             if(reachable(currentNode,targetNode,virtualMap)){
-                double offerCost = currentNode.getTotalCost()+GlobalUtilities.relativeDistance(targetNode.index,currentNode.index) + PathFinder.TURN_COST;
-                if(Orientation.relativeDegree(currentNode.index,targetNode.index)==0)
-                    offerCost += TURN_COST;//Turn Cost
-                if(targetNode.getTotalCost()> offerCost){
+                double offerCost = currentNode.pathCost + GlobalUtilities.relativeDistance(targetNode.index,currentNode.index)/100 + PathFinder.TURN_COST;
+                if(targetNode.pathCost > offerCost){
+
                     virtualMap.getVirtualMap()[targetNode.index[0]][targetNode.index[1]].previousNode = currentNode.index;//do update to virtual map
                     targetNode.setPathCost(offerCost);
                 }
