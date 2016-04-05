@@ -148,31 +148,25 @@ public class PathFinder {
         return diagonalPath;
     }
 
-    public Path getDiagonalPath(Path straightShortestPath,VirtualMap virtualMap){
-        Path diagonalPath = new Path();
-        diagonalPath.getPathNodes().add(straightShortestPath.getPathNodes().get(0));//push first node into Path
-        prepareDiagonalPath(straightShortestPath,diagonalPath,virtualMap,0);
+    public Path getDiagonalPath(int[] goalIndex,Path straightShortestPath,VirtualMap virtualMap){
+        prepareDiagonalPath(straightShortestPath,virtualMap,0);
+        Path diagonalPath = new Path(virtualMap,goalIndex);
         return diagonalPath;
     }
 
-    private void prepareDiagonalPath(Path straightPath,Path diagonalPath,VirtualMap virtualMap,int current_index){
-        int last_reachable = -1;
-
-        PathNode currentNode = straightPath.getPathNodes().get(current_index);
+    private void prepareDiagonalPath(Path path,VirtualMap virtualMap,int current_index){
+        if(current_index==path.getPathNodes().size()-1)return;
+        PathNode currentNode = path.getPathNodes().get(current_index);
         PathNode targetNode;
-        //idea:
-        //Assume 3 point allocate at straight shortest Path,ABC
-        //and there exists 1 reachable point D between BC
-        //AD+DC distance is not possible lesser than AC
-        for(int i=current_index+1;i<straightPath.getPathNodes().size();i++){
-            targetNode = straightPath.getPathNodes().get(i);
-            if(reachable(currentNode,targetNode,virtualMap))
-                last_reachable = i;
+        for(int i=current_index+1;i<path.getPathNodes().size();i++){
+            targetNode = path.getPathNodes().get(i);
+            if(reachable(currentNode,targetNode,virtualMap)){
+                if(targetNode.getTotalCost()>currentNode.getTotalCost()+GlobalUtilities.relativeDistance(targetNode.index,currentNode.index)){
+                    virtualMap.getVirtualMap()[targetNode.index[0]][targetNode.index[1]].previousNode = currentNode.index;//do update to virtual map
+                }
+            }
         }
-        diagonalPath.getPathNodes().add(straightPath.getPathNodes().get(last_reachable));
-        if(last_reachable==straightPath.getPathNodes().size()-1)//means next reachable node is actually goal
-            return;
-        prepareDiagonalPath(straightPath,diagonalPath,virtualMap,last_reachable);//start from next node
+        prepareDiagonalPath(path,virtualMap,current_index+1);//start from next node
     }
 
 
