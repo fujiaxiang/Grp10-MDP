@@ -1,7 +1,5 @@
 package algorithms;
 
-import com.sun.org.apache.xerces.internal.parsers.CachingParserPool;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import controllers.Controller;
 import models.Arena;
 import models.Path;
@@ -9,7 +7,6 @@ import models.Robot;
 import models.Sensor;
 import services.*;
 import utilities.GlobalUtilities;
-import utilities.Messages;
 import utilities.Orientation;
 import utilities.VoiceOut;
 
@@ -112,10 +109,15 @@ public class MazeExplorer {
 //            }
             robot.getPerceivedArena().makeBlocksPath(robot.getRobotBlocks());
             //robot.getPerceivedArena().print();
+            long time1 = System.nanoTime();
             observe();
+            long time2 = System.nanoTime();
+            System.out.println("RealRun = " + isRealRun + ", observation delay = " + (time2 - time1));
             androidService.sendObstacleInfo();
-
+            long time3 = System.nanoTime();
             analyzeAndMove();
+            long time4 = System.nanoTime();
+            System.out.println("RealRun = " + isRealRun + ", analysis delay = " + (time4 - time3));
 
             moves++;
 
@@ -138,7 +140,7 @@ public class MazeExplorer {
         System.out.println("The map string is :******" + robot.getPerceivedArena().toMapDescriptor() + "*******");
         controller.stopTimer();
 
-        Path shortestPath = getReadyForShortestPathTemprary();
+        Path shortestPath = getReadyForDiagonalShortestPath();
 //        Path shortestPath = getReadyForShortestPath();
         System.out.println("Exploration completed");
 
@@ -392,7 +394,7 @@ public class MazeExplorer {
 
 
     //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
-    public Path getReadyForShortestPathTemprary(){
+    public Path getReadyForDiagonalShortestPath(){
 
         Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
         int[] start = robot.getPerceivedArena().getStart();

@@ -70,23 +70,30 @@ public class SimuRPiService implements RPiServiceInterface{
 
     @Override
     public int moveDistance(double distance) {
-        int dis = (int) distance;
+        int dis = (int) (distance + 0.5);
         System.out.println("****Message sent: " + Messages.ARDUINO_CODE + Messages.moveDistance(dis) + Messages.ARDUINO_END_CODE + "****");  //send to Arduino
         return 0;
     }
 
     @Override
     public int turnDegree(double degree) {
-        int deg = (int) (degree + 0.5);
+        int centiDegree = (int) (degree * 100 + 0.5);
         int direction;
-        if(deg < 180){
+        if(centiDegree < 180 * 100){
             direction = Orientation.RIGHT;
         }else{
             direction = Orientation.LEFT;
-            deg = 360 - deg;
+            centiDegree = (360 * 100) - centiDegree;
         }
-        System.out.println("****Message sent: " + Messages.ARDUINO_CODE + Messages.turnDegree(deg, direction) + Messages.ARDUINO_END_CODE + "****");  //send to Arduino
 
+        if(centiDegree>-0.01 && centiDegree<0.01) {
+            System.out.println("In class SimuRpiService, centiDegree is 0");
+            return 0;
+        }
+
+        System.out.println("****Message sent: " + Messages.ARDUINO_CODE + Messages.turnDegree(centiDegree, direction) + Messages.ARDUINO_END_CODE + "****");  //send to Arduino
+        double newOrientation = (robot.getFullOrientation() + degree) % 360;
+        robot.setFullOrientation(newOrientation);
         return 0;
     }
 

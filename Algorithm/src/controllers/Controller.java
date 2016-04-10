@@ -250,7 +250,6 @@ public class Controller {
             return;
         }
 
-        shortestPath.print();
 
         //System.out.println("The path cost is " + shortestPath.getTotalCost());
         System.out.println("The path cost is " + shortestPath.getDiagonalPathCost());
@@ -289,8 +288,6 @@ public class Controller {
             System.out.println("I can't find any path to the goal. I'm sorry!");
             return;
         }
-
-        shortestPath.print();
 
         System.out.println("The path cost is " + shortestPath.getTotalCost());
 

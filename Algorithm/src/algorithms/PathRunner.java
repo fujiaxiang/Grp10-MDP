@@ -87,24 +87,44 @@ public class PathRunner {
 
     public void runDiagonalPath(Path path, boolean isRealRun){
         initialiseServices(isRealRun);
-        androidService.waitToRunShortestPath();
-        int i = 0;
 
-        if(!(robot.getLocation()[0]==path.getPathNodes().get(i).index[0] && robot.getLocation()[1]==path.getPathNodes().get(i).index[1])){
+        if(!(robot.getLocation()[0]==path.getPathNodes().get(0).index[0] && robot.getLocation()[1]==path.getPathNodes().get(0).index[1])){
             System.out.println("In PathRunner class, runDiagonaPath method, robot position is not at first node");
             return;
         }
 
         robot.updateFullOrientation();
+        double nextDistance;
+        final double allowedCheatDistance = 100;
+        boolean started = false;
 
+        int i = 0;
         while(i < path.getPathNodes().size() -1){
             double nextDegree = Orientation.relativeDegree(path.getPathNodes().get(i).index, path.getPathNodes().get(i+1).index);
             rpiService.turnDegree(Orientation.degreeToTurn(robot.getFullOrientation(), nextDegree));
-            rpiService.moveDistance(GlobalUtilities.relativeDistance(path.getPathNodes().get(i).index, path.getPathNodes().get(i+1).index));
+            nextDistance = GlobalUtilities.relativeDistance(path.getPathNodes().get(i).index, path.getPathNodes().get(i+1).index);
+            //System.out.println("next degree = " + nextDegree + ", next distance = " + nextDistance);
+            if(!started){
+                if(nextDistance > allowedCheatDistance - 0.01 && nextDistance < allowedCheatDistance + 0.01){
+                    rpiService.moveDistance(nextDistance);
+                    nextDegree = Orientation.relativeDegree(path.getPathNodes().get(i+1).index, path.getPathNodes().get(i+2).index);
+                    rpiService.turnDegree(Orientation.degreeToTurn(robot.getFullOrientation(), nextDegree));
+                    androidService.waitToRunShortestPath();
+                }
+                else if(nextDistance > allowedCheatDistance){
+                    rpiService.moveDistance(allowedCheatDistance);
+                    androidService.waitToRunShortestPath();
+                    rpiService.moveDistance(nextDistance - allowedCheatDistance);
+                }else{
+                    androidService.waitToRunShortestPath();
+                    rpiService.moveDistance(nextDistance);
+                }
+                started = true;
+            }else
+                rpiService.moveDistance(nextDistance);
             i++;
         }
 
     }
-
 
 }

@@ -46,13 +46,13 @@ public class TcpService {
         }catch (InterruptedException ite){
             ite.printStackTrace();
         }
-        while(tests < 20) {
-            TcpService.getInstance().sendMessage("hA10|");
-            TcpService.getInstance().readMessage();
-            TcpService.getInstance().sendMessage("hD10|");
-            TcpService.getInstance().readMessage();
-            tests++;
-        }
+//        while(tests < 20) {
+//            TcpService.getInstance().sendMessage("hA10|");
+//            TcpService.getInstance().readMessage();
+//            TcpService.getInstance().sendMessage("hD10|");
+//            TcpService.getInstance().readMessage();
+//            tests++;
+//        }
 
 //
 //        ****Message sent: hF632|****

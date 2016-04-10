@@ -433,7 +433,7 @@ public class Main extends Application {
                 robot_timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        controller.startRobotTest();
+                        controller.startRobot();
                     }
                 },SLEEP_DURATION);
 

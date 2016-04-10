@@ -132,26 +132,30 @@ public class RealRPiService implements RPiServiceInterface {
 
     @Override
     public int turnDegree(double degree) {
-        int deg = (int) (degree + 0.5);
+        int centiDegree = (int) (degree * 100 + 0.5);
         int direction;
-        if(deg < 180){
+        if(centiDegree < 180 * 100){
             direction = Orientation.RIGHT;
         }else{
             direction = Orientation.LEFT;
-            deg = 360 - deg;
+            centiDegree = (360 * 100) - centiDegree;
         }
-        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnDegree(deg, direction) + Messages.ARDUINO_END_CODE);  //send to Arduino
+        if(centiDegree>-0.01 && centiDegree<0.01) {
+            System.out.println("In class RealRpiService, centiDegree is 0");
+            return 0;
+        }
+        tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnDegree(centiDegree, direction) + Messages.ARDUINO_END_CODE);  //send to Arduino
 
         String returnMessage = tcpService.readMessage();
-        System.out.println("The return message is supposed to be **" + Messages.robotTurnedDegree(deg, direction) + "**");
-        while(!returnMessage.equals(Messages.robotTurnedDegree(deg, direction))) {     //if the return message matches
+        System.out.println("The return message is supposed to be **" + Messages.robotTurnedDegree(centiDegree, direction) + "**");
+        while(!returnMessage.equals(Messages.robotTurnedDegree(centiDegree, direction))) {     //if the return message matches
             if (returnMessage.equals(Messages.RESEND_CODE)) {
                 try {
                     Thread.sleep(TIME_TO_RESEND);
                 } catch (InterruptedException ite) {
                     ite.printStackTrace();
                 }
-                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnDegree(deg, direction) + Messages.ARDUINO_END_CODE);  //send to Arduino
+                tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.turnDegree(centiDegree, direction) + Messages.ARDUINO_END_CODE);  //send to Arduino
                 returnMessage = tcpService.readMessage();
             } else {
                 System.out.println("The move forward return message is incorrect");
@@ -165,7 +169,7 @@ public class RealRPiService implements RPiServiceInterface {
 
     @Override
     public int moveDistance(double distance) {
-        int dis = (int) distance;
+        int dis = (int) (distance + 0.5);
         tcpService.sendMessage(Messages.ARDUINO_CODE + Messages.moveDistance(dis) + Messages.ARDUINO_END_CODE);  //send to Arduino
 
         String returnMessage = tcpService.readMessage();

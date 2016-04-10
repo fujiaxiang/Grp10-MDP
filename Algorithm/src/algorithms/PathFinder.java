@@ -150,6 +150,7 @@ public class PathFinder {
     }
 
     public Path getDiagonalPath(int[] goalIndex, Path straightShortestPath, VirtualMap virtualMap){
+        makePathInVirtualMap(straightShortestPath, virtualMap);
         prepareDiagonalPath(straightShortestPath,virtualMap,0);
         virtualMap.getPathNode(goalIndex).setPathCost(straightShortestPath.getPathNodes().get(straightShortestPath.getPathNodes().size()-1).pathCost);
         Path diagonalPath = new Path(virtualMap,goalIndex);
@@ -169,14 +170,20 @@ public class PathFinder {
             //targetNode = virtualMap.getVirtualMap()[targetNode.index[0]][targetNode.index[1]]; //node on virtual map
             if(reachable(currentNode,targetNode,virtualMap)){
                 double offerCost = currentNode.pathCost + GlobalUtilities.relativeDistance(targetNode.index,currentNode.index)/100 + PathFinder.TURN_COST;
-                if(targetNode.pathCost > offerCost){
-
+                //System.out.println("offer cost = "+offerCost + ", current cost = " + targetNode.pathCost);
+                if(offerCost < targetNode.pathCost + 0.00001){
                     virtualMap.getVirtualMap()[targetNode.index[0]][targetNode.index[1]].previousNode = currentNode.index;//do update to virtual map
                     targetNode.setPathCost(offerCost);
                 }
             }
         }
         prepareDiagonalPath(path,virtualMap,current_index+1);//start from next node
+    }
+
+    private void makePathInVirtualMap(Path path, VirtualMap virtualMap){
+        for(PathNode node : path.getPathNodes()){
+            virtualMap.getPathNode(node.index).previousNode = node.previousNode;
+        }
     }
 
 

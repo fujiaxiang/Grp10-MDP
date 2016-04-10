@@ -44,12 +44,21 @@ public class Messages {
 
     //messages ralated to Arduino
     public static String moveRobotForward(int n){
-        return "W" + n;
+        return "F" + n * 100;
     }
 
     public static String robotMovedForward(int n){
-        return "W" + n + "done";
+        return "F" + (n * 100) + "done";
     }
+
+//    public static String moveRobotForward(int n){
+//        return "W" + n;
+//    }
+//
+//    public static String robotMovedForward(int n){
+//        return "W" + n + "done";
+//    }
+
 
     public static String moveDistance(int distance){
         return "F" + distance;
@@ -59,22 +68,36 @@ public class Messages {
         return "F" + distance + "done";
     }
 
-    public static String turnDegree(int degree, int direction){
-        if(direction == Orientation.LEFT)
-            return "A" + degree;
-        else if (direction == Orientation.RIGHT)
-            return "D" + degree;
+    public static String turnDegree(int centiDegree, int direction){
+        final int smallDegreeeLimit = 20;
+        if(direction == Orientation.LEFT) {
+//            if (centiDegree < smallDegreeeLimit)
+//                return "a" + centiDegree;
+            return "A" + centiDegree;
+        }
+        else if (direction == Orientation.RIGHT) {
+//            if (centiDegree < smallDegreeeLimit)
+//                return "d" + centiDegree;
+            return "D" + centiDegree;
+        }
         else{
             System.out.println("In class Messages, method turnDegree, entering default case");
             return null;
         }
     }
 
-    public static String robotTurnedDegree(int degree, int direction){
-        if(direction == Orientation.LEFT)
-            return "A" + degree + "done";
-        else if (direction == Orientation.RIGHT)
-            return "D" + degree + "done";
+    public static String robotTurnedDegree(int centiDegree, int direction){
+        final int smallDegreeeLimit = 20;
+        if(direction == Orientation.LEFT) {
+//            if (centiDegree < smallDegreeeLimit)
+//                return "a" + centiDegree + "done";
+            return "A" + centiDegree + "done";
+        }
+        else if (direction == Orientation.RIGHT) {
+//            if (centiDegree < smallDegreeeLimit)
+//                return "d" + centiDegree + "done";
+            return "D" + centiDegree + "done";
+        }
         else{
             System.out.println("In class Messages, method robotTurnedDegree, entering default case");
             return null;
@@ -87,21 +110,21 @@ public class Messages {
 
     public static String turnRobot(int direction){
         if(direction==Orientation.LEFT)
-            return "A90";
+            return "A9000";
         else if(direction==Orientation.RIGHT)
-            return "D90";
+            return "D9000";
         else if(direction==Orientation.BACK)
-            return "D180";
+            return "D18000";
         return null;
     }
 
     public static String robotTurned(int direction){
         if(direction==Orientation.LEFT)
-            return "A90done";
+            return "A9000done";
         else if(direction==Orientation.RIGHT)
-            return "D90done";
+            return "D9000done";
         else if(direction==Orientation.BACK)
-            return "D180done";
+            return "D18000done";
         return null;
     }
 
