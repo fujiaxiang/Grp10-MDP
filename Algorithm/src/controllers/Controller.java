@@ -267,6 +267,8 @@ public class Controller {
         isStopped = true;
     }
 
+
+    //this function allows testing of actual shortest path running without actual exploration phase (simulated exploration)
     public void startRobotTest() {
         resetTime();
         isDone = false;

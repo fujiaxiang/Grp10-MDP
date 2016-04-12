@@ -123,6 +123,8 @@ public class PathFinder {
         }
     }
 
+
+    //this function was used to calculated a non-optimal diagonal path
     public Path diagonalPath(Arena.mazeState[][] maze, boolean treatUnknownAsObstacle, Path path){
         VirtualMap virtualMap = new VirtualMap(maze, treatUnknownAsObstacle);
         Path diagonalPath = new Path();

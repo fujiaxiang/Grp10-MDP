@@ -78,9 +78,6 @@ public class MazeExplorer {
 
         robot.printStatus();
 
-        int moves = 0; //keeping track of the moves robot has made
-        //calibrate_age = CALIBRATE_LIMIT;   //initialize calibrate age so that the robot calibrates at the begining
-        //double_calibrate_age = DOUBLE_CALIBRATE_LIMIT;
 
         androidService.waitToStartExploration();
         controller.startTimer();
@@ -89,10 +86,10 @@ public class MazeExplorer {
         robot.getPerceivedArena().makeBlocksPath(robot.getPerceivedArena().getStartBlocks());
         robot.getPerceivedArena().makeBlocksPath(robot.getPerceivedArena().getGoalBlocks());
         robot.getPerceivedArena().print();
-        //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getStart(),Arena.START_GOAL_SIZE));
-        //robot.getPerceivedArena().makeBlocksFree(Convertor.convertToBlock(Controller.getInstance().getArena().getGoal(),Arena.START_GOAL_SIZE));
 
         forcePerformDoubleCalibrate();
+
+        int moves = 0; //keeping track of the moves robot has made
 
         while(!controller.isStopped()){
 
@@ -107,15 +104,21 @@ public class MazeExplorer {
 //                targetCoverageReachedAction();
 //                return null;   // need to change if robot want to do something after terminated
 //            }
+
             robot.getPerceivedArena().makeBlocksPath(robot.getRobotBlocks());
-            //robot.getPerceivedArena().print();
+
             long time1 = System.nanoTime();
+
             observe();
+
             long time2 = System.nanoTime();
             System.out.println("RealRun = " + isRealRun + ", observation delay = " + (time2 - time1));
+
             androidService.sendObstacleInfo();
+
             long time3 = System.nanoTime();
             analyzeAndMove();
+
             long time4 = System.nanoTime();
             System.out.println("RealRun = " + isRealRun + ", analysis delay = " + (time4 - time3));
 
@@ -147,6 +150,8 @@ public class MazeExplorer {
         return shortestPath;
 
     }
+
+
 
     private void notEnoughTimeAction(){}
     private void targetCoverageReachedAction(){}
@@ -239,8 +244,10 @@ public class MazeExplorer {
         return readings;
     }
 
-
+//    this version will allow the robot to explore the maze in difference direction, i.e left-wall hugging instead of right-wall hugging
 //    private void analyzeAndMove(){
+//
+//        preemptRobotCircling(Orientation.RIGHT);
 //
 //        analyzeAndCalibrate();
 //
@@ -264,7 +271,7 @@ public class MazeExplorer {
 //
 //    }
 
-//    public static final int HARD_CODE = 1;
+//    public static final int HARD_CODE = 1;  //this was used to shoot the video
     private void analyzeAndMove(){
 
         //if(getMazeStateOverridenOrientation()>=Orientation.NORTH){
@@ -272,6 +279,7 @@ public class MazeExplorer {
         //}
         analyzeAndCalibrate();
 
+        //this a few lines were used to shoot video
 //        if(HARD_CODE==1 && robot.getLocation()[0]==10 && robot.getLocation()[1] == 8){
 //            rpiService.turn(Orientation.LEFT);
 //        }
@@ -453,6 +461,7 @@ public class MazeExplorer {
 
 
     //after exploring the maze, calculate the ideal path from start zone and turn to the ideal starting orientation
+    //take the first step to save 1 second during fastest path phase
     public Path getReadyForShortestPath(){
 
         Arena.mazeState[][] maze = robot.getPerceivedArena().getMaze();
@@ -534,80 +543,10 @@ public class MazeExplorer {
             calibrate(orientation);
     }
     private void analyzeAndCalibrate(){
-        //int orientation;
         analyzeAndCalibrate(true);
         analyzeAndCalibrate(false);
-//        orientation = checkDoubleCalibrate();
-//        if(orientation>= Orientation.FRONT){
-//            doubleCalibrate(orientation);
-//            return;
-//        }
-//
-//        //unable to perform double, check if single is possible
-//        orientation = checkCalibrate();
-//        if(orientation >= Orientation.FRONT)
-//            calibrate(orientation);
     }
 
-    //we will skip using behind for calibration
-//    private int checkDoubleCalibrate(){
-//        if(double_calibrate_age++<DOUBLE_CALIBRATE_LIMIT) return -1;
-//        if(locateObstacle("topLeft", Orientation.FRONT)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT)==CALIBRATE_DISTANCE
-//                &&locateObstacle("topRight", Orientation.FRONT)==CALIBRATE_DISTANCE){
-//            if(locateObstacle("topRight", Orientation.RIGHT)==CALIBRATE_DISTANCE&&locateObstacle("middleRight", Orientation.RIGHT)==CALIBRATE_DISTANCE
-//                    &&locateObstacle("bottomRight", Orientation.RIGHT)==CALIBRATE_DISTANCE)
-//                return Orientation.RIGHT;
-//            if(locateObstacle("topLeft", Orientation.LEFT)==CALIBRATE_DISTANCE&&locateObstacle("middleLeft", Orientation.LEFT)==CALIBRATE_DISTANCE
-//                    &&locateObstacle("bottomLeft", Orientation.LEFT)==CALIBRATE_DISTANCE)
-//                return Orientation.LEFT;
-//        }
-//        return -1;
-//    }
-
-    //return (RELATIVE) orientation that can use to calibrate
-    //behind is not considered
-    //return -1 for unable/unecessary  to calibrate
-//    private int checkCalibrate(){
-////        if(calibrate_age++<CALIBRATE_LIMIT) return -1;//still too early to calibrate
-////
-////        if(locateObstacle("topLeft", Orientation.FRONT)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT)==CALIBRATE_DISTANCE
-////                &&locateObstacle("topRight", Orientation.FRONT)==CALIBRATE_DISTANCE)
-////            return Orientation.FRONT;
-////        else if(locateObstacle("topRight", Orientation.RIGHT)==CALIBRATE_DISTANCE&&locateObstacle("middleRight", Orientation.RIGHT)==CALIBRATE_DISTANCE
-////                &&locateObstacle("bottomRight", Orientation.RIGHT)==CALIBRATE_DISTANCE)
-////            return Orientation.RIGHT;
-////        else if(locateObstacle("topLeft", Orientation.LEFT)==CALIBRATE_DISTANCE&&locateObstacle("middleLeft", Orientation.LEFT)==CALIBRATE_DISTANCE
-////                &&locateObstacle("bottomLeft", Orientation.LEFT)==CALIBRATE_DISTANCE)
-////            return Orientation.LEFT;
-////        else if(locateObstacle("bottomLeft", Orientation.BACK)==CALIBRATE_DISTANCE&&locateObstacle("bottomCenter", Orientation.BACK)==CALIBRATE_DISTANCE
-////                &&locateObstacle("bottomRight", Orientation.BACK)==CALIBRATE_DISTANCE)
-////            return Orientation.BACK;
-////        System.out.println(locateObstacle("bottomLeft", Orientation.BACK) + " " + locateObstacle("bottomCenter", Orientation.BACK)+ " " + locateObstacle("bottomRight", Orientation.BACK));
-////        return -1;
-//        if(calibrate_age_ns<CALIBRATE_LIMIT&&calibrate_age_we<CALIBRATE_LIMIT) return -1;//still too early to calibrate
-//
-//        if(calibrate_age_ns>=CALIBRATE_LIMIT){
-//            if(locateObstacle("topLeft", Orientation.FRONT)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT)==CALIBRATE_DISTANCE
-//                    &&locateObstacle("topRight", Orientation.FRONT)==CALIBRATE_DISTANCE)
-//                return Orientation.FRONT;
-//            else if(locateObstacle("bottomLeft", Orientation.BACK)==CALIBRATE_DISTANCE&&locateObstacle("bottomCenter", Orientation.BACK)==CALIBRATE_DISTANCE
-//                    &&locateObstacle("bottomRight", Orientation.BACK)==CALIBRATE_DISTANCE)
-//                return Orientation.BACK;
-//            System.out.println((locateObstacle("bottomLeft", Orientation.BACK)+" "+locateObstacle("bottomCenter", Orientation.BACK)+" "+locateObstacle("bottomRight", Orientation.BACK)+" "));
-//        }
-//
-//        if(calibrate_age_we>=CALIBRATE_LIMIT) {
-//            if (locateObstacle("topRight", Orientation.RIGHT) == CALIBRATE_DISTANCE && locateObstacle("middleRight", Orientation.RIGHT) == CALIBRATE_DISTANCE
-//                    && locateObstacle("bottomRight", Orientation.RIGHT) == CALIBRATE_DISTANCE)
-//                return Orientation.RIGHT;
-//            else if (locateObstacle("topLeft", Orientation.LEFT) == CALIBRATE_DISTANCE && locateObstacle("middleLeft", Orientation.LEFT) == CALIBRATE_DISTANCE
-//                    && locateObstacle("bottomLeft", Orientation.LEFT) == CALIBRATE_DISTANCE)
-//                return Orientation.LEFT;
-//        }
-//        System.out.println(calibrate_age_ns+" "+calibrate_age_we);
-//        //System.out.println(locateObstacle("bottomLeft", Orientation.BACK) + " " + locateObstacle("bottomCenter", Orientation.BACK)+ " " + locateObstacle("bottomRight", Orientation.BACK));
-//        return -1;
-//    }
 
     private boolean checkCanCalibrateFront(){
         if(locateObstacle("topLeft", Orientation.FRONT,false)==CALIBRATE_DISTANCE&&locateObstacle("topCenter", Orientation.FRONT,false)==CALIBRATE_DISTANCE
